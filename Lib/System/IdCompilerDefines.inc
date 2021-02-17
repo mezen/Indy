@@ -72,6 +72,9 @@
 // as specified further below.  Delphi/C++Builder Mobile/NextGen compilers
 // do not support Ansi data types anymore, and is moving away from raw
 // pointers as well.
+//
+// UPDATE: in Delphi/C++Builder 10.4, all Ansi types are supported again on
+// all platforms, including the mobile compilers.
 {$DEFINE HAS_AnsiString}
 {$DEFINE HAS_AnsiChar}
 {$DEFINE HAS_PAnsiChar}
@@ -81,6 +84,10 @@
 // Make sure the following are $DEFINE'd only for suitable environments
 // as specified further below.  Delphi/C++Builder Mobile/NextGen compilers
 // use ARC for TObject life time management.
+//
+// UPDATE: ARC for TObject lifetime management has been removed in
+// Delphi/C++Builder 10.4 mobile compilers.  All platforms now use a single
+// unified memory management model!
 {$UNDEF USE_MARSHALLED_PTRS}
 {$UNDEF HAS_MarshaledAString}
 {$UNDEF USE_OBJECT_ARC}
@@ -103,6 +110,7 @@
 // Make sure that this is defined only for environments where we are using
 // the iconv library to charactor conversions.
 {.$UNDEF USE_ICONV}
+{.$UNDEF USE_LCONVENC}
 
 //Define for Delphi cross-compiler targetting Posix
 {$UNDEF USE_VCL_POSIX}
@@ -408,7 +416,7 @@
     {$ENDIF}
   {$ENDIF}
 
-  //Delphi & CBuilder 10.4 (Denali)
+  //Delphi & CBuilder 10.4 Sydney (Denali)
   {$IFDEF VER340}
     {$DEFINE VCL_10_4}
     {$IFDEF CBUILDER}
@@ -507,6 +515,7 @@
   {$IFDEF FPC_2_7_1_OR_ABOVE}
     {.$MODE DelphiUnicode}
     {.$MODESWITCH UnicodeStrings}
+    {.$CODEPAGE UTF8} // needed for Unicode string literals to work properly
   {$ENDIF}
   //note that we may need further defines for widget types depending on
   //what we do and what platforms we support in FPC.
@@ -1011,11 +1020,12 @@
   // When generating a C++ HPP file, if a class has no explicit constructor
   // defined and contains compiler-managed members (xxxString, TDateTime,
   // Variant, DelphiInterface, etc), the HPP will contain a forwarding
-  // inline constructor that implicitally initializes those managed members,
+  // inline constructor that implicitly initializes those managed members,
   // which will overwrite any non-default initializations performed inside
   // of InitComponent() overrides! In this situation, the workaround is to
-  // define an explicit constructor that forwards to the base class constructor
-  // manually.
+  // define an explicit constructor that calls the base class constructor
+  // manually, allowing those managed members to be initialized by the
+  // compiler before InitComponent() overrides then re-assign them.
   {$DEFINE WORKAROUND_INLINE_CONSTRUCTORS}
 {$ENDIF}
 
@@ -1182,6 +1192,7 @@
   {$ENDIF}
   {$DEFINE HAS_SetCodePage}
   {$DEFINE HAS_PRawByteString}
+  {$DEFINE HAS_TThreadProcedure}
 {$ENDIF}
 
 {$IFDEF VCL_2010_OR_ABOVE}
@@ -1328,6 +1339,14 @@
 
 {$IFDEF VCL_10_3_UPDATE2_OR_ABOVE}
   {$DEFINE HAS_ComponentPlatformsAttribute_OSX64}
+{$ENDIF}
+
+{$IFDEF VCL_10_4_OR_ABOVE}
+  // 0-based string indexing via '[]' is turned off by default in Delphi 10.4.
+  // TStringHelper is always 0-indexed, flat RTL functions are always 1-indexed,
+  // and now '[]' is 1-indexed again on all platforms - {$ZEROBASEDSTRINGS OFF}
+  // is the default.
+  {.$UNDEF HAS_DIRECTIVE_ZEROBASEDSTRINGS}
 {$ENDIF}
 
 // Delphi XE+ cross-compiling
@@ -1524,6 +1543,9 @@
 // TODO: Ansi data types were disabled on mobile platforms in XE3, but
 // UTF8String and RawByteString were re-enabled in 10.1 Berlin! What else,
 // if anything, was re-enabled to facilitate that?
+//
+// UPDATE: In 10.4 Sydney, AnsiChar and AnsiString were re-enabled on
+// mobile platforms!  NEXTGEN is no longer defined in the mobile compilers.
 {$IFDEF NO_ANSI_TYPES}
   {$UNDEF HAS_AnsiString}
   {$UNDEF HAS_AnsiChar}
@@ -1634,6 +1656,13 @@
 {$IFDEF WINDOWS}
   {$UNDEF USE_ICONV_ENC}
   {$DEFINE USE_SAFELOADLIBRARY}
+{$ENDIF}
+// Use here for all *nix systems that you do not want to use iconv library
+{$IFDEF FPC}
+  {$IFDEF ANDROID}
+    {$UNDEF USE_ICONV}
+    {$DEFINE USE_LCONVENC}
+  {$ENDIF}
 {$ENDIF}
 
 {$UNDEF USE_INVALIDATE_MOD_CACHE}
@@ -1849,15 +1878,6 @@ word to an 8 bit byte and an 8 bit byte field named sa_len was added.
 {$IFDEF REGISTER_EXPECTED_MEMORY_LEAK}
   {$IFDEF DOTNET}
     {$UNDEF REGISTER_EXPECTED_MEMORY_LEAK}
-  {$ENDIF}
-  {$IFDEF VCL_CROSS_COMPILE}
-    // RLebeau: this should be enabled for Windows, at least...
-    {$IFNDEF MSWINDOWS}
-      // RLebeau: LeakCheck has leak reporting on other platforms...
-      {$IFNDEF USE_LEAKCHECK}
-        {$UNDEF REGISTER_EXPECTED_MEMORY_LEAK}
-      {$ENDIF}
-    {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 

@@ -477,6 +477,7 @@ type
   function GetMIMETypeFromFile(const AFile: TIdFileName): string;
   function GetMIMEDefaultFileExt(const MIMEType: string): TIdFileName;
   function GetGMTDateByName(const AFileName : TIdFileName) : TDateTime;
+  function GetGMTOffsetStr(const S: string): string;
   function GmtOffsetStrToDateTime(const S: string): TDateTime;
   function GMTToLocalDateTime(S: string): TDateTime;
   function CookieStrToLocalDateTime(S: string): TDateTime;
@@ -1480,6 +1481,7 @@ begin
   {$ENDIF}
   {$IFDEF WINDOWS}
     {$IFDEF WIN32_OR_WIN64}
+  // TODO: use SetThreadErrorMode() instead, when available...
   LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
   try
     {$ENDIF}
@@ -1777,6 +1779,7 @@ begin
     ready or there's some other critical I/O error.
     }
     {$IFDEF WIN32_OR_WIN64}
+    // TODO: use SetThreadErrorMode() instead, when available...
     LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
     {$ENDIF}
@@ -1892,9 +1895,11 @@ begin
 
   if not IsVolume(AFileName) then begin
       {$IFDEF WIN32_OR_WIN64}
+    // TODO: use SetThreadErrorMode() instead, when available...
     LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       {$ENDIF}
+      // TODO: use GetFileAttributesEx() on systems that support it
       LHandle := Windows.FindFirstFile(PIdFileNameChar(AFileName), LRec);
       {$IFDEF WIN32_OR_WIN64}
     finally
@@ -2748,6 +2753,16 @@ begin
     end;
   end;
   Result := '-0000' {do not localize}
+end;
+
+function GetGMTOffsetStr(const S: string): string;
+var
+  Ignored: TDateTime;
+begin
+  Result := S;
+  if not RawStrInternetToDateTime(Result, Ignored) then begin
+    Result := '';
+  end;
 end;
 
 function GmtOffsetStrToDateTime(const S: string): TDateTime;
