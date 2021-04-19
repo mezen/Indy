@@ -196,6 +196,9 @@ var
 
   OPENSSL_issetugid: function: TIdC_INT cdecl = nil;
 
+  OPENSSL_sk_num : function (const x : Pointer) : TIdC_INT cdecl = nil;
+  OPENSSL_sk_value : function (x : Pointer; i : TIdC_INT) : PIdAnsiChar cdecl = nil;
+
   (* No longer use an index. *)
   //function CRYPTO_free_ex_index(class_index: TIdC_INT; idx: TIdC_INT): TIdC_INT;
 
@@ -382,6 +385,8 @@ begin
   OpenSSL_version_num := LoadFunction('OpenSSL_version_num', AFailed);
   OpenSSL_version := LoadFunction('OpenSSL_version', AFailed);
   OPENSSL_issetugid := LoadFunction('OPENSSL_issetugid', AFailed);
+  OPENSSL_sk_num:= LoadFunction('OPENSSL_sk_num', AFailed);
+  OPENSSL_sk_value:= LoadFunction('OPENSSL_sk_value', AFailed);
   CRYPTO_new_ex_data := LoadFunction('CRYPTO_new_ex_data', AFailed);
   CRYPTO_dup_ex_data := LoadFunction('CRYPTO_dup_ex_data', AFailed);
   CRYPTO_free_ex_data := LoadFunction('CRYPTO_free_ex_data', AFailed);
@@ -452,6 +457,8 @@ begin
   OPENSSL_hexchar2int := nil;
   OpenSSL_version_num := nil;
   OpenSSL_version := nil;
+  OPENSSL_sk_num:= nil;
+  OPENSSL_sk_value:= nil;
   OPENSSL_issetugid := nil;
   CRYPTO_new_ex_data := nil;
   CRYPTO_dup_ex_data := nil;
