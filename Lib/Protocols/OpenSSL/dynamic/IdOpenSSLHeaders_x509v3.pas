@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 28.10.2020 15:24:13
+// Generation date: 19.04.2021 21:11:28
 
 unit IdOpenSSLHeaders_x509v3;
 
@@ -384,6 +384,30 @@ type
 //  DEFINE_STACK_OF(GENERAL_NAME)
 //  typedef STACK_OF(GENERAL_NAME) GENERAL_NAMES;
 //  DEFINE_STACK_OF(GENERAL_NAMES)
+
+  STACK = record
+    num : TIdC_INT; //int num;
+    data : Pointer; //PIdAnsiChar;  //char **data;
+    sorted : TIdC_INT;//int sorted;
+    num_alloc : TIdC_INT; //int num_alloc;
+    comp : function (_para1: PPIdAnsiChar; _para2: PPIdAnsiChar):  TIdC_INT; cdecl;
+    //int (*comp)(const char * const *, const char * const *);
+  end;
+  PSTACK = ^STACK;
+  STACK_OF_GENERAL_NAME = record
+    _stack: stack;
+  end;
+  PSTACK_OF_GENERAL_NAME = ^STACK_OF_GENERAL_NAME;
+
+  GENERAL_NAME_union_ = record
+    case byte of
+      3 : (dNSName : PASN1_STRING); // PASN1_IA5STRING);
+  end;
+  GENERAL_NAME_ = record
+    type_ : TIdC_INT;
+    d : GENERAL_NAME_union_;
+  end;
+  PGENERAL_NAME_ = ^GENERAL_NAME_;
 
 //  DEFINE_STACK_OF(ACCESS_DESCRIPTION)
 //  DIST_POINT_NAME_st_union = record

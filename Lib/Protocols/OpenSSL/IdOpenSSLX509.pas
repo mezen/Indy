@@ -178,7 +178,8 @@ uses
   IdOpenSSLHeaders_objects,
   IdOpenSSLHeaders_pem,
   IdOpenSSLHeaders_x509,
-  IdOpenSSLUtils;
+  IdOpenSSLUtils,
+  IdOpenSSLConsts;
 
 { TIdOpenSSLX509 }
 

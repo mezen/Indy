@@ -186,6 +186,9 @@ var
 
   function OPENSSL_issetugid: TIdC_INT;
 
+  function OPENSSL_sk_num(const x : Pointer) : TIdC_INT;
+  function OPENSSL_sk_value(x : Pointer; i : TIdC_INT) : PIdAnsiChar;
+
   (* No longer use an index. *)
   //function CRYPTO_free_ex_index(class_index: TIdC_INT; idx: TIdC_INT): TIdC_INT;
 

@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 03.11.2020 09:35:30
+// Generation date: 19.04.2021 21:12:12
 
 unit IdOpenSSLHeaders_crypto;
 
@@ -190,6 +190,9 @@ function OPENSSL_secure_actual_size(ptr: Pointer): TIdC_SIZET;
   function OpenSSL_version(&type: TIdC_INT): PIdAnsiChar cdecl; external CLibCrypto;
 
   function OPENSSL_issetugid: TIdC_INT cdecl; external CLibCrypto;
+
+  function OPENSSL_sk_num(const x : Pointer) : TIdC_INT cdecl; external CLibCrypto;
+  function OPENSSL_sk_value(x : Pointer; i : TIdC_INT) : PIdAnsiChar cdecl; external CLibCrypto;
 
   (* No longer use an index. *)
   //function CRYPTO_free_ex_index(class_index: TIdC_INT; idx: TIdC_INT): TIdC_INT;
