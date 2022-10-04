@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 23.07.2021 14:35:33
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_cms;
 
@@ -44,7 +44,8 @@ uses
   IdGlobal,
   IdOpenSSLConsts,
   IdOpenSSLHeaders_ossl_typ,
-  IdOpenSSLHeaders_x509;
+  IdOpenSSLHeaders_x509,
+  IdOpenSSLHeaders_stack;
 
 type
   CMS_ContentInfo_st = type Pointer;
@@ -88,9 +89,29 @@ type
   PPCMS_OtherKeyAttribute = ^PCMS_OtherKeyAttribute;
 
 //DEFINE_STACK_OF(CMS_SignerInfo)
+  STACK_OF_CMS_SignerInfo = type of pointer;
+  PSTACK_OF_CMS_SignerInfo = ^STACK_OF_CMS_SignerInfo;
+  sk_CMS_SignerInfo_compfunc = function(const a: PCMS_SignerInfo; const b: PCMS_SignerInfo): TIdC_INT; cdecl;
+  sk_CMS_SignerInfo_freefunc = procedure(a: PCMS_SignerInfo); cdecl;
+  sk_CMS_SignerInfo_copyfunc = function(const a: PCMS_SignerInfo): PCMS_SignerInfo; cdecl;
 //DEFINE_STACK_OF(CMS_RecipientEncryptedKey)
+  STACK_OF_CMS_RecipientEncryptedKey = type of pointer;
+  PSTACK_OF_CMS_RecipientEncryptedKey = ^STACK_OF_CMS_RecipientEncryptedKey;
+  sk_CMS_RecipientEncryptedKey_compfunc = function(const a: PCMS_RecipientEncryptedKey; const b: PCMS_RecipientEncryptedKey): TIdC_INT; cdecl;
+  sk_CMS_RecipientEncryptedKey_freefunc = procedure(a: PCMS_RecipientEncryptedKey); cdecl;
+  sk_CMS_RecipientEncryptedKey_copyfunc = function(const a: PCMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey; cdecl;
 //DEFINE_STACK_OF(CMS_RecipientInfo)
+  STACK_OF_CMS_RecipientInfo = type of pointer;
+  PSTACK_OF_CMS_RecipientInfo = ^STACK_OF_CMS_RecipientInfo;
+  sk_CMS_RecipientInfo_compfunc = function(const a: PCMS_RecipientInfo; const b: PCMS_RecipientInfo): TIdC_INT; cdecl;
+  sk_CMS_RecipientInfo_freefunc = procedure(a: PCMS_RecipientInfo); cdecl;
+  sk_CMS_RecipientInfo_copyfunc = function(const a: PCMS_RecipientInfo): PCMS_RecipientInfo; cdecl;
 //DEFINE_STACK_OF(CMS_RevocationInfoChoice)
+  STACK_OF_CMS_RevocationInfoChoice = type of pointer;
+  PSTACK_OF_CMS_RevocationInfoChoice = ^STACK_OF_CMS_RevocationInfoChoice;
+  sk_CMS_RevocationInfoChoice_compfunc = function(const a: PCMS_RevocationInfoChoice; const b: PCMS_RevocationInfoChoice): TIdC_INT; cdecl;
+  sk_CMS_RevocationInfoChoice_freefunc = procedure(a: PCMS_RevocationInfoChoice); cdecl;
+  sk_CMS_RevocationInfoChoice_copyfunc = function(const a: PCMS_RevocationInfoChoice): PCMS_RevocationInfoChoice; cdecl;
 //DECLARE_ASN1_FUNCTIONS(CMS_ContentInfo)
 //DECLARE_ASN1_FUNCTIONS(CMS_ReceiptRequest)
 //DECLARE_ASN1_PRINT_FUNCTION(CMS_ContentInfo)
@@ -292,6 +313,504 @@ const
   //# define CMS_R_UNKNOWN_DIGEST_ALGORITM CMS_R_UNKNOWN_DIGEST_ALGORITHM
   //# define CMS_R_UNSUPPORTED_RECPIENTINFO_TYPE \ CMS_R_UNSUPPORTED_RECIPIENTINFO_TYPE
 
+function sk_CMS_SignerInfo_num(const sk: PSTACK_OF_CMS_SignerInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_value(const sk: PSTACK_OF_CMS_SignerInfo; index: TIdC_INT): PCMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_new(compare: sk_CMS_SignerInfo_compfunc): PSTACK_OF_CMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_new_null(): PSTACK_OF_CMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_new_reserve(compare: sk_CMS_SignerInfo_compfunc; n: TIdC_INT): PSTACK_OF_CMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_reserve(sk: PSTACK_OF_CMS_SignerInfo; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_SignerInfo_free(sk: PSTACK_OF_CMS_SignerInfo);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_SignerInfo_zero(sk: PSTACK_OF_CMS_SignerInfo);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_delete(sk: PSTACK_OF_CMS_SignerInfo; i: TIdC_INT): PCMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_delete_ptr(sk: PSTACK_OF_CMS_SignerInfo; ptr: PCMS_SignerInfo): PCMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_push(sk: PSTACK_OF_CMS_SignerInfo; ptr: PCMS_SignerInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_unshift(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_pop(sk: PSTACK_OF_CMS_SignerInfo): PCMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_shift(sk: PSTACK_OF_CMS_SignerInfo): PCMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_SignerInfo_pop_free(sk: PSTACK_OF_CMS_SignerInfo; freeFunc: sk_CMS_SignerInfo_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_insert(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_set(sk: PSTACK_OF_CMS_SignerInfo; idx: TIdC_INT; const ptr: PCMS_SignerInfo): PCMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_find(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_find_ex(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_SignerInfo_sort(sk: PSTACK_OF_CMS_SignerInfo);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_is_sorted(sk: PSTACK_OF_CMS_SignerInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_dup(const sk: PSTACK_OF_CMS_SignerInfo): PSTACK_OF_CMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_deep_copy(const sk: PSTACK_OF_CMS_SignerInfo; copyfunc: sk_CMS_SignerInfo_copyfunc; freefunc:sk_CMS_SignerInfo_freefunc): PSTACK_OF_CMS_SignerInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_SignerInfo_set_cmp_func(const sk: PSTACK_OF_CMS_SignerInfo; compare: sk_CMS_SignerInfo_compfunc): sk_CMS_SignerInfo_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_CMS_RecipientEncryptedKey_num(const sk: PSTACK_OF_CMS_RecipientEncryptedKey): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_value(const sk: PSTACK_OF_CMS_RecipientEncryptedKey; index: TIdC_INT): PCMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_new(compare: sk_CMS_RecipientEncryptedKey_compfunc): PSTACK_OF_CMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_new_null(): PSTACK_OF_CMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_new_reserve(compare: sk_CMS_RecipientEncryptedKey_compfunc; n: TIdC_INT): PSTACK_OF_CMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_reserve(sk: PSTACK_OF_CMS_RecipientEncryptedKey; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientEncryptedKey_free(sk: PSTACK_OF_CMS_RecipientEncryptedKey);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientEncryptedKey_zero(sk: PSTACK_OF_CMS_RecipientEncryptedKey);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_delete(sk: PSTACK_OF_CMS_RecipientEncryptedKey; i: TIdC_INT): PCMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_delete_ptr(sk: PSTACK_OF_CMS_RecipientEncryptedKey; ptr: PCMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_push(sk: PSTACK_OF_CMS_RecipientEncryptedKey; ptr: PCMS_RecipientEncryptedKey): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_unshift(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_pop(sk: PSTACK_OF_CMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_shift(sk: PSTACK_OF_CMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientEncryptedKey_pop_free(sk: PSTACK_OF_CMS_RecipientEncryptedKey; freeFunc: sk_CMS_RecipientEncryptedKey_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_insert(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_set(sk: PSTACK_OF_CMS_RecipientEncryptedKey; idx: TIdC_INT; const ptr: PCMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_find(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_find_ex(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientEncryptedKey_sort(sk: PSTACK_OF_CMS_RecipientEncryptedKey);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_is_sorted(sk: PSTACK_OF_CMS_RecipientEncryptedKey): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_dup(const sk: PSTACK_OF_CMS_RecipientEncryptedKey): PSTACK_OF_CMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_deep_copy(const sk: PSTACK_OF_CMS_RecipientEncryptedKey; copyfunc: sk_CMS_RecipientEncryptedKey_copyfunc; freefunc:sk_CMS_RecipientEncryptedKey_freefunc): PSTACK_OF_CMS_RecipientEncryptedKey;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientEncryptedKey_set_cmp_func(const sk: PSTACK_OF_CMS_RecipientEncryptedKey; compare: sk_CMS_RecipientEncryptedKey_compfunc): sk_CMS_RecipientEncryptedKey_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_CMS_RecipientInfo_num(const sk: PSTACK_OF_CMS_RecipientInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_value(const sk: PSTACK_OF_CMS_RecipientInfo; index: TIdC_INT): PCMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_new(compare: sk_CMS_RecipientInfo_compfunc): PSTACK_OF_CMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_new_null(): PSTACK_OF_CMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_new_reserve(compare: sk_CMS_RecipientInfo_compfunc; n: TIdC_INT): PSTACK_OF_CMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_reserve(sk: PSTACK_OF_CMS_RecipientInfo; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientInfo_free(sk: PSTACK_OF_CMS_RecipientInfo);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientInfo_zero(sk: PSTACK_OF_CMS_RecipientInfo);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_delete(sk: PSTACK_OF_CMS_RecipientInfo; i: TIdC_INT): PCMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_delete_ptr(sk: PSTACK_OF_CMS_RecipientInfo; ptr: PCMS_RecipientInfo): PCMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_push(sk: PSTACK_OF_CMS_RecipientInfo; ptr: PCMS_RecipientInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_unshift(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_pop(sk: PSTACK_OF_CMS_RecipientInfo): PCMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_shift(sk: PSTACK_OF_CMS_RecipientInfo): PCMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientInfo_pop_free(sk: PSTACK_OF_CMS_RecipientInfo; freeFunc: sk_CMS_RecipientInfo_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_insert(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_set(sk: PSTACK_OF_CMS_RecipientInfo; idx: TIdC_INT; const ptr: PCMS_RecipientInfo): PCMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_find(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_find_ex(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RecipientInfo_sort(sk: PSTACK_OF_CMS_RecipientInfo);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_is_sorted(sk: PSTACK_OF_CMS_RecipientInfo): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_dup(const sk: PSTACK_OF_CMS_RecipientInfo): PSTACK_OF_CMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_deep_copy(const sk: PSTACK_OF_CMS_RecipientInfo; copyfunc: sk_CMS_RecipientInfo_copyfunc; freefunc:sk_CMS_RecipientInfo_freefunc): PSTACK_OF_CMS_RecipientInfo;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RecipientInfo_set_cmp_func(const sk: PSTACK_OF_CMS_RecipientInfo; compare: sk_CMS_RecipientInfo_compfunc): sk_CMS_RecipientInfo_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_CMS_RevocationInfoChoice_num(const sk: PSTACK_OF_CMS_RevocationInfoChoice): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_value(const sk: PSTACK_OF_CMS_RevocationInfoChoice; index: TIdC_INT): PCMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_new(compare: sk_CMS_RevocationInfoChoice_compfunc): PSTACK_OF_CMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_new_null(): PSTACK_OF_CMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_new_reserve(compare: sk_CMS_RevocationInfoChoice_compfunc; n: TIdC_INT): PSTACK_OF_CMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_reserve(sk: PSTACK_OF_CMS_RevocationInfoChoice; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RevocationInfoChoice_free(sk: PSTACK_OF_CMS_RevocationInfoChoice);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RevocationInfoChoice_zero(sk: PSTACK_OF_CMS_RevocationInfoChoice);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_delete(sk: PSTACK_OF_CMS_RevocationInfoChoice; i: TIdC_INT): PCMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_delete_ptr(sk: PSTACK_OF_CMS_RevocationInfoChoice; ptr: PCMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_push(sk: PSTACK_OF_CMS_RevocationInfoChoice; ptr: PCMS_RevocationInfoChoice): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_unshift(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_pop(sk: PSTACK_OF_CMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_shift(sk: PSTACK_OF_CMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RevocationInfoChoice_pop_free(sk: PSTACK_OF_CMS_RevocationInfoChoice; freeFunc: sk_CMS_RevocationInfoChoice_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_insert(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_set(sk: PSTACK_OF_CMS_RevocationInfoChoice; idx: TIdC_INT; const ptr: PCMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_find(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_find_ex(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CMS_RevocationInfoChoice_sort(sk: PSTACK_OF_CMS_RevocationInfoChoice);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_is_sorted(sk: PSTACK_OF_CMS_RevocationInfoChoice): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_dup(const sk: PSTACK_OF_CMS_RevocationInfoChoice): PSTACK_OF_CMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_deep_copy(const sk: PSTACK_OF_CMS_RevocationInfoChoice; copyfunc: sk_CMS_RevocationInfoChoice_copyfunc; freefunc:sk_CMS_RevocationInfoChoice_freefunc): PSTACK_OF_CMS_RevocationInfoChoice;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CMS_RevocationInfoChoice_set_cmp_func(const sk: PSTACK_OF_CMS_RevocationInfoChoice; compare: sk_CMS_RevocationInfoChoice_compfunc): sk_CMS_RevocationInfoChoice_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(CMS_SignerInfo) Methoden }
+
+function sk_CMS_SignerInfo_num(const sk: PSTACK_OF_CMS_SignerInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CMS_SignerInfo_value(const sk: PSTACK_OF_CMS_SignerInfo; index: TIdC_INT): PCMS_SignerInfo;
+begin
+  result := PCMS_SignerInfo(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CMS_SignerInfo_new(compare: sk_CMS_SignerInfo_compfunc): PSTACK_OF_CMS_SignerInfo;
+begin
+  result := PSTACK_OF_CMS_SignerInfo(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CMS_SignerInfo_new_null(): PSTACK_OF_CMS_SignerInfo;
+begin
+  result := PSTACK_OF_CMS_SignerInfo(OPENSSL_sk_new_null());
+end;
+function sk_CMS_SignerInfo_new_reserve(compare: sk_CMS_SignerInfo_compfunc; n: TIdC_INT): PSTACK_OF_CMS_SignerInfo;
+begin
+  result := PSTACK_OF_CMS_SignerInfo(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CMS_SignerInfo_reserve(sk: PSTACK_OF_CMS_SignerInfo; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CMS_SignerInfo_free(sk: PSTACK_OF_CMS_SignerInfo);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CMS_SignerInfo_zero(sk: PSTACK_OF_CMS_SignerInfo);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CMS_SignerInfo_delete(sk: PSTACK_OF_CMS_SignerInfo; i: TIdC_INT): PCMS_SignerInfo;
+begin
+  result := PCMS_SignerInfo(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CMS_SignerInfo_delete_ptr(sk: PSTACK_OF_CMS_SignerInfo; ptr: PCMS_SignerInfo): PCMS_SignerInfo;
+begin
+  result := PCMS_SignerInfo(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CMS_SignerInfo_push(sk: PSTACK_OF_CMS_SignerInfo; ptr: PCMS_SignerInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_SignerInfo_unshift(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_SignerInfo_pop(sk: PSTACK_OF_CMS_SignerInfo): PCMS_SignerInfo;
+begin
+  result := PCMS_SignerInfo(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_SignerInfo_shift(sk: PSTACK_OF_CMS_SignerInfo): PCMS_SignerInfo;
+begin
+  result := PCMS_SignerInfo(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CMS_SignerInfo_pop_free(sk: PSTACK_OF_CMS_SignerInfo; freeFunc: sk_CMS_SignerInfo_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CMS_SignerInfo_insert(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CMS_SignerInfo_set(sk: PSTACK_OF_CMS_SignerInfo; idx: TIdC_INT; const ptr: PCMS_SignerInfo): PCMS_SignerInfo;
+begin
+  result := PCMS_SignerInfo(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CMS_SignerInfo_find(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CMS_SignerInfo_find_ex(sk: PSTACK_OF_CMS_SignerInfo; const ptr: PCMS_SignerInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CMS_SignerInfo_sort(sk: PSTACK_OF_CMS_SignerInfo);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CMS_SignerInfo_is_sorted(sk: PSTACK_OF_CMS_SignerInfo): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CMS_SignerInfo_dup(const sk: PSTACK_OF_CMS_SignerInfo): PSTACK_OF_CMS_SignerInfo;
+begin
+  result:=PSTACK_OF_CMS_SignerInfo(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_SignerInfo_deep_copy(const sk: PSTACK_OF_CMS_SignerInfo; copyfunc: sk_CMS_SignerInfo_copyfunc; freefunc:sk_CMS_SignerInfo_freefunc): PSTACK_OF_CMS_SignerInfo;
+begin
+  result:=PSTACK_OF_CMS_SignerInfo(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CMS_SignerInfo_set_cmp_func(const sk: PSTACK_OF_CMS_SignerInfo; compare: sk_CMS_SignerInfo_compfunc): sk_CMS_SignerInfo_compfunc;
+begin
+  result:=sk_CMS_SignerInfo_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(CMS_RecipientEncryptedKey) Methoden }
+
+function sk_CMS_RecipientEncryptedKey_num(const sk: PSTACK_OF_CMS_RecipientEncryptedKey): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientEncryptedKey_value(const sk: PSTACK_OF_CMS_RecipientEncryptedKey; index: TIdC_INT): PCMS_RecipientEncryptedKey;
+begin
+  result := PCMS_RecipientEncryptedKey(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CMS_RecipientEncryptedKey_new(compare: sk_CMS_RecipientEncryptedKey_compfunc): PSTACK_OF_CMS_RecipientEncryptedKey;
+begin
+  result := PSTACK_OF_CMS_RecipientEncryptedKey(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CMS_RecipientEncryptedKey_new_null(): PSTACK_OF_CMS_RecipientEncryptedKey;
+begin
+  result := PSTACK_OF_CMS_RecipientEncryptedKey(OPENSSL_sk_new_null());
+end;
+function sk_CMS_RecipientEncryptedKey_new_reserve(compare: sk_CMS_RecipientEncryptedKey_compfunc; n: TIdC_INT): PSTACK_OF_CMS_RecipientEncryptedKey;
+begin
+  result := PSTACK_OF_CMS_RecipientEncryptedKey(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CMS_RecipientEncryptedKey_reserve(sk: PSTACK_OF_CMS_RecipientEncryptedKey; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CMS_RecipientEncryptedKey_free(sk: PSTACK_OF_CMS_RecipientEncryptedKey);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CMS_RecipientEncryptedKey_zero(sk: PSTACK_OF_CMS_RecipientEncryptedKey);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientEncryptedKey_delete(sk: PSTACK_OF_CMS_RecipientEncryptedKey; i: TIdC_INT): PCMS_RecipientEncryptedKey;
+begin
+  result := PCMS_RecipientEncryptedKey(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CMS_RecipientEncryptedKey_delete_ptr(sk: PSTACK_OF_CMS_RecipientEncryptedKey; ptr: PCMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;
+begin
+  result := PCMS_RecipientEncryptedKey(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CMS_RecipientEncryptedKey_push(sk: PSTACK_OF_CMS_RecipientEncryptedKey; ptr: PCMS_RecipientEncryptedKey): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_RecipientEncryptedKey_unshift(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_RecipientEncryptedKey_pop(sk: PSTACK_OF_CMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;
+begin
+  result := PCMS_RecipientEncryptedKey(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_RecipientEncryptedKey_shift(sk: PSTACK_OF_CMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;
+begin
+  result := PCMS_RecipientEncryptedKey(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CMS_RecipientEncryptedKey_pop_free(sk: PSTACK_OF_CMS_RecipientEncryptedKey; freeFunc: sk_CMS_RecipientEncryptedKey_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CMS_RecipientEncryptedKey_insert(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CMS_RecipientEncryptedKey_set(sk: PSTACK_OF_CMS_RecipientEncryptedKey; idx: TIdC_INT; const ptr: PCMS_RecipientEncryptedKey): PCMS_RecipientEncryptedKey;
+begin
+  result := PCMS_RecipientEncryptedKey(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CMS_RecipientEncryptedKey_find(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CMS_RecipientEncryptedKey_find_ex(sk: PSTACK_OF_CMS_RecipientEncryptedKey; const ptr: PCMS_RecipientEncryptedKey): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CMS_RecipientEncryptedKey_sort(sk: PSTACK_OF_CMS_RecipientEncryptedKey);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientEncryptedKey_is_sorted(sk: PSTACK_OF_CMS_RecipientEncryptedKey): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientEncryptedKey_dup(const sk: PSTACK_OF_CMS_RecipientEncryptedKey): PSTACK_OF_CMS_RecipientEncryptedKey;
+begin
+  result:=PSTACK_OF_CMS_RecipientEncryptedKey(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_RecipientEncryptedKey_deep_copy(const sk: PSTACK_OF_CMS_RecipientEncryptedKey; copyfunc: sk_CMS_RecipientEncryptedKey_copyfunc; freefunc:sk_CMS_RecipientEncryptedKey_freefunc): PSTACK_OF_CMS_RecipientEncryptedKey;
+begin
+  result:=PSTACK_OF_CMS_RecipientEncryptedKey(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CMS_RecipientEncryptedKey_set_cmp_func(const sk: PSTACK_OF_CMS_RecipientEncryptedKey; compare: sk_CMS_RecipientEncryptedKey_compfunc): sk_CMS_RecipientEncryptedKey_compfunc;
+begin
+  result:=sk_CMS_RecipientEncryptedKey_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(CMS_RecipientInfo) Methoden }
+
+function sk_CMS_RecipientInfo_num(const sk: PSTACK_OF_CMS_RecipientInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientInfo_value(const sk: PSTACK_OF_CMS_RecipientInfo; index: TIdC_INT): PCMS_RecipientInfo;
+begin
+  result := PCMS_RecipientInfo(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CMS_RecipientInfo_new(compare: sk_CMS_RecipientInfo_compfunc): PSTACK_OF_CMS_RecipientInfo;
+begin
+  result := PSTACK_OF_CMS_RecipientInfo(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CMS_RecipientInfo_new_null(): PSTACK_OF_CMS_RecipientInfo;
+begin
+  result := PSTACK_OF_CMS_RecipientInfo(OPENSSL_sk_new_null());
+end;
+function sk_CMS_RecipientInfo_new_reserve(compare: sk_CMS_RecipientInfo_compfunc; n: TIdC_INT): PSTACK_OF_CMS_RecipientInfo;
+begin
+  result := PSTACK_OF_CMS_RecipientInfo(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CMS_RecipientInfo_reserve(sk: PSTACK_OF_CMS_RecipientInfo; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CMS_RecipientInfo_free(sk: PSTACK_OF_CMS_RecipientInfo);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CMS_RecipientInfo_zero(sk: PSTACK_OF_CMS_RecipientInfo);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientInfo_delete(sk: PSTACK_OF_CMS_RecipientInfo; i: TIdC_INT): PCMS_RecipientInfo;
+begin
+  result := PCMS_RecipientInfo(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CMS_RecipientInfo_delete_ptr(sk: PSTACK_OF_CMS_RecipientInfo; ptr: PCMS_RecipientInfo): PCMS_RecipientInfo;
+begin
+  result := PCMS_RecipientInfo(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CMS_RecipientInfo_push(sk: PSTACK_OF_CMS_RecipientInfo; ptr: PCMS_RecipientInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_RecipientInfo_unshift(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_RecipientInfo_pop(sk: PSTACK_OF_CMS_RecipientInfo): PCMS_RecipientInfo;
+begin
+  result := PCMS_RecipientInfo(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_RecipientInfo_shift(sk: PSTACK_OF_CMS_RecipientInfo): PCMS_RecipientInfo;
+begin
+  result := PCMS_RecipientInfo(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CMS_RecipientInfo_pop_free(sk: PSTACK_OF_CMS_RecipientInfo; freeFunc: sk_CMS_RecipientInfo_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CMS_RecipientInfo_insert(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CMS_RecipientInfo_set(sk: PSTACK_OF_CMS_RecipientInfo; idx: TIdC_INT; const ptr: PCMS_RecipientInfo): PCMS_RecipientInfo;
+begin
+  result := PCMS_RecipientInfo(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CMS_RecipientInfo_find(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CMS_RecipientInfo_find_ex(sk: PSTACK_OF_CMS_RecipientInfo; const ptr: PCMS_RecipientInfo): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CMS_RecipientInfo_sort(sk: PSTACK_OF_CMS_RecipientInfo);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientInfo_is_sorted(sk: PSTACK_OF_CMS_RecipientInfo): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RecipientInfo_dup(const sk: PSTACK_OF_CMS_RecipientInfo): PSTACK_OF_CMS_RecipientInfo;
+begin
+  result:=PSTACK_OF_CMS_RecipientInfo(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_RecipientInfo_deep_copy(const sk: PSTACK_OF_CMS_RecipientInfo; copyfunc: sk_CMS_RecipientInfo_copyfunc; freefunc:sk_CMS_RecipientInfo_freefunc): PSTACK_OF_CMS_RecipientInfo;
+begin
+  result:=PSTACK_OF_CMS_RecipientInfo(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CMS_RecipientInfo_set_cmp_func(const sk: PSTACK_OF_CMS_RecipientInfo; compare: sk_CMS_RecipientInfo_compfunc): sk_CMS_RecipientInfo_compfunc;
+begin
+  result:=sk_CMS_RecipientInfo_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(CMS_RevocationInfoChoice) Methoden }
+
+function sk_CMS_RevocationInfoChoice_num(const sk: PSTACK_OF_CMS_RevocationInfoChoice): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RevocationInfoChoice_value(const sk: PSTACK_OF_CMS_RevocationInfoChoice; index: TIdC_INT): PCMS_RevocationInfoChoice;
+begin
+  result := PCMS_RevocationInfoChoice(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CMS_RevocationInfoChoice_new(compare: sk_CMS_RevocationInfoChoice_compfunc): PSTACK_OF_CMS_RevocationInfoChoice;
+begin
+  result := PSTACK_OF_CMS_RevocationInfoChoice(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CMS_RevocationInfoChoice_new_null(): PSTACK_OF_CMS_RevocationInfoChoice;
+begin
+  result := PSTACK_OF_CMS_RevocationInfoChoice(OPENSSL_sk_new_null());
+end;
+function sk_CMS_RevocationInfoChoice_new_reserve(compare: sk_CMS_RevocationInfoChoice_compfunc; n: TIdC_INT): PSTACK_OF_CMS_RevocationInfoChoice;
+begin
+  result := PSTACK_OF_CMS_RevocationInfoChoice(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CMS_RevocationInfoChoice_reserve(sk: PSTACK_OF_CMS_RevocationInfoChoice; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CMS_RevocationInfoChoice_free(sk: PSTACK_OF_CMS_RevocationInfoChoice);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CMS_RevocationInfoChoice_zero(sk: PSTACK_OF_CMS_RevocationInfoChoice);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RevocationInfoChoice_delete(sk: PSTACK_OF_CMS_RevocationInfoChoice; i: TIdC_INT): PCMS_RevocationInfoChoice;
+begin
+  result := PCMS_RevocationInfoChoice(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CMS_RevocationInfoChoice_delete_ptr(sk: PSTACK_OF_CMS_RevocationInfoChoice; ptr: PCMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;
+begin
+  result := PCMS_RevocationInfoChoice(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CMS_RevocationInfoChoice_push(sk: PSTACK_OF_CMS_RevocationInfoChoice; ptr: PCMS_RevocationInfoChoice): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_RevocationInfoChoice_unshift(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CMS_RevocationInfoChoice_pop(sk: PSTACK_OF_CMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;
+begin
+  result := PCMS_RevocationInfoChoice(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_RevocationInfoChoice_shift(sk: PSTACK_OF_CMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;
+begin
+  result := PCMS_RevocationInfoChoice(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CMS_RevocationInfoChoice_pop_free(sk: PSTACK_OF_CMS_RevocationInfoChoice; freeFunc: sk_CMS_RevocationInfoChoice_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CMS_RevocationInfoChoice_insert(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CMS_RevocationInfoChoice_set(sk: PSTACK_OF_CMS_RevocationInfoChoice; idx: TIdC_INT; const ptr: PCMS_RevocationInfoChoice): PCMS_RevocationInfoChoice;
+begin
+  result := PCMS_RevocationInfoChoice(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CMS_RevocationInfoChoice_find(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CMS_RevocationInfoChoice_find_ex(sk: PSTACK_OF_CMS_RevocationInfoChoice; const ptr: PCMS_RevocationInfoChoice): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CMS_RevocationInfoChoice_sort(sk: PSTACK_OF_CMS_RevocationInfoChoice);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RevocationInfoChoice_is_sorted(sk: PSTACK_OF_CMS_RevocationInfoChoice): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CMS_RevocationInfoChoice_dup(const sk: PSTACK_OF_CMS_RevocationInfoChoice): PSTACK_OF_CMS_RevocationInfoChoice;
+begin
+  result:=PSTACK_OF_CMS_RevocationInfoChoice(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CMS_RevocationInfoChoice_deep_copy(const sk: PSTACK_OF_CMS_RevocationInfoChoice; copyfunc: sk_CMS_RevocationInfoChoice_copyfunc; freefunc:sk_CMS_RevocationInfoChoice_freefunc): PSTACK_OF_CMS_RevocationInfoChoice;
+begin
+  result:=PSTACK_OF_CMS_RevocationInfoChoice(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CMS_RevocationInfoChoice_set_cmp_func(const sk: PSTACK_OF_CMS_RevocationInfoChoice; compare: sk_CMS_RevocationInfoChoice_compfunc): sk_CMS_RevocationInfoChoice_compfunc;
+begin
+  result:=sk_CMS_RevocationInfoChoice_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
 
 end.

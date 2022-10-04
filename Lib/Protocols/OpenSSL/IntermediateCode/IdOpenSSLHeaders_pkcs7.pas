@@ -37,6 +37,8 @@ uses
   IdCTypes,
   IdGlobal,
   IdOpenSSLConsts,
+  IdOpenSSLHeaders_x509,
+  IdOpenSSLHeaders_stack,
   IdOpenSSLHeaders_ossl_typ;
 
 const
@@ -100,15 +102,17 @@ type
     version: PASN1_INTEGER;
     issuer_and_serial: PPKCS7_ISSUER_AND_SERIAL;
     digest_alg: PX509_ALGOR;
-    auth_attr: Pointer; //PSTACK_OF_X509_ATTRIBUTE;
+    auth_attr: PSTACK_OF_X509_ATTRIBUTE;
     digest_enc_alg: PX509_ALGOR;
     enc_digest: PASN1_OCTET_STRING;
-    unauth_attr: Pointer; //PSTACK_OF_X509_ATTRIBUTE;
+    unauth_attr: PSTACK_OF_X509_ATTRIBUTE;
     pkey: PEVP_PKEY;
   end;
   PKCS7_SIGNER_INFO = pkcs7_issuer_and_serial_st;
   PPKCS7_SIGNER_INFO = ^PKCS7_SIGNER_INFO;
   PPPKCS7_SIGNER_INFO = ^PPKCS7_SIGNER_INFO;
+
+  // DEFINE_STACK_OF(PKCS7_SIGNER_INFO)
 
   pkcs7_recip_info_st = record
     version: PASN1_INTEGER;
@@ -121,12 +125,14 @@ type
   PPKCS7_RECIP_INFO = ^PKCS7_RECIP_INFO;
   PPPKCS7_RECIP_INFO = ^PPKCS7_RECIP_INFO;
 
+  // DEFINE_STACK_OF(PKCS7_RECIP_INFO)
+
   pkcs7_signed_st = record
     version: PASN1_INTEGER;
-    md_algs: Pointer; //PSTACK_OF_X509_ALGOR;
-    cert: Pointer; //PSTACK_OF_X509;
-    crl: Pointer; //PSTACK_OF_X509_CRL;
-    signer_info: Pointer; //PSTACK_OF_PKCS7_SIGNER_INFO;
+    md_algs: PSTACK_OF_X509_ALGOR;
+    cert: PSTACK_OF_X509; //PSTACK_OF_X509;
+    crl: PSTACK_OF_X509_CRL;
+    signer_info: PSTACK_OF_PKCS7_SIGNER_INFO;
     contents: PPKCS7;
   end;
   PKCS7_SIGNED = pkcs7_signed_st;
@@ -145,7 +151,7 @@ type
 
   pkcs7_enveloped_st = record
     version: PASN1_INTEGER;
-    recipientinfo: Pointer; //PSTACK_OF_PKCS7_RECIP_INFO;
+    recipientinfo: PSTACK_OF_PKCS7_RECIP_INFO;
     enc_data: PPKCS7_ENC_CONTENT;
   end;
   PKCS7_ENVELOPE = pkcs7_enveloped_st;
@@ -154,12 +160,12 @@ type
 
   pkcs7_signedandenveloped_st = record
     version: PASN1_INTEGER;
-    md_algs: Pointer; //PSTACK_OF_X509_ALGOR;
-    cert: Pointer; //PSTACK_OF_X509;
-    crl: Pointer; //PSTACK_OF_X509_CRL;
-    signer_info: Pointer; //PSTACK_OF_PKCS7_SIGNER_INFO;
+    md_algs: PSTACK_OF_X509_ALGOR;
+    cert: PSTACK_OF_X509; //PSTACK_OF_X509;
+    crl: PSTACK_OF_X509_CRL;
+    signer_info: PSTACK_OF_PKCS7_SIGNER_INFO;
     enc_data: PPKCS7_ENC_CONTENT;
-    recipientinfo: Pointer; //PSTACK_OF_PKCS7_RECIP_INFO;
+    recipientinfo: PSTACK_OF_PKCS7_RECIP_INFO;
   end;
   PKCS7_SIGN_ENVELOPE = pkcs7_signedandenveloped_st;
   PPKCS7_SIGN_ENVELOPE = ^PKCS7_SIGN_ENVELOPE;
@@ -266,8 +272,8 @@ var
 //  function i2d_PKCS7_ENCRYPT(const a: PPKCS7_ENCRYPT_STRUCT; out_: PByte): TIdC_INT;
 //  function PKCS7_ENCRYPT_it: PASN1_ITEM;
 //
-//  function PKCS7_new: PPKCS7;
-//  procedure PKCS7_free(a: PPKCS7);
+  function PKCS7_new: PPKCS7;
+  procedure PKCS7_free(a: PPKCS7);
 //  function d2i_PKCS7(a: PPPKCS7; const in_: PByte; len: TIdC_LONG): PPKCS7;
 //  function i2d_PKCS7(const a: PPKCS7; out_: PByte): TIdC_INT;
 //  function PKCS7_it: PASN1_ITEM;
@@ -300,7 +306,7 @@ var
   function PKCS7_add_signature(p7: PPKCS7; x509: PX509; pkey: PEVP_PKEY; const dgst: PEVP_MD): PPKCS7_SIGNER_INFO;
   function PKCS7_cert_from_signer_info(p7: PPKCS7; si: PPKCS7_SIGNER_INFO): PX509;
   function PKCS7_set_digest(p7: PPKCS7; const md: PEVP_MD): TIdC_INT;
-//  function PKCS7_get_signer_info(p7: PPKCS7): PSTACK_OF_PKCS7_SIGNER_INFO;
+  function PKCS7_get_signer_info(p7: PPKCS7): PSTACK_OF_PKCS7_SIGNER_INFO;
 
   function PKCS7_add_recipient(p7: PPKCS7; x509: PX509): PPKCS7_RECIP_INFO;
   procedure PKCS7_SIGNER_INFO_get0_algs(si: PPKCS7_SIGNER_INFO; pk: PPEVP_PKEY; pdig: PPX509_ALGOR; psig: PPX509_ALGOR);
@@ -311,27 +317,27 @@ var
   function PKCS7_stream(boundary: PPPByte; p7: PPKCS7): TIdC_INT;
 
   function PKCS7_get_issuer_and_serial(p7: PPKCS7; idx: TIdC_INT): PPKCS7_ISSUER_AND_SERIAL;
-  //function PKCS7_digest_from_attributes(sk: Pointer{PSTACK_OF_X509_ATTRIBUTE}): PASN1_OCTET_STRING;
+  function PKCS7_digest_from_attributes(sk: PSTACK_OF_X509_ATTRIBUTE): PASN1_OCTET_STRING;
   function PKCS7_add_signed_attribute(p7si: PPKCS7_SIGNER_INFO; nid: TIdC_INT; type_: TIdC_INT; data: Pointer): TIdC_INT;
   function PKCS7_add_attribute(p7si: PPKCS7_SIGNER_INFO; nid: TIdC_INT; atrtype: TIdC_INT; value: Pointer): TIdC_INT;
   function PKCS7_get_attribute(si: PPKCS7_SIGNER_INFO; nid: TIdC_INT): PASN1_TYPE;
   function PKCS7_get_signed_attribute(si: PPKCS7_SIGNER_INFO; nid: TIdC_INT): PASN1_TYPE;
-  //function PKCS7_set_signed_attributes(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509): TIdC_INT;
-  //function PKCS7_set_attributes(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509_ATTRIBUTE): TIdC_INT;
+  function PKCS7_set_signed_attributes(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509): TIdC_INT;
+  function PKCS7_set_attributes(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509_ATTRIBUTE): TIdC_INT;
 
-  //function PKCS7_sign(signcert: PX509; pkey: PEVP_PKEY; certs: PSTACK_OF_X509; data: PBIO; flags: TIdC_INT): PPKCS7;
+  function PKCS7_sign(signcert: PX509; pkey: PEVP_PKEY; certs: PSTACK_OF_X509; data: PBIO; flags: TIdC_INT): PPKCS7;
 
   function PKCS7_sign_add_signer(p7: PPKCS7; signcert: PX509; pkey: PEVP_PKEY; const md: PEVP_MD; flags: TIdC_INT): PPKCS7_SIGNER_INFO;
 
   function PKCS7_final(p7: PPKCS7; data: PBIO; flags: TIdC_INT): TIdC_INT;
-  //function PKCS7_verify(p7: PPKCS7; certs: PSTACK_OF_X509; store: PX509_STORE; indata: PBIO; out_: PBIO; flags: TIdC_INT): TIdC_INT;
-  //function PKCS7_get0_signers(p7: PPKCS7; certs: PSTACK_OF_X509; flags: TIdC_INT): PSTACK_OF_X509;
-  //function PKCS7_encrypt(certs: PSTACK_OF_X509; in_: PBIO; const cipher: PEVP_CIPHER; flags: TIdC_INT): PPKCS7;
+  function PKCS7_verify(p7: PPKCS7; certs: PSTACK_OF_X509; store: PX509_STORE; indata: PBIO; out_: PBIO; flags: TIdC_INT): TIdC_INT;
+  function PKCS7_get0_signers(p7: PPKCS7; certs: PSTACK_OF_X509; flags: TIdC_INT): PSTACK_OF_X509;
+  function PKCS7_encrypt(certs: PSTACK_OF_X509; in_: PBIO; const cipher: PEVP_CIPHER; flags: TIdC_INT): PPKCS7;
   function PKCS7_decrypt(p7: PPKCS7; pkey: PEVP_PKEY; cert: PX509; data: PBIO; flags: TIdC_INT): TIdC_INT;
 
-  //function PKCS7_add_attrib_smimecap(si: PPKCS7_SIGNER_INFO; cap: PSTACK_OF_X509_ALGOR): TIdC_INT;
-  //function PKCS7_get_smimecap(si: PPKCS7_SIGNER_INFO): PSTACK_OF_X509_ALGOR;
-  //function PKCS7_simple_smimecap(sk: PSTACK_OF_X509_ALGOR; nid: TIdC_INT; arg: TIdC_INT): TIdC_INT;
+  function PKCS7_add_attrib_smimecap(si: PPKCS7_SIGNER_INFO; cap: PSTACK_OF_X509_ALGOR): TIdC_INT;
+  function PKCS7_get_smimecap(si: PPKCS7_SIGNER_INFO): PSTACK_OF_X509_ALGOR;
+  function PKCS7_simple_smimecap(sk: PSTACK_OF_X509_ALGOR; nid: TIdC_INT; arg: TIdC_INT): TIdC_INT;
 
   function PKCS7_add_attrib_content_type(si: PPKCS7_SIGNER_INFO; coid: PASN1_OBJECT): TIdC_INT;
   function PKCS7_add0_attrib_signing_time(si: PPKCS7_SIGNER_INFO; t: PASN1_TIME): TIdC_INT;

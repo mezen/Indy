@@ -40,7 +40,8 @@ uses
   IdOpenSSLHeaders_asn1,
   IdOpenSSLHeaders_bio,
   IdOpenSSLHeaders_evp,
-  IdOpenSSLHeaders_ossl_typ;
+  IdOpenSSLHeaders_ossl_typ,
+  IdOpenSSLHeaders_stack;
 
 type
   X509_ALGORS = type Pointer;
@@ -199,9 +200,10 @@ type
   PX509_EXTENSION = ^X509_EXTENSION;
   PPX509_EXTENSION = ^PX509_EXTENSION;
 
-  //typedef STACK_OF(X509_EXTENSION) X509_EXTENSIONS;
-  //
+
   //DEFINE_STACK_OF(X509_EXTENSION)
+  //
+  //typedef STACK_OF(X509_EXTENSION) X509_EXTENSIONS;
 
   X509_ATTRIBUTE = type Pointer; // x509_attributes_st
   PX509_ATTRIBUTE = ^X509_ATTRIBUTE;
@@ -513,7 +515,7 @@ var
   function X509_PUBKEY_set(x: PPX509_PUBKEY; pkey: PEVP_PKEY): TIdC_INT;
   function X509_PUBKEY_get0(key: PX509_PUBKEY): PEVP_PKEY;
   function X509_PUBKEY_get(key: PX509_PUBKEY): PEVP_PKEY;
-//  function X509_get_pubkey_parameters(pkey: PEVP_PKEY; chain: P STACK_OF(X509)): TIdC_INT;
+  function X509_get_pubkey_parameters(pkey: PEVP_PKEY; chain: PSTACK_OF_X509): TIdC_INT;
   function X509_get_pathlen(x: PX509): TIdC_LONG;
   function i2d_PUBKEY(a: PEVP_PKEY; pp: PPByte): TIdC_INT;
   function d2i_PUBKEY(a: PPEVP_PKEY; const pp: PPByte; length: TIdC_LONG): PEVP_PKEY;
@@ -749,7 +751,7 @@ var
   //                            X509 *x, STACK_OF(X509) *chain,
   //                            unsigned TIdC_LONG flags);
   function X509_CRL_check_suiteb(crl: PX509_CRL; pk: PEVP_PKEY; flags: TIdC_ULONG): TIdC_INT;
-  //STACK_OF(X509) *X509_chain_up_ref(STACK_OF(X509) *chain);
+  function X509_chain_up_ref(chain: PSTACK_OF_X509): PSTACK_OF_X509;
 
   function X509_issuer_and_serial_cmp(const a: PX509; const b: PX509): TIdC_INT;
   function X509_issuer_and_serial_hash(a: PX509): TIdC_ULONG;

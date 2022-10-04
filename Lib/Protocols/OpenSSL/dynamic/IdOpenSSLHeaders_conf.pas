@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 28.10.2020 15:24:13
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_conf;
 
@@ -45,7 +45,8 @@ uses
   IdGlobal,
   IdOpenSSLConsts,
   IdOpenSSLHeaders_bio,
-  IdOpenSSLHeaders_ossl_typ;
+  IdOpenSSLHeaders_ossl_typ,
+  IdOpenSSLHeaders_stack;
 
 type
   CONF_parse_list_list_cb = function (const elem: PAnsiChar; len: TIdC_INT; usr: Pointer): TIdC_INT;
@@ -58,6 +59,11 @@ type
   PCONF_VALUE = ^CONF_VALUE;
 
 //DEFINE_STACK_OF(CONF_VALUE)
+  STACK_OF_CONF_VALUE = type of pointer;
+  PSTACK_OF_CONF_VALUE = ^STACK_OF_CONF_VALUE;
+  sk_CONF_VALUE_compfunc = function(const a: PCONF_VALUE; const b: PCONF_VALUE): TIdC_INT; cdecl;
+  sk_CONF_VALUE_freefunc = procedure(a: PCONF_VALUE); cdecl;
+  sk_CONF_VALUE_copyfunc = function(const a: PCONF_VALUE): PCONF_VALUE; cdecl;
 //DEFINE_LHASH_OF(CONF_VALUE);
 
   conf_st = type Pointer;
@@ -90,7 +96,17 @@ type
   PCONF_MODULE = ^CONF_MODULE;
 
 //DEFINE_STACK_OF(CONF_MODULE)
+  STACK_OF_CONF_MODULE = type of pointer;
+  PSTACK_OF_CONF_MODULE = ^STACK_OF_CONF_MODULE;
+  sk_CONF_MODULE_compfunc = function(const a: PCONF_MODULE; const b: PCONF_MODULE): TIdC_INT; cdecl;
+  sk_CONF_MODULE_freefunc = procedure(a: PCONF_MODULE); cdecl;
+  sk_CONF_MODULE_copyfunc = function(const a: PCONF_MODULE): PCONF_MODULE; cdecl;
 //DEFINE_STACK_OF(CONF_IMODULE)
+  STACK_OF_CONF_IMODULE = type of pointer;
+  PSTACK_OF_CONF_IMODULE = ^STACK_OF_CONF_IMODULE;
+  sk_CONF_IMODULE_compfunc = function(const a: PCONF_IMODULE; const b: PCONF_IMODULE): TIdC_INT; cdecl;
+  sk_CONF_IMODULE_freefunc = procedure(a: PCONF_IMODULE); cdecl;
+  sk_CONF_IMODULE_copyfunc = function(const a: PCONF_IMODULE): PCONF_IMODULE; cdecl;
 
 //* DSO module function typedefs */
   conf_init_func = function(md: PCONF_IMODULE; const cnf: PCONF): TIdC_INT;
@@ -189,7 +205,382 @@ var
 
   OPENSSL_load_builtin_modules: procedure cdecl = nil;
 
+function sk_CONF_VALUE_num(const sk: PSTACK_OF_CONF_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_value(const sk: PSTACK_OF_CONF_VALUE; index: TIdC_INT): PCONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_new(compare: sk_CONF_VALUE_compfunc): PSTACK_OF_CONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_new_null(): PSTACK_OF_CONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_new_reserve(compare: sk_CONF_VALUE_compfunc; n: TIdC_INT): PSTACK_OF_CONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_reserve(sk: PSTACK_OF_CONF_VALUE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_VALUE_free(sk: PSTACK_OF_CONF_VALUE);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_VALUE_zero(sk: PSTACK_OF_CONF_VALUE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_delete(sk: PSTACK_OF_CONF_VALUE; i: TIdC_INT): PCONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_delete_ptr(sk: PSTACK_OF_CONF_VALUE; ptr: PCONF_VALUE): PCONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_push(sk: PSTACK_OF_CONF_VALUE; ptr: PCONF_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_unshift(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_pop(sk: PSTACK_OF_CONF_VALUE): PCONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_shift(sk: PSTACK_OF_CONF_VALUE): PCONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_VALUE_pop_free(sk: PSTACK_OF_CONF_VALUE; freeFunc: sk_CONF_VALUE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_insert(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_set(sk: PSTACK_OF_CONF_VALUE; idx: TIdC_INT; const ptr: PCONF_VALUE): PCONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_find(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_find_ex(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_VALUE_sort(sk: PSTACK_OF_CONF_VALUE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_is_sorted(sk: PSTACK_OF_CONF_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_dup(const sk: PSTACK_OF_CONF_VALUE): PSTACK_OF_CONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_deep_copy(const sk: PSTACK_OF_CONF_VALUE; copyfunc: sk_CONF_VALUE_copyfunc; freefunc:sk_CONF_VALUE_freefunc): PSTACK_OF_CONF_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_VALUE_set_cmp_func(const sk: PSTACK_OF_CONF_VALUE; compare: sk_CONF_VALUE_compfunc): sk_CONF_VALUE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_CONF_MODULE_num(const sk: PSTACK_OF_CONF_MODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_value(const sk: PSTACK_OF_CONF_MODULE; index: TIdC_INT): PCONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_new(compare: sk_CONF_MODULE_compfunc): PSTACK_OF_CONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_new_null(): PSTACK_OF_CONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_new_reserve(compare: sk_CONF_MODULE_compfunc; n: TIdC_INT): PSTACK_OF_CONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_reserve(sk: PSTACK_OF_CONF_MODULE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_MODULE_free(sk: PSTACK_OF_CONF_MODULE);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_MODULE_zero(sk: PSTACK_OF_CONF_MODULE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_delete(sk: PSTACK_OF_CONF_MODULE; i: TIdC_INT): PCONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_delete_ptr(sk: PSTACK_OF_CONF_MODULE; ptr: PCONF_MODULE): PCONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_push(sk: PSTACK_OF_CONF_MODULE; ptr: PCONF_MODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_unshift(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_pop(sk: PSTACK_OF_CONF_MODULE): PCONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_shift(sk: PSTACK_OF_CONF_MODULE): PCONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_MODULE_pop_free(sk: PSTACK_OF_CONF_MODULE; freeFunc: sk_CONF_MODULE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_insert(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_set(sk: PSTACK_OF_CONF_MODULE; idx: TIdC_INT; const ptr: PCONF_MODULE): PCONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_find(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_find_ex(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_MODULE_sort(sk: PSTACK_OF_CONF_MODULE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_is_sorted(sk: PSTACK_OF_CONF_MODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_dup(const sk: PSTACK_OF_CONF_MODULE): PSTACK_OF_CONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_deep_copy(const sk: PSTACK_OF_CONF_MODULE; copyfunc: sk_CONF_MODULE_copyfunc; freefunc:sk_CONF_MODULE_freefunc): PSTACK_OF_CONF_MODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_MODULE_set_cmp_func(const sk: PSTACK_OF_CONF_MODULE; compare: sk_CONF_MODULE_compfunc): sk_CONF_MODULE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_CONF_IMODULE_num(const sk: PSTACK_OF_CONF_IMODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_value(const sk: PSTACK_OF_CONF_IMODULE; index: TIdC_INT): PCONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_new(compare: sk_CONF_IMODULE_compfunc): PSTACK_OF_CONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_new_null(): PSTACK_OF_CONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_new_reserve(compare: sk_CONF_IMODULE_compfunc; n: TIdC_INT): PSTACK_OF_CONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_reserve(sk: PSTACK_OF_CONF_IMODULE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_IMODULE_free(sk: PSTACK_OF_CONF_IMODULE);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_IMODULE_zero(sk: PSTACK_OF_CONF_IMODULE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_delete(sk: PSTACK_OF_CONF_IMODULE; i: TIdC_INT): PCONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_delete_ptr(sk: PSTACK_OF_CONF_IMODULE; ptr: PCONF_IMODULE): PCONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_push(sk: PSTACK_OF_CONF_IMODULE; ptr: PCONF_IMODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_unshift(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_pop(sk: PSTACK_OF_CONF_IMODULE): PCONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_shift(sk: PSTACK_OF_CONF_IMODULE): PCONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_IMODULE_pop_free(sk: PSTACK_OF_CONF_IMODULE; freeFunc: sk_CONF_IMODULE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_insert(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_set(sk: PSTACK_OF_CONF_IMODULE; idx: TIdC_INT; const ptr: PCONF_IMODULE): PCONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_find(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_find_ex(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_CONF_IMODULE_sort(sk: PSTACK_OF_CONF_IMODULE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_is_sorted(sk: PSTACK_OF_CONF_IMODULE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_dup(const sk: PSTACK_OF_CONF_IMODULE): PSTACK_OF_CONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_deep_copy(const sk: PSTACK_OF_CONF_IMODULE; copyfunc: sk_CONF_IMODULE_copyfunc; freefunc:sk_CONF_IMODULE_freefunc): PSTACK_OF_CONF_IMODULE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_CONF_IMODULE_set_cmp_func(const sk: PSTACK_OF_CONF_IMODULE; compare: sk_CONF_IMODULE_compfunc): sk_CONF_IMODULE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(CONF_VALUE) Methoden }
+
+function sk_CONF_VALUE_num(const sk: PSTACK_OF_CONF_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CONF_VALUE_value(const sk: PSTACK_OF_CONF_VALUE; index: TIdC_INT): PCONF_VALUE;
+begin
+  result := PCONF_VALUE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CONF_VALUE_new(compare: sk_CONF_VALUE_compfunc): PSTACK_OF_CONF_VALUE;
+begin
+  result := PSTACK_OF_CONF_VALUE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CONF_VALUE_new_null(): PSTACK_OF_CONF_VALUE;
+begin
+  result := PSTACK_OF_CONF_VALUE(OPENSSL_sk_new_null());
+end;
+function sk_CONF_VALUE_new_reserve(compare: sk_CONF_VALUE_compfunc; n: TIdC_INT): PSTACK_OF_CONF_VALUE;
+begin
+  result := PSTACK_OF_CONF_VALUE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CONF_VALUE_reserve(sk: PSTACK_OF_CONF_VALUE; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CONF_VALUE_free(sk: PSTACK_OF_CONF_VALUE);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CONF_VALUE_zero(sk: PSTACK_OF_CONF_VALUE);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CONF_VALUE_delete(sk: PSTACK_OF_CONF_VALUE; i: TIdC_INT): PCONF_VALUE;
+begin
+  result := PCONF_VALUE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CONF_VALUE_delete_ptr(sk: PSTACK_OF_CONF_VALUE; ptr: PCONF_VALUE): PCONF_VALUE;
+begin
+  result := PCONF_VALUE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CONF_VALUE_push(sk: PSTACK_OF_CONF_VALUE; ptr: PCONF_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CONF_VALUE_unshift(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CONF_VALUE_pop(sk: PSTACK_OF_CONF_VALUE): PCONF_VALUE;
+begin
+  result := PCONF_VALUE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CONF_VALUE_shift(sk: PSTACK_OF_CONF_VALUE): PCONF_VALUE;
+begin
+  result := PCONF_VALUE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CONF_VALUE_pop_free(sk: PSTACK_OF_CONF_VALUE; freeFunc: sk_CONF_VALUE_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CONF_VALUE_insert(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CONF_VALUE_set(sk: PSTACK_OF_CONF_VALUE; idx: TIdC_INT; const ptr: PCONF_VALUE): PCONF_VALUE;
+begin
+  result := PCONF_VALUE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CONF_VALUE_find(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CONF_VALUE_find_ex(sk: PSTACK_OF_CONF_VALUE; const ptr: PCONF_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CONF_VALUE_sort(sk: PSTACK_OF_CONF_VALUE);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CONF_VALUE_is_sorted(sk: PSTACK_OF_CONF_VALUE): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CONF_VALUE_dup(const sk: PSTACK_OF_CONF_VALUE): PSTACK_OF_CONF_VALUE;
+begin
+  result:=PSTACK_OF_CONF_VALUE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CONF_VALUE_deep_copy(const sk: PSTACK_OF_CONF_VALUE; copyfunc: sk_CONF_VALUE_copyfunc; freefunc:sk_CONF_VALUE_freefunc): PSTACK_OF_CONF_VALUE;
+begin
+  result:=PSTACK_OF_CONF_VALUE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CONF_VALUE_set_cmp_func(const sk: PSTACK_OF_CONF_VALUE; compare: sk_CONF_VALUE_compfunc): sk_CONF_VALUE_compfunc;
+begin
+  result:=sk_CONF_VALUE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(CONF_MODULE) Methoden }
+
+function sk_CONF_MODULE_num(const sk: PSTACK_OF_CONF_MODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CONF_MODULE_value(const sk: PSTACK_OF_CONF_MODULE; index: TIdC_INT): PCONF_MODULE;
+begin
+  result := PCONF_MODULE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CONF_MODULE_new(compare: sk_CONF_MODULE_compfunc): PSTACK_OF_CONF_MODULE;
+begin
+  result := PSTACK_OF_CONF_MODULE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CONF_MODULE_new_null(): PSTACK_OF_CONF_MODULE;
+begin
+  result := PSTACK_OF_CONF_MODULE(OPENSSL_sk_new_null());
+end;
+function sk_CONF_MODULE_new_reserve(compare: sk_CONF_MODULE_compfunc; n: TIdC_INT): PSTACK_OF_CONF_MODULE;
+begin
+  result := PSTACK_OF_CONF_MODULE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CONF_MODULE_reserve(sk: PSTACK_OF_CONF_MODULE; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CONF_MODULE_free(sk: PSTACK_OF_CONF_MODULE);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CONF_MODULE_zero(sk: PSTACK_OF_CONF_MODULE);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CONF_MODULE_delete(sk: PSTACK_OF_CONF_MODULE; i: TIdC_INT): PCONF_MODULE;
+begin
+  result := PCONF_MODULE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CONF_MODULE_delete_ptr(sk: PSTACK_OF_CONF_MODULE; ptr: PCONF_MODULE): PCONF_MODULE;
+begin
+  result := PCONF_MODULE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CONF_MODULE_push(sk: PSTACK_OF_CONF_MODULE; ptr: PCONF_MODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CONF_MODULE_unshift(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CONF_MODULE_pop(sk: PSTACK_OF_CONF_MODULE): PCONF_MODULE;
+begin
+  result := PCONF_MODULE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CONF_MODULE_shift(sk: PSTACK_OF_CONF_MODULE): PCONF_MODULE;
+begin
+  result := PCONF_MODULE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CONF_MODULE_pop_free(sk: PSTACK_OF_CONF_MODULE; freeFunc: sk_CONF_MODULE_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CONF_MODULE_insert(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CONF_MODULE_set(sk: PSTACK_OF_CONF_MODULE; idx: TIdC_INT; const ptr: PCONF_MODULE): PCONF_MODULE;
+begin
+  result := PCONF_MODULE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CONF_MODULE_find(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CONF_MODULE_find_ex(sk: PSTACK_OF_CONF_MODULE; const ptr: PCONF_MODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CONF_MODULE_sort(sk: PSTACK_OF_CONF_MODULE);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CONF_MODULE_is_sorted(sk: PSTACK_OF_CONF_MODULE): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CONF_MODULE_dup(const sk: PSTACK_OF_CONF_MODULE): PSTACK_OF_CONF_MODULE;
+begin
+  result:=PSTACK_OF_CONF_MODULE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CONF_MODULE_deep_copy(const sk: PSTACK_OF_CONF_MODULE; copyfunc: sk_CONF_MODULE_copyfunc; freefunc:sk_CONF_MODULE_freefunc): PSTACK_OF_CONF_MODULE;
+begin
+  result:=PSTACK_OF_CONF_MODULE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CONF_MODULE_set_cmp_func(const sk: PSTACK_OF_CONF_MODULE; compare: sk_CONF_MODULE_compfunc): sk_CONF_MODULE_compfunc;
+begin
+  result:=sk_CONF_MODULE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(CONF_IMODULE) Methoden }
+
+function sk_CONF_IMODULE_num(const sk: PSTACK_OF_CONF_IMODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_CONF_IMODULE_value(const sk: PSTACK_OF_CONF_IMODULE; index: TIdC_INT): PCONF_IMODULE;
+begin
+  result := PCONF_IMODULE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_CONF_IMODULE_new(compare: sk_CONF_IMODULE_compfunc): PSTACK_OF_CONF_IMODULE;
+begin
+  result := PSTACK_OF_CONF_IMODULE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_CONF_IMODULE_new_null(): PSTACK_OF_CONF_IMODULE;
+begin
+  result := PSTACK_OF_CONF_IMODULE(OPENSSL_sk_new_null());
+end;
+function sk_CONF_IMODULE_new_reserve(compare: sk_CONF_IMODULE_compfunc; n: TIdC_INT): PSTACK_OF_CONF_IMODULE;
+begin
+  result := PSTACK_OF_CONF_IMODULE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_CONF_IMODULE_reserve(sk: PSTACK_OF_CONF_IMODULE; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_CONF_IMODULE_free(sk: PSTACK_OF_CONF_IMODULE);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_CONF_IMODULE_zero(sk: PSTACK_OF_CONF_IMODULE);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_CONF_IMODULE_delete(sk: PSTACK_OF_CONF_IMODULE; i: TIdC_INT): PCONF_IMODULE;
+begin
+  result := PCONF_IMODULE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_CONF_IMODULE_delete_ptr(sk: PSTACK_OF_CONF_IMODULE; ptr: PCONF_IMODULE): PCONF_IMODULE;
+begin
+  result := PCONF_IMODULE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_CONF_IMODULE_push(sk: PSTACK_OF_CONF_IMODULE; ptr: PCONF_IMODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CONF_IMODULE_unshift(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_CONF_IMODULE_pop(sk: PSTACK_OF_CONF_IMODULE): PCONF_IMODULE;
+begin
+  result := PCONF_IMODULE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_CONF_IMODULE_shift(sk: PSTACK_OF_CONF_IMODULE): PCONF_IMODULE;
+begin
+  result := PCONF_IMODULE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_CONF_IMODULE_pop_free(sk: PSTACK_OF_CONF_IMODULE; freeFunc: sk_CONF_IMODULE_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_CONF_IMODULE_insert(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_CONF_IMODULE_set(sk: PSTACK_OF_CONF_IMODULE; idx: TIdC_INT; const ptr: PCONF_IMODULE): PCONF_IMODULE;
+begin
+  result := PCONF_IMODULE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_CONF_IMODULE_find(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_CONF_IMODULE_find_ex(sk: PSTACK_OF_CONF_IMODULE; const ptr: PCONF_IMODULE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_CONF_IMODULE_sort(sk: PSTACK_OF_CONF_IMODULE);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_CONF_IMODULE_is_sorted(sk: PSTACK_OF_CONF_IMODULE): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_CONF_IMODULE_dup(const sk: PSTACK_OF_CONF_IMODULE): PSTACK_OF_CONF_IMODULE;
+begin
+  result:=PSTACK_OF_CONF_IMODULE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_CONF_IMODULE_deep_copy(const sk: PSTACK_OF_CONF_IMODULE; copyfunc: sk_CONF_IMODULE_copyfunc; freefunc:sk_CONF_IMODULE_freefunc): PSTACK_OF_CONF_IMODULE;
+begin
+  result:=PSTACK_OF_CONF_IMODULE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_CONF_IMODULE_set_cmp_func(const sk: PSTACK_OF_CONF_IMODULE; compare: sk_CONF_IMODULE_compfunc): sk_CONF_IMODULE_compfunc;
+begin
+  result:=sk_CONF_IMODULE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
+
 
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 
@@ -258,5 +649,4 @@ begin
   CONF_parse_list := nil;
   OPENSSL_load_builtin_modules := nil;
 end;
-
 end.

@@ -40,7 +40,8 @@ uses
   IdOpenSSLHeaders_ossl_typ,
   IdOpenSSLHeaders_crypto,
   IdOpenSSLHeaders_pem,
-  IdOpenSSLHeaders_uierr;
+  IdOpenSSLHeaders_uierr,
+  IdOpenSSLHeaders_stack;
 
 {$MINENUMSIZE 4}
 

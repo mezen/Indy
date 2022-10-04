@@ -40,7 +40,8 @@ uses
   IdOpenSSLHeaders_ossl_typ,
   IdOpenSSLHeaders_asn1,
   IdOpenSSLHeaders_asn1t,
-  IdOpenSSLHeaders_x509;
+  IdOpenSSLHeaders_x509,
+  IdOpenSSLHeaders_stack;
 
 const
   (* ext_flags values *)
@@ -282,7 +283,8 @@ type
 //  end;
 //  X509V3_EXT_METHOD = v3_ext_method;
 //  PX509V3_EXT_METHOD = ^X509V3_EXT_METHOD;
-//  DEFINE_STACK_OF(X509V3_EXT_METHOD)
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -DEFINE_STACK_OF(X509V3_EXT_METHOD)
 
 //  typedef struct X509V3_CONF_METHOD_st {
 //      PIdAnsiChar *(*get_string) (void *db, const section: PIdAnsiChar, const value: PIdAnsiChar);
@@ -368,7 +370,6 @@ type
   ACCESS_DESCRIPTION = ACCESS_DESCRIPTION_st;
   PACCESS_DESCRIPTION = ^ACCESS_DESCRIPTION;
 
-//  typedef STACK_OF(ACCESS_DESCRIPTION) AUTHORITY_INFO_ACCESS;
 
 //  typedef STACK_OF(ASN1_OBJECT) EXTENDED_KEY_USAGE;
 
@@ -376,9 +377,12 @@ type
 
 //  DEFINE_STACK_OF(GENERAL_NAME)
 //  typedef STACK_OF(GENERAL_NAME) GENERAL_NAMES;
-//  DEFINE_STACK_OF(GENERAL_NAMES)
+//  -DEFINE_STACK_OF(GENERAL_NAMES) is equal to STACK_OF_GENERAL_NAME
+//  DEFINE_STACK_OF(STACK_OF_GENERAL_NAME)
 
 //  DEFINE_STACK_OF(ACCESS_DESCRIPTION)
+//  typedef STACK_OF(ACCESS_DESCRIPTION) AUTHORITY_INFO_ACCESS;
+
 //  DIST_POINT_NAME_st_union = record
 //    case TIdC_INT of
 //      0: (GENERAL_NAMES *fullname);
@@ -400,9 +404,9 @@ type
 //      TIdC_INT dp_reasons;
 //  };
 
-//  typedef STACK_OF(DIST_POINT) CRL_DIST_POINTS;
-
 //  DEFINE_STACK_OF(DIST_POINT)
+
+//  typedef STACK_OF(DIST_POINT) CRL_DIST_POINTS;
 
 //  AUTHORITY_KEYID_st = record
 //    keyid: PASN1_OCTET_STRING;
@@ -453,7 +457,9 @@ type
 //  end;
 //  POLICYQUALINFO = POLICYQUALINFO_st;
 //  PPOLICYQUALINFO = ^POLICYQUALINFO;
-//  DEFINE_STACK_OF(POLICYQUALINFO)
+
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -DEFINE_STACK_OF(POLICYQUALINFO)
 
 //  POLICYINFO_st = record
 //    ASN1_OBJECT *policyid;
@@ -461,8 +467,9 @@ type
 //  end;
 //  POLICYINFO = POLICYINFO_st;
 //  PPOLICYINFO = ^POLICYINFO;
-//  typedef STACK_OF(POLICYINFO) CERTIFICATEPOLICIES;
-//  DEFINE_STACK_OF(POLICYINFO)
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -typedef STACK_OF(POLICYINFO) CERTIFICATEPOLICIES;
+//  -DEFINE_STACK_OF(POLICYINFO)
 
   POLICY_MAPPING_st = record
     issuerDomainPolicy: PASN1_OBJECT;
@@ -575,8 +582,8 @@ type
   end;
   ASIdOrRange = ASIdOrRange_st;
   PASIdOrRange = ^ASIdOrRange;
-//  typedef STACK_OF(ASIdOrRange) ASIdOrRanges;
 //  DEFINE_STACK_OF(ASIdOrRange)
+//  typedef STACK_OF(ASIdOrRange) ASIdOrRanges;
 
 //  ASIdentifierChoice_st = record
 //    type_: TIdC_INT;
@@ -613,8 +620,8 @@ type
   IPAddressOrRange = IPAddressOrRange_st;
   PIPAddressOrRange = ^IPAddressOrRange;
 
-//  typedef STACK_OF(IPAddressOrRange) IPAddressOrRanges;
 //  DEFINE_STACK_OF(IPAddressOrRange)
+//  typedef STACK_OF(IPAddressOrRange) IPAddressOrRanges;
 
 //  IPAddressChoice_st = record
 //    type_: TIdC_INT;
@@ -632,8 +639,9 @@ type
 //  IPAddressFamily = IPAddressFamily_st;
 //  PIPAddressFamily = ^IPAddressFamily;
 
-//  typedef STACK_OF(IPAddressFamily) IPAddrBlocks;
-//  DEFINE_STACK_OF(IPAddressFamily)
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -DEFINE_STACK_OF(IPAddressFamily)
+//  -typedef STACK_OF(IPAddressFamily) IPAddrBlocks;
 
 //  DECLARE_ASN1_FUNCTIONS(IPAddressRange)
 //  DECLARE_ASN1_FUNCTIONS(IPAddressOrRange)

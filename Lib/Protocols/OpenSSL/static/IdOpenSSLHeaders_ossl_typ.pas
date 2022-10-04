@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 28.07.2021 14:11:10
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_ossl_typ;
 
@@ -42,7 +42,8 @@ interface
 uses
   IdCTypes,
   IdGlobal,
-  IdOpenSSLConsts;
+  IdOpenSSLConsts,
+  IdOpenSSLHeaders_stack;
 
 type
 // moved from unit "asn1" to prevent circular references
@@ -525,6 +526,13 @@ type
   X509_ALGOR = X509_algor_st;
   PX509_ALGOR = ^X509_ALGOR;
   PPX509_ALGOR = ^PX509_ALGOR;
+
+  //DEFINE_STACK_OF(X509_ALGOR)
+  STACK_OF_X509_ALGOR = type of pointer;
+  PSTACK_OF_X509_ALGOR = ^STACK_OF_X509_ALGOR;
+  sk_X509_ALGOR_compfunc = function(const a: PX509_ALGOR; const b: PX509_ALGOR): TIdC_INT; cdecl;
+  sk_X509_ALGOR_freefunc = procedure(a: PX509_ALGOR); cdecl;
+  sk_X509_ALGOR_copyfunc = function(const a: PX509_ALGOR): PX509_ALGOR; cdecl;
   
   i2d_of_void = type Pointer;
   Pi2d_of_void = ^i2d_of_void;
@@ -532,6 +540,132 @@ type
   d2i_of_void = type Pointer;
   Pd2i_of_void = ^d2i_of_void;
 
+function sk_X509_ALGOR_num(const sk: PSTACK_OF_X509_ALGOR): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_value(const sk: PSTACK_OF_X509_ALGOR; index: TIdC_INT): PX509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_new(compare: sk_X509_ALGOR_compfunc): PSTACK_OF_X509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_new_null(): PSTACK_OF_X509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_new_reserve(compare: sk_X509_ALGOR_compfunc; n: TIdC_INT): PSTACK_OF_X509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_reserve(sk: PSTACK_OF_X509_ALGOR; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_ALGOR_free(sk: PSTACK_OF_X509_ALGOR);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_ALGOR_zero(sk: PSTACK_OF_X509_ALGOR);{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_delete(sk: PSTACK_OF_X509_ALGOR; i: TIdC_INT): PX509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_delete_ptr(sk: PSTACK_OF_X509_ALGOR; ptr: PX509_ALGOR): PX509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_push(sk: PSTACK_OF_X509_ALGOR; ptr: PX509_ALGOR): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_unshift(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_pop(sk: PSTACK_OF_X509_ALGOR): PX509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_shift(sk: PSTACK_OF_X509_ALGOR): PX509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_ALGOR_pop_free(sk: PSTACK_OF_X509_ALGOR; freeFunc: sk_X509_ALGOR_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_insert(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_set(sk: PSTACK_OF_X509_ALGOR; idx: TIdC_INT; const ptr: PX509_ALGOR): PX509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_find(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_find_ex(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_ALGOR_sort(sk: PSTACK_OF_X509_ALGOR);{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_is_sorted(sk: PSTACK_OF_X509_ALGOR): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_dup(const sk: PSTACK_OF_X509_ALGOR): PSTACK_OF_X509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_deep_copy(const sk: PSTACK_OF_X509_ALGOR; copyfunc: sk_X509_ALGOR_copyfunc; freefunc:sk_X509_ALGOR_freefunc): PSTACK_OF_X509_ALGOR;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_ALGOR_set_cmp_func(const sk: PSTACK_OF_X509_ALGOR; compare: sk_X509_ALGOR_compfunc): sk_X509_ALGOR_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(X509_ALGOR) Methoden }
+
+function sk_X509_ALGOR_num(const sk: PSTACK_OF_X509_ALGOR): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_X509_ALGOR_value(const sk: PSTACK_OF_X509_ALGOR; index: TIdC_INT): PX509_ALGOR;
+begin
+  result := PX509_ALGOR(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_X509_ALGOR_new(compare: sk_X509_ALGOR_compfunc): PSTACK_OF_X509_ALGOR;
+begin
+  result := PSTACK_OF_X509_ALGOR(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_X509_ALGOR_new_null(): PSTACK_OF_X509_ALGOR;
+begin
+  result := PSTACK_OF_X509_ALGOR(OPENSSL_sk_new_null());
+end;
+function sk_X509_ALGOR_new_reserve(compare: sk_X509_ALGOR_compfunc; n: TIdC_INT): PSTACK_OF_X509_ALGOR;
+begin
+  result := PSTACK_OF_X509_ALGOR(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_X509_ALGOR_reserve(sk: PSTACK_OF_X509_ALGOR; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_X509_ALGOR_free(sk: PSTACK_OF_X509_ALGOR);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_X509_ALGOR_zero(sk: PSTACK_OF_X509_ALGOR);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_X509_ALGOR_delete(sk: PSTACK_OF_X509_ALGOR; i: TIdC_INT): PX509_ALGOR;
+begin
+  result := PX509_ALGOR(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_X509_ALGOR_delete_ptr(sk: PSTACK_OF_X509_ALGOR; ptr: PX509_ALGOR): PX509_ALGOR;
+begin
+  result := PX509_ALGOR(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_X509_ALGOR_push(sk: PSTACK_OF_X509_ALGOR; ptr: PX509_ALGOR): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_X509_ALGOR_unshift(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_X509_ALGOR_pop(sk: PSTACK_OF_X509_ALGOR): PX509_ALGOR;
+begin
+  result := PX509_ALGOR(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_X509_ALGOR_shift(sk: PSTACK_OF_X509_ALGOR): PX509_ALGOR;
+begin
+  result := PX509_ALGOR(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_X509_ALGOR_pop_free(sk: PSTACK_OF_X509_ALGOR; freeFunc: sk_X509_ALGOR_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_X509_ALGOR_insert(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_X509_ALGOR_set(sk: PSTACK_OF_X509_ALGOR; idx: TIdC_INT; const ptr: PX509_ALGOR): PX509_ALGOR;
+begin
+  result := PX509_ALGOR(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_X509_ALGOR_find(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_X509_ALGOR_find_ex(sk: PSTACK_OF_X509_ALGOR; const ptr: PX509_ALGOR): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_X509_ALGOR_sort(sk: PSTACK_OF_X509_ALGOR);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_X509_ALGOR_is_sorted(sk: PSTACK_OF_X509_ALGOR): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_X509_ALGOR_dup(const sk: PSTACK_OF_X509_ALGOR): PSTACK_OF_X509_ALGOR;
+begin
+  result:=PSTACK_OF_X509_ALGOR(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_X509_ALGOR_deep_copy(const sk: PSTACK_OF_X509_ALGOR; copyfunc: sk_X509_ALGOR_copyfunc; freefunc:sk_X509_ALGOR_freefunc): PSTACK_OF_X509_ALGOR;
+begin
+  result:=PSTACK_OF_X509_ALGOR(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_X509_ALGOR_set_cmp_func(const sk: PSTACK_OF_X509_ALGOR; compare: sk_X509_ALGOR_compfunc): sk_X509_ALGOR_compfunc;
+begin
+  result:=sk_X509_ALGOR_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
 
 end.

@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 28.10.2020 15:24:13
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_asn1t;
 
@@ -44,7 +44,8 @@ uses
   IdCTypes,
   IdGlobal,
   IdOpenSSLConsts,
-  IdOpenSSLHeaders_ossl_typ;
+  IdOpenSSLHeaders_ossl_typ,
+  IdOpenSSLHeaders_stack;
   
 type
   // moved from asn1
@@ -981,7 +982,13 @@ const
 //DECLARE_ASN1_ITEM(ZLONG)
 //# endif
 
+type
 //DEFINE_STACK_OF(ASN1_VALUE)
+  STACK_OF_ASN1_VALUE = type of pointer;
+  PSTACK_OF_ASN1_VALUE = ^STACK_OF_ASN1_VALUE;
+  sk_ASN1_VALUE_compfunc = function(const a: PASN1_VALUE; const b: PASN1_VALUE): TIdC_INT; cdecl;
+  sk_ASN1_VALUE_freefunc = procedure(a: PASN1_VALUE); cdecl;
+  sk_ASN1_VALUE_copyfunc = function(const a: PASN1_VALUE): PASN1_VALUE; cdecl;
 
 //* Functions used internally by the ASN1 code */
 
@@ -996,7 +1003,134 @@ var
 
   ASN1_item_ex_i2d: function(pval: PPASN1_VALUE; AOut: PPByte; const it: PASN1_ITEM; tag: TIdC_INT; aclass: TIdC_INT): TIdC_INT cdecl = nil;
 
+function sk_ASN1_VALUE_num(const sk: PSTACK_OF_ASN1_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_value(const sk: PSTACK_OF_ASN1_VALUE; index: TIdC_INT): PASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_new(compare: sk_ASN1_VALUE_compfunc): PSTACK_OF_ASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_new_null(): PSTACK_OF_ASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_new_reserve(compare: sk_ASN1_VALUE_compfunc; n: TIdC_INT): PSTACK_OF_ASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_reserve(sk: PSTACK_OF_ASN1_VALUE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASN1_VALUE_free(sk: PSTACK_OF_ASN1_VALUE);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASN1_VALUE_zero(sk: PSTACK_OF_ASN1_VALUE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_delete(sk: PSTACK_OF_ASN1_VALUE; i: TIdC_INT): PASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_delete_ptr(sk: PSTACK_OF_ASN1_VALUE; ptr: PASN1_VALUE): PASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_push(sk: PSTACK_OF_ASN1_VALUE; ptr: PASN1_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_unshift(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_pop(sk: PSTACK_OF_ASN1_VALUE): PASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_shift(sk: PSTACK_OF_ASN1_VALUE): PASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASN1_VALUE_pop_free(sk: PSTACK_OF_ASN1_VALUE; freeFunc: sk_ASN1_VALUE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_insert(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_set(sk: PSTACK_OF_ASN1_VALUE; idx: TIdC_INT; const ptr: PASN1_VALUE): PASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_find(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_find_ex(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASN1_VALUE_sort(sk: PSTACK_OF_ASN1_VALUE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_is_sorted(sk: PSTACK_OF_ASN1_VALUE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_dup(const sk: PSTACK_OF_ASN1_VALUE): PSTACK_OF_ASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_deep_copy(const sk: PSTACK_OF_ASN1_VALUE; copyfunc: sk_ASN1_VALUE_copyfunc; freefunc:sk_ASN1_VALUE_freefunc): PSTACK_OF_ASN1_VALUE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASN1_VALUE_set_cmp_func(const sk: PSTACK_OF_ASN1_VALUE; compare: sk_ASN1_VALUE_compfunc): sk_ASN1_VALUE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(ASN1_VALUE) Methoden }
+
+function sk_ASN1_VALUE_num(const sk: PSTACK_OF_ASN1_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_ASN1_VALUE_value(const sk: PSTACK_OF_ASN1_VALUE; index: TIdC_INT): PASN1_VALUE;
+begin
+  result := PASN1_VALUE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_ASN1_VALUE_new(compare: sk_ASN1_VALUE_compfunc): PSTACK_OF_ASN1_VALUE;
+begin
+  result := PSTACK_OF_ASN1_VALUE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_ASN1_VALUE_new_null(): PSTACK_OF_ASN1_VALUE;
+begin
+  result := PSTACK_OF_ASN1_VALUE(OPENSSL_sk_new_null());
+end;
+function sk_ASN1_VALUE_new_reserve(compare: sk_ASN1_VALUE_compfunc; n: TIdC_INT): PSTACK_OF_ASN1_VALUE;
+begin
+  result := PSTACK_OF_ASN1_VALUE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_ASN1_VALUE_reserve(sk: PSTACK_OF_ASN1_VALUE; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_ASN1_VALUE_free(sk: PSTACK_OF_ASN1_VALUE);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_ASN1_VALUE_zero(sk: PSTACK_OF_ASN1_VALUE);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_ASN1_VALUE_delete(sk: PSTACK_OF_ASN1_VALUE; i: TIdC_INT): PASN1_VALUE;
+begin
+  result := PASN1_VALUE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_ASN1_VALUE_delete_ptr(sk: PSTACK_OF_ASN1_VALUE; ptr: PASN1_VALUE): PASN1_VALUE;
+begin
+  result := PASN1_VALUE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_ASN1_VALUE_push(sk: PSTACK_OF_ASN1_VALUE; ptr: PASN1_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ASN1_VALUE_unshift(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ASN1_VALUE_pop(sk: PSTACK_OF_ASN1_VALUE): PASN1_VALUE;
+begin
+  result := PASN1_VALUE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_ASN1_VALUE_shift(sk: PSTACK_OF_ASN1_VALUE): PASN1_VALUE;
+begin
+  result := PASN1_VALUE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_ASN1_VALUE_pop_free(sk: PSTACK_OF_ASN1_VALUE; freeFunc: sk_ASN1_VALUE_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_ASN1_VALUE_insert(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_ASN1_VALUE_set(sk: PSTACK_OF_ASN1_VALUE; idx: TIdC_INT; const ptr: PASN1_VALUE): PASN1_VALUE;
+begin
+  result := PASN1_VALUE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_ASN1_VALUE_find(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_ASN1_VALUE_find_ex(sk: PSTACK_OF_ASN1_VALUE; const ptr: PASN1_VALUE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_ASN1_VALUE_sort(sk: PSTACK_OF_ASN1_VALUE);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_ASN1_VALUE_is_sorted(sk: PSTACK_OF_ASN1_VALUE): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_ASN1_VALUE_dup(const sk: PSTACK_OF_ASN1_VALUE): PSTACK_OF_ASN1_VALUE;
+begin
+  result:=PSTACK_OF_ASN1_VALUE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_ASN1_VALUE_deep_copy(const sk: PSTACK_OF_ASN1_VALUE; copyfunc: sk_ASN1_VALUE_copyfunc; freefunc:sk_ASN1_VALUE_freefunc): PSTACK_OF_ASN1_VALUE;
+begin
+  result:=PSTACK_OF_ASN1_VALUE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_ASN1_VALUE_set_cmp_func(const sk: PSTACK_OF_ASN1_VALUE; compare: sk_ASN1_VALUE_compfunc): sk_ASN1_VALUE_compfunc;
+begin
+  result:=sk_ASN1_VALUE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
+
 
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 
@@ -1021,5 +1155,4 @@ begin
   ASN1_item_ex_d2i := nil;
   ASN1_item_ex_i2d := nil;
 end;
-
 end.

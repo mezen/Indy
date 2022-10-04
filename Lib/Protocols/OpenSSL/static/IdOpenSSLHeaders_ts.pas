@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 28.10.2020 15:24:33
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_ts;
 
@@ -50,7 +50,8 @@ uses
   IdOpenSSLHeaders_rsa,
   IdOpenSSLHeaders_tserr,
   IdOpenSSLHeaders_x509,
-  IdOpenSSLHeaders_x509v3;
+  IdOpenSSLHeaders_x509v3,
+  IdOpenSSLHeaders_stack;
 
 const
   (* Possible values for status. *)
@@ -170,6 +171,11 @@ type
   PPESS_SIGNING_CERT = ^PESS_SIGNING_CERT;
 
 // DEFINE_STACK_OF(ESS_CERT_ID)
+  STACK_OF_ESS_CERT_ID = type of pointer;
+  PSTACK_OF_ESS_CERT_ID = ^STACK_OF_ESS_CERT_ID;
+  sk_ESS_CERT_ID_compfunc = function(const a: PESS_CERT_ID; const b: PESS_CERT_ID): TIdC_INT; cdecl;
+  sk_ESS_CERT_ID_freefunc = procedure(a: PESS_CERT_ID); cdecl;
+  sk_ESS_CERT_ID_copyfunc = function(const a: PESS_CERT_ID): PESS_CERT_ID; cdecl;
 
   ESS_CERT_ID_V2 = ESS_cert_id_v2_st;
   PESS_CERT_ID_V2 = ^ESS_CERT_ID_V2;
@@ -180,6 +186,11 @@ type
   PPESS_SIGNING_CERT_V2 = ^PESS_SIGNING_CERT_V2;
 
 // DEFINE_STACK_OF(ESS_CERT_ID_V2)
+  STACK_OF_ESS_CERT_ID_V2 = type of pointer;
+  PSTACK_OF_ESS_CERT_ID_V2 = ^STACK_OF_ESS_CERT_ID_V2;
+  sk_ESS_CERT_ID_V2_compfunc = function(const a: PESS_CERT_ID_V2; const b: PESS_CERT_ID_V2): TIdC_INT; cdecl;
+  sk_ESS_CERT_ID_V2_freefunc = procedure(a: PESS_CERT_ID_V2); cdecl;
+  sk_ESS_CERT_ID_V2_copyfunc = function(const a: PESS_CERT_ID_V2): PESS_CERT_ID_V2; cdecl;
   TS_resp_st = type Pointer;
   TS_RESP = TS_resp_st;
   PTS_RESP = ^TS_RESP;
@@ -559,6 +570,256 @@ type
   function TS_CONF_set_ess_cert_id_chain(conf: PCONF; section: PIdAnsiChar; ctx: PTS_RESP_CTX): TIdC_INT cdecl; external CLibCrypto;
   function TS_CONF_set_ess_cert_id_digest(conf: PCONF; section: PIdAnsiChar; ctx: PTS_RESP_CTX): TIdC_INT cdecl; external CLibCrypto;
 
+function sk_ESS_CERT_ID_num(const sk: PSTACK_OF_ESS_CERT_ID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_value(const sk: PSTACK_OF_ESS_CERT_ID; index: TIdC_INT): PESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_new(compare: sk_ESS_CERT_ID_compfunc): PSTACK_OF_ESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_new_null(): PSTACK_OF_ESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_new_reserve(compare: sk_ESS_CERT_ID_compfunc; n: TIdC_INT): PSTACK_OF_ESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_reserve(sk: PSTACK_OF_ESS_CERT_ID; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_free(sk: PSTACK_OF_ESS_CERT_ID);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_zero(sk: PSTACK_OF_ESS_CERT_ID);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_delete(sk: PSTACK_OF_ESS_CERT_ID; i: TIdC_INT): PESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_delete_ptr(sk: PSTACK_OF_ESS_CERT_ID; ptr: PESS_CERT_ID): PESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_push(sk: PSTACK_OF_ESS_CERT_ID; ptr: PESS_CERT_ID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_unshift(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_pop(sk: PSTACK_OF_ESS_CERT_ID): PESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_shift(sk: PSTACK_OF_ESS_CERT_ID): PESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_pop_free(sk: PSTACK_OF_ESS_CERT_ID; freeFunc: sk_ESS_CERT_ID_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_insert(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_set(sk: PSTACK_OF_ESS_CERT_ID; idx: TIdC_INT; const ptr: PESS_CERT_ID): PESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_find(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_find_ex(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_sort(sk: PSTACK_OF_ESS_CERT_ID);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_is_sorted(sk: PSTACK_OF_ESS_CERT_ID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_dup(const sk: PSTACK_OF_ESS_CERT_ID): PSTACK_OF_ESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_deep_copy(const sk: PSTACK_OF_ESS_CERT_ID; copyfunc: sk_ESS_CERT_ID_copyfunc; freefunc:sk_ESS_CERT_ID_freefunc): PSTACK_OF_ESS_CERT_ID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_set_cmp_func(const sk: PSTACK_OF_ESS_CERT_ID; compare: sk_ESS_CERT_ID_compfunc): sk_ESS_CERT_ID_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_ESS_CERT_ID_V2_num(const sk: PSTACK_OF_ESS_CERT_ID_V2): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_value(const sk: PSTACK_OF_ESS_CERT_ID_V2; index: TIdC_INT): PESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_new(compare: sk_ESS_CERT_ID_V2_compfunc): PSTACK_OF_ESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_new_null(): PSTACK_OF_ESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_new_reserve(compare: sk_ESS_CERT_ID_V2_compfunc; n: TIdC_INT): PSTACK_OF_ESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_reserve(sk: PSTACK_OF_ESS_CERT_ID_V2; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_V2_free(sk: PSTACK_OF_ESS_CERT_ID_V2);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_V2_zero(sk: PSTACK_OF_ESS_CERT_ID_V2);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_delete(sk: PSTACK_OF_ESS_CERT_ID_V2; i: TIdC_INT): PESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_delete_ptr(sk: PSTACK_OF_ESS_CERT_ID_V2; ptr: PESS_CERT_ID_V2): PESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_push(sk: PSTACK_OF_ESS_CERT_ID_V2; ptr: PESS_CERT_ID_V2): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_unshift(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_pop(sk: PSTACK_OF_ESS_CERT_ID_V2): PESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_shift(sk: PSTACK_OF_ESS_CERT_ID_V2): PESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_V2_pop_free(sk: PSTACK_OF_ESS_CERT_ID_V2; freeFunc: sk_ESS_CERT_ID_V2_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_insert(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_set(sk: PSTACK_OF_ESS_CERT_ID_V2; idx: TIdC_INT; const ptr: PESS_CERT_ID_V2): PESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_find(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_find_ex(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ESS_CERT_ID_V2_sort(sk: PSTACK_OF_ESS_CERT_ID_V2);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_is_sorted(sk: PSTACK_OF_ESS_CERT_ID_V2): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_dup(const sk: PSTACK_OF_ESS_CERT_ID_V2): PSTACK_OF_ESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_deep_copy(const sk: PSTACK_OF_ESS_CERT_ID_V2; copyfunc: sk_ESS_CERT_ID_V2_copyfunc; freefunc:sk_ESS_CERT_ID_V2_freefunc): PSTACK_OF_ESS_CERT_ID_V2;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ESS_CERT_ID_V2_set_cmp_func(const sk: PSTACK_OF_ESS_CERT_ID_V2; compare: sk_ESS_CERT_ID_V2_compfunc): sk_ESS_CERT_ID_V2_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(ESS_CERT_ID) Methoden }
+
+function sk_ESS_CERT_ID_num(const sk: PSTACK_OF_ESS_CERT_ID): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_value(const sk: PSTACK_OF_ESS_CERT_ID; index: TIdC_INT): PESS_CERT_ID;
+begin
+  result := PESS_CERT_ID(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_ESS_CERT_ID_new(compare: sk_ESS_CERT_ID_compfunc): PSTACK_OF_ESS_CERT_ID;
+begin
+  result := PSTACK_OF_ESS_CERT_ID(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_ESS_CERT_ID_new_null(): PSTACK_OF_ESS_CERT_ID;
+begin
+  result := PSTACK_OF_ESS_CERT_ID(OPENSSL_sk_new_null());
+end;
+function sk_ESS_CERT_ID_new_reserve(compare: sk_ESS_CERT_ID_compfunc; n: TIdC_INT): PSTACK_OF_ESS_CERT_ID;
+begin
+  result := PSTACK_OF_ESS_CERT_ID(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_ESS_CERT_ID_reserve(sk: PSTACK_OF_ESS_CERT_ID; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_ESS_CERT_ID_free(sk: PSTACK_OF_ESS_CERT_ID);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_ESS_CERT_ID_zero(sk: PSTACK_OF_ESS_CERT_ID);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_delete(sk: PSTACK_OF_ESS_CERT_ID; i: TIdC_INT): PESS_CERT_ID;
+begin
+  result := PESS_CERT_ID(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_ESS_CERT_ID_delete_ptr(sk: PSTACK_OF_ESS_CERT_ID; ptr: PESS_CERT_ID): PESS_CERT_ID;
+begin
+  result := PESS_CERT_ID(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_ESS_CERT_ID_push(sk: PSTACK_OF_ESS_CERT_ID; ptr: PESS_CERT_ID): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ESS_CERT_ID_unshift(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ESS_CERT_ID_pop(sk: PSTACK_OF_ESS_CERT_ID): PESS_CERT_ID;
+begin
+  result := PESS_CERT_ID(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_ESS_CERT_ID_shift(sk: PSTACK_OF_ESS_CERT_ID): PESS_CERT_ID;
+begin
+  result := PESS_CERT_ID(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_ESS_CERT_ID_pop_free(sk: PSTACK_OF_ESS_CERT_ID; freeFunc: sk_ESS_CERT_ID_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_ESS_CERT_ID_insert(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_ESS_CERT_ID_set(sk: PSTACK_OF_ESS_CERT_ID; idx: TIdC_INT; const ptr: PESS_CERT_ID): PESS_CERT_ID;
+begin
+  result := PESS_CERT_ID(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_ESS_CERT_ID_find(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_ESS_CERT_ID_find_ex(sk: PSTACK_OF_ESS_CERT_ID; const ptr: PESS_CERT_ID): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_ESS_CERT_ID_sort(sk: PSTACK_OF_ESS_CERT_ID);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_is_sorted(sk: PSTACK_OF_ESS_CERT_ID): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_dup(const sk: PSTACK_OF_ESS_CERT_ID): PSTACK_OF_ESS_CERT_ID;
+begin
+  result:=PSTACK_OF_ESS_CERT_ID(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_ESS_CERT_ID_deep_copy(const sk: PSTACK_OF_ESS_CERT_ID; copyfunc: sk_ESS_CERT_ID_copyfunc; freefunc:sk_ESS_CERT_ID_freefunc): PSTACK_OF_ESS_CERT_ID;
+begin
+  result:=PSTACK_OF_ESS_CERT_ID(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_ESS_CERT_ID_set_cmp_func(const sk: PSTACK_OF_ESS_CERT_ID; compare: sk_ESS_CERT_ID_compfunc): sk_ESS_CERT_ID_compfunc;
+begin
+  result:=sk_ESS_CERT_ID_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(ESS_CERT_ID_V2) Methoden }
+
+function sk_ESS_CERT_ID_V2_num(const sk: PSTACK_OF_ESS_CERT_ID_V2): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_V2_value(const sk: PSTACK_OF_ESS_CERT_ID_V2; index: TIdC_INT): PESS_CERT_ID_V2;
+begin
+  result := PESS_CERT_ID_V2(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_ESS_CERT_ID_V2_new(compare: sk_ESS_CERT_ID_V2_compfunc): PSTACK_OF_ESS_CERT_ID_V2;
+begin
+  result := PSTACK_OF_ESS_CERT_ID_V2(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_ESS_CERT_ID_V2_new_null(): PSTACK_OF_ESS_CERT_ID_V2;
+begin
+  result := PSTACK_OF_ESS_CERT_ID_V2(OPENSSL_sk_new_null());
+end;
+function sk_ESS_CERT_ID_V2_new_reserve(compare: sk_ESS_CERT_ID_V2_compfunc; n: TIdC_INT): PSTACK_OF_ESS_CERT_ID_V2;
+begin
+  result := PSTACK_OF_ESS_CERT_ID_V2(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_ESS_CERT_ID_V2_reserve(sk: PSTACK_OF_ESS_CERT_ID_V2; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_ESS_CERT_ID_V2_free(sk: PSTACK_OF_ESS_CERT_ID_V2);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_ESS_CERT_ID_V2_zero(sk: PSTACK_OF_ESS_CERT_ID_V2);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_V2_delete(sk: PSTACK_OF_ESS_CERT_ID_V2; i: TIdC_INT): PESS_CERT_ID_V2;
+begin
+  result := PESS_CERT_ID_V2(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_ESS_CERT_ID_V2_delete_ptr(sk: PSTACK_OF_ESS_CERT_ID_V2; ptr: PESS_CERT_ID_V2): PESS_CERT_ID_V2;
+begin
+  result := PESS_CERT_ID_V2(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_ESS_CERT_ID_V2_push(sk: PSTACK_OF_ESS_CERT_ID_V2; ptr: PESS_CERT_ID_V2): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ESS_CERT_ID_V2_unshift(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ESS_CERT_ID_V2_pop(sk: PSTACK_OF_ESS_CERT_ID_V2): PESS_CERT_ID_V2;
+begin
+  result := PESS_CERT_ID_V2(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_ESS_CERT_ID_V2_shift(sk: PSTACK_OF_ESS_CERT_ID_V2): PESS_CERT_ID_V2;
+begin
+  result := PESS_CERT_ID_V2(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_ESS_CERT_ID_V2_pop_free(sk: PSTACK_OF_ESS_CERT_ID_V2; freeFunc: sk_ESS_CERT_ID_V2_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_ESS_CERT_ID_V2_insert(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_ESS_CERT_ID_V2_set(sk: PSTACK_OF_ESS_CERT_ID_V2; idx: TIdC_INT; const ptr: PESS_CERT_ID_V2): PESS_CERT_ID_V2;
+begin
+  result := PESS_CERT_ID_V2(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_ESS_CERT_ID_V2_find(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_ESS_CERT_ID_V2_find_ex(sk: PSTACK_OF_ESS_CERT_ID_V2; const ptr: PESS_CERT_ID_V2): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_ESS_CERT_ID_V2_sort(sk: PSTACK_OF_ESS_CERT_ID_V2);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_V2_is_sorted(sk: PSTACK_OF_ESS_CERT_ID_V2): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_ESS_CERT_ID_V2_dup(const sk: PSTACK_OF_ESS_CERT_ID_V2): PSTACK_OF_ESS_CERT_ID_V2;
+begin
+  result:=PSTACK_OF_ESS_CERT_ID_V2(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_ESS_CERT_ID_V2_deep_copy(const sk: PSTACK_OF_ESS_CERT_ID_V2; copyfunc: sk_ESS_CERT_ID_V2_copyfunc; freefunc:sk_ESS_CERT_ID_V2_freefunc): PSTACK_OF_ESS_CERT_ID_V2;
+begin
+  result:=PSTACK_OF_ESS_CERT_ID_V2(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_ESS_CERT_ID_V2_set_cmp_func(const sk: PSTACK_OF_ESS_CERT_ID_V2; compare: sk_ESS_CERT_ID_V2_compfunc): sk_ESS_CERT_ID_V2_compfunc;
+begin
+  result:=sk_ESS_CERT_ID_V2_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
 
 end.

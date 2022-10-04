@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 23.07.2021 14:35:33
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_x509v3;
 
@@ -46,7 +46,8 @@ uses
   IdOpenSSLHeaders_ossl_typ,
   IdOpenSSLHeaders_asn1,
   IdOpenSSLHeaders_asn1t,
-  IdOpenSSLHeaders_x509;
+  IdOpenSSLHeaders_x509,
+  IdOpenSSLHeaders_stack;
 
 const
   (* ext_flags values *)
@@ -288,7 +289,8 @@ type
 //  end;
 //  X509V3_EXT_METHOD = v3_ext_method;
 //  PX509V3_EXT_METHOD = ^X509V3_EXT_METHOD;
-//  DEFINE_STACK_OF(X509V3_EXT_METHOD)
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -DEFINE_STACK_OF(X509V3_EXT_METHOD)
 
 //  typedef struct X509V3_CONF_METHOD_st {
 //      PIdAnsiChar *(*get_string) (void *db, const section: PIdAnsiChar, const value: PIdAnsiChar);
@@ -374,17 +376,42 @@ type
   ACCESS_DESCRIPTION = ACCESS_DESCRIPTION_st;
   PACCESS_DESCRIPTION = ^ACCESS_DESCRIPTION;
 
-//  typedef STACK_OF(ACCESS_DESCRIPTION) AUTHORITY_INFO_ACCESS;
 
 //  typedef STACK_OF(ASN1_OBJECT) EXTENDED_KEY_USAGE;
+  EXTENDED_KEY_USAGE = STACK_OF_ASN1_OBJECT;
+  PEXTENDED_KEY_USAGE = PSTACK_OF_ASN1_OBJECT;
 
 //  typedef STACK_OF(ASN1_INTEGER) TLS_FEATURE;
+  TLS_FEATURE = STACK_OF_ASN1_INTEGER;
+  PTLS_FEATURE = PSTACK_OF_ASN1_INTEGER;
 
 //  DEFINE_STACK_OF(GENERAL_NAME)
+  STACK_OF_GENERAL_NAME = type of pointer;
+  PSTACK_OF_GENERAL_NAME = ^STACK_OF_GENERAL_NAME;
+  sk_GENERAL_NAME_compfunc = function(const a: PGENERAL_NAME; const b: PGENERAL_NAME): TIdC_INT; cdecl;
+  sk_GENERAL_NAME_freefunc = procedure(a: PGENERAL_NAME); cdecl;
+  sk_GENERAL_NAME_copyfunc = function(const a: PGENERAL_NAME): PGENERAL_NAME; cdecl;
 //  typedef STACK_OF(GENERAL_NAME) GENERAL_NAMES;
-//  DEFINE_STACK_OF(GENERAL_NAMES)
+  GENERAL_NAMES = STACK_OF_GENERAL_NAME;
+  PGENERAL_NAMES = PSTACK_OF_GENERAL_NAME;
+//  -DEFINE_STACK_OF(GENERAL_NAMES) is equal to STACK_OF_GENERAL_NAME
+//  DEFINE_STACK_OF(STACK_OF_GENERAL_NAME)
+  STACK_OF_STACK_OF_GENERAL_NAME = type of pointer;
+  PSTACK_OF_STACK_OF_GENERAL_NAME = ^STACK_OF_STACK_OF_GENERAL_NAME;
+  sk_STACK_OF_GENERAL_NAME_compfunc = function(const a: PSTACK_OF_GENERAL_NAME; const b: PSTACK_OF_GENERAL_NAME): TIdC_INT; cdecl;
+  sk_STACK_OF_GENERAL_NAME_freefunc = procedure(a: PSTACK_OF_GENERAL_NAME); cdecl;
+  sk_STACK_OF_GENERAL_NAME_copyfunc = function(const a: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME; cdecl;
 
 //  DEFINE_STACK_OF(ACCESS_DESCRIPTION)
+  STACK_OF_ACCESS_DESCRIPTION = type of pointer;
+  PSTACK_OF_ACCESS_DESCRIPTION = ^STACK_OF_ACCESS_DESCRIPTION;
+  sk_ACCESS_DESCRIPTION_compfunc = function(const a: PACCESS_DESCRIPTION; const b: PACCESS_DESCRIPTION): TIdC_INT; cdecl;
+  sk_ACCESS_DESCRIPTION_freefunc = procedure(a: PACCESS_DESCRIPTION); cdecl;
+  sk_ACCESS_DESCRIPTION_copyfunc = function(const a: PACCESS_DESCRIPTION): PACCESS_DESCRIPTION; cdecl;
+//  typedef STACK_OF(ACCESS_DESCRIPTION) AUTHORITY_INFO_ACCESS;
+  AUTHORITY_INFO_ACCESS = STACK_OF_ACCESS_DESCRIPTION;
+  PAUTHORITY_INFO_ACCESS = PSTACK_OF_ACCESS_DESCRIPTION;
+
 //  DIST_POINT_NAME_st_union = record
 //    case TIdC_INT of
 //      0: (GENERAL_NAMES *fullname);
@@ -406,9 +433,16 @@ type
 //      TIdC_INT dp_reasons;
 //  };
 
-//  typedef STACK_OF(DIST_POINT) CRL_DIST_POINTS;
-
 //  DEFINE_STACK_OF(DIST_POINT)
+  STACK_OF_DIST_POINT = type of pointer;
+  PSTACK_OF_DIST_POINT = ^STACK_OF_DIST_POINT;
+  sk_DIST_POINT_compfunc = function(const a: PDIST_POINT; const b: PDIST_POINT): TIdC_INT; cdecl;
+  sk_DIST_POINT_freefunc = procedure(a: PDIST_POINT); cdecl;
+  sk_DIST_POINT_copyfunc = function(const a: PDIST_POINT): PDIST_POINT; cdecl;
+
+//  typedef STACK_OF(DIST_POINT) CRL_DIST_POINTS;
+  CRL_DIST_POINTS = STACK_OF_DIST_POINT;
+  PCRL_DIST_POINTS = PSTACK_OF_DIST_POINT;
 
 //  AUTHORITY_KEYID_st = record
 //    keyid: PASN1_OCTET_STRING;
@@ -425,6 +459,11 @@ type
   SXNETID = SXNET_ID_st;
   PSXNETID = ^SXNETID;
 //  DEFINE_STACK_OF(SXNETID)
+  STACK_OF_SXNETID = type of pointer;
+  PSTACK_OF_SXNETID = ^STACK_OF_SXNETID;
+  sk_SXNETID_compfunc = function(const a: PSXNETID; const b: PSXNETID): TIdC_INT; cdecl;
+  sk_SXNETID_freefunc = procedure(a: PSXNETID); cdecl;
+  sk_SXNETID_copyfunc = function(const a: PSXNETID): PSXNETID; cdecl;
 
 //  SXNET_st = record
 //    ASN1_INTEGER *version;
@@ -459,7 +498,9 @@ type
 //  end;
 //  POLICYQUALINFO = POLICYQUALINFO_st;
 //  PPOLICYQUALINFO = ^POLICYQUALINFO;
-//  DEFINE_STACK_OF(POLICYQUALINFO)
+
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -DEFINE_STACK_OF(POLICYQUALINFO)
 
 //  POLICYINFO_st = record
 //    ASN1_OBJECT *policyid;
@@ -467,8 +508,9 @@ type
 //  end;
 //  POLICYINFO = POLICYINFO_st;
 //  PPOLICYINFO = ^POLICYINFO;
-//  typedef STACK_OF(POLICYINFO) CERTIFICATEPOLICIES;
-//  DEFINE_STACK_OF(POLICYINFO)
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -typedef STACK_OF(POLICYINFO) CERTIFICATEPOLICIES;
+//  -DEFINE_STACK_OF(POLICYINFO)
 
   POLICY_MAPPING_st = record
     issuerDomainPolicy: PASN1_OBJECT;
@@ -477,7 +519,14 @@ type
   POLICY_MAPPING = POLICY_MAPPING_st;
   PPOLICY_MAPPING = ^POLICY_MAPPING;
 //  DEFINE_STACK_OF(POLICY_MAPPING)
+  STACK_OF_POLICY_MAPPING = type of pointer;
+  PSTACK_OF_POLICY_MAPPING = ^STACK_OF_POLICY_MAPPING;
+  sk_POLICY_MAPPING_compfunc = function(const a: PPOLICY_MAPPING; const b: PPOLICY_MAPPING): TIdC_INT; cdecl;
+  sk_POLICY_MAPPING_freefunc = procedure(a: PPOLICY_MAPPING); cdecl;
+  sk_POLICY_MAPPING_copyfunc = function(const a: PPOLICY_MAPPING): PPOLICY_MAPPING; cdecl;
 //  typedef STACK_OF(POLICY_MAPPING) POLICY_MAPPINGS;
+  POLICY_MAPPINGS = STACK_OF_POLICY_MAPPING;
+  PPOLICY_MAPPINGS = PSTACK_OF_POLICY_MAPPING;
 
   GENERAL_SUBTREE_st = record
     base: PGENERAL_NAME;
@@ -487,6 +536,11 @@ type
   GENERAL_SUBTREE = GENERAL_SUBTREE_st;
   PGENERAL_SUBTREE = ^GENERAL_SUBTREE;
 //  DEFINE_STACK_OF(GENERAL_SUBTREE)
+  STACK_OF_GENERAL_SUBTREE = type of pointer;
+  PSTACK_OF_GENERAL_SUBTREE = ^STACK_OF_GENERAL_SUBTREE;
+  sk_GENERAL_SUBTREE_compfunc = function(const a: PGENERAL_SUBTREE; const b: PGENERAL_SUBTREE): TIdC_INT; cdecl;
+  sk_GENERAL_SUBTREE_freefunc = procedure(a: PGENERAL_SUBTREE); cdecl;
+  sk_GENERAL_SUBTREE_copyfunc = function(const a: PGENERAL_SUBTREE): PGENERAL_SUBTREE; cdecl;
 
 //  NAME_CONSTRAINTS_st = record
 //    STACK_OF(GENERAL_SUBTREE) *permittedSubtrees;
@@ -561,6 +615,11 @@ type
   end;
   X509_PURPOSE = x509_purpose_st;
 //  DEFINE_STACK_OF(X509_PURPOSE)
+  STACK_OF_X509_PURPOSE = type of pointer;
+  PSTACK_OF_X509_PURPOSE = ^STACK_OF_X509_PURPOSE;
+  sk_X509_PURPOSE_compfunc = function(const a: PX509_PURPOSE; const b: PX509_PURPOSE): TIdC_INT; cdecl;
+  sk_X509_PURPOSE_freefunc = procedure(a: PX509_PURPOSE); cdecl;
+  sk_X509_PURPOSE_copyfunc = function(const a: PX509_PURPOSE): PX509_PURPOSE; cdecl;
 
 //  DECLARE_ASN1_FUNCTIONS(BASIC_CONSTRAINTS_st)
 
@@ -581,8 +640,15 @@ type
   end;
   ASIdOrRange = ASIdOrRange_st;
   PASIdOrRange = ^ASIdOrRange;
-//  typedef STACK_OF(ASIdOrRange) ASIdOrRanges;
 //  DEFINE_STACK_OF(ASIdOrRange)
+  STACK_OF_ASIdOrRange = type of pointer;
+  PSTACK_OF_ASIdOrRange = ^STACK_OF_ASIdOrRange;
+  sk_ASIdOrRange_compfunc = function(const a: PASIdOrRange; const b: PASIdOrRange): TIdC_INT; cdecl;
+  sk_ASIdOrRange_freefunc = procedure(a: PASIdOrRange); cdecl;
+  sk_ASIdOrRange_copyfunc = function(const a: PASIdOrRange): PASIdOrRange; cdecl;
+//  typedef STACK_OF(ASIdOrRange) ASIdOrRanges;
+  ASIdOrRanges = STACK_OF_ASIdOrRange;
+  PASIdOrRanges = PSTACK_OF_ASIdOrRange;
 
 //  ASIdentifierChoice_st = record
 //    type_: TIdC_INT;
@@ -619,8 +685,15 @@ type
   IPAddressOrRange = IPAddressOrRange_st;
   PIPAddressOrRange = ^IPAddressOrRange;
 
-//  typedef STACK_OF(IPAddressOrRange) IPAddressOrRanges;
 //  DEFINE_STACK_OF(IPAddressOrRange)
+  STACK_OF_IPAddressOrRange = type of pointer;
+  PSTACK_OF_IPAddressOrRange = ^STACK_OF_IPAddressOrRange;
+  sk_IPAddressOrRange_compfunc = function(const a: PIPAddressOrRange; const b: PIPAddressOrRange): TIdC_INT; cdecl;
+  sk_IPAddressOrRange_freefunc = procedure(a: PIPAddressOrRange); cdecl;
+  sk_IPAddressOrRange_copyfunc = function(const a: PIPAddressOrRange): PIPAddressOrRange; cdecl;
+//  typedef STACK_OF(IPAddressOrRange) IPAddressOrRanges;
+  IPAddressOrRanges = STACK_OF_IPAddressOrRange;
+  PIPAddressOrRanges = PSTACK_OF_IPAddressOrRange;
 
 //  IPAddressChoice_st = record
 //    type_: TIdC_INT;
@@ -638,8 +711,9 @@ type
 //  IPAddressFamily = IPAddressFamily_st;
 //  PIPAddressFamily = ^IPAddressFamily;
 
-//  typedef STACK_OF(IPAddressFamily) IPAddrBlocks;
-//  DEFINE_STACK_OF(IPAddressFamily)
+// remove leading - to enable the macro DEFINE_STACK_OF in GenerateCode again!
+//  -DEFINE_STACK_OF(IPAddressFamily)
+//  -typedef STACK_OF(IPAddressFamily) IPAddrBlocks;
 
 //  DECLARE_ASN1_FUNCTIONS(IPAddressRange)
 //  DECLARE_ASN1_FUNCTIONS(IPAddressOrRange)
@@ -666,8 +740,20 @@ type
 //  DECLARE_ASN1_FUNCTIONS(ADMISSIONS)
 //  DECLARE_ASN1_FUNCTIONS(ADMISSION_SYNTAX)
 //  DEFINE_STACK_OF(ADMISSIONS)
+  STACK_OF_ADMISSIONS = type of pointer;
+  PSTACK_OF_ADMISSIONS = ^STACK_OF_ADMISSIONS;
+  sk_ADMISSIONS_compfunc = function(const a: PADMISSIONS; const b: PADMISSIONS): TIdC_INT; cdecl;
+  sk_ADMISSIONS_freefunc = procedure(a: PADMISSIONS); cdecl;
+  sk_ADMISSIONS_copyfunc = function(const a: PADMISSIONS): PADMISSIONS; cdecl;
 //  DEFINE_STACK_OF(PROFESSION_INFO)
+  STACK_OF_PROFESSION_INFO = type of pointer;
+  PSTACK_OF_PROFESSION_INFO = ^STACK_OF_PROFESSION_INFO;
+  sk_PROFESSION_INFO_compfunc = function(const a: PPROFESSION_INFO; const b: PPROFESSION_INFO): TIdC_INT; cdecl;
+  sk_PROFESSION_INFO_freefunc = procedure(a: PPROFESSION_INFO); cdecl;
+  sk_PROFESSION_INFO_copyfunc = function(const a: PPROFESSION_INFO): PPROFESSION_INFO; cdecl;
 //  typedef STACK_OF(PROFESSION_INFO) PROFESSION_INFOS;
+  PROFESSION_INFOS = STACK_OF_PROFESSION_INFO;
+  PPROFESSION_INFOS = PSTACK_OF_PROFESSION_INFO;
 
 //  function SXNET_add_id_asc(psx: PPSXNET; const zone: PIdAnsiChar; const user: PIdAnsiChar; userlen: TIdC_INT): TIdC_INT;
 //  function SXNET_add_id_ulong(psx: PPSXNET; lzone: TIdC_ULONG; const user: PIdAnsiChar; userlen: TIdC_INT): TIdC_INT;
@@ -927,6 +1013,1496 @@ type
   procedure PROFESSION_INFO_set0_registrationNumber(pi: PPROFESSION_INFO; rn: PASN1_PRINTABLESTRING) cdecl; external CLibCrypto;
 
 
+function sk_GENERAL_NAME_num(const sk: PSTACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_value(const sk: PSTACK_OF_GENERAL_NAME; index: TIdC_INT): PGENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_new(compare: sk_GENERAL_NAME_compfunc): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_new_null(): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_new_reserve(compare: sk_GENERAL_NAME_compfunc; n: TIdC_INT): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_reserve(sk: PSTACK_OF_GENERAL_NAME; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_NAME_free(sk: PSTACK_OF_GENERAL_NAME);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_NAME_zero(sk: PSTACK_OF_GENERAL_NAME);{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_delete(sk: PSTACK_OF_GENERAL_NAME; i: TIdC_INT): PGENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_delete_ptr(sk: PSTACK_OF_GENERAL_NAME; ptr: PGENERAL_NAME): PGENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_push(sk: PSTACK_OF_GENERAL_NAME; ptr: PGENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_unshift(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_pop(sk: PSTACK_OF_GENERAL_NAME): PGENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_shift(sk: PSTACK_OF_GENERAL_NAME): PGENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_NAME_pop_free(sk: PSTACK_OF_GENERAL_NAME; freeFunc: sk_GENERAL_NAME_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_insert(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_set(sk: PSTACK_OF_GENERAL_NAME; idx: TIdC_INT; const ptr: PGENERAL_NAME): PGENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_find(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_find_ex(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_NAME_sort(sk: PSTACK_OF_GENERAL_NAME);{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_is_sorted(sk: PSTACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_dup(const sk: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_deep_copy(const sk: PSTACK_OF_GENERAL_NAME; copyfunc: sk_GENERAL_NAME_copyfunc; freefunc:sk_GENERAL_NAME_freefunc): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_NAME_set_cmp_func(const sk: PSTACK_OF_GENERAL_NAME; compare: sk_GENERAL_NAME_compfunc): sk_GENERAL_NAME_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_STACK_OF_GENERAL_NAME_num(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_value(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME; index: TIdC_INT): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_new(compare: sk_STACK_OF_GENERAL_NAME_compfunc): PSTACK_OF_STACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_new_null(): PSTACK_OF_STACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_new_reserve(compare: sk_STACK_OF_GENERAL_NAME_compfunc; n: TIdC_INT): PSTACK_OF_STACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_reserve(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_STACK_OF_GENERAL_NAME_free(sk: PSTACK_OF_STACK_OF_GENERAL_NAME);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_STACK_OF_GENERAL_NAME_zero(sk: PSTACK_OF_STACK_OF_GENERAL_NAME);{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_delete(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; i: TIdC_INT): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_delete_ptr(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; ptr: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_push(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_unshift(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_pop(sk: PSTACK_OF_STACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_shift(sk: PSTACK_OF_STACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_STACK_OF_GENERAL_NAME_pop_free(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; freeFunc: sk_STACK_OF_GENERAL_NAME_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_insert(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_set(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; idx: TIdC_INT; const ptr: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_find(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_find_ex(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_STACK_OF_GENERAL_NAME_sort(sk: PSTACK_OF_STACK_OF_GENERAL_NAME);{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_is_sorted(sk: PSTACK_OF_STACK_OF_GENERAL_NAME): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_dup(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME): PSTACK_OF_STACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_deep_copy(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME; copyfunc: sk_STACK_OF_GENERAL_NAME_copyfunc; freefunc:sk_STACK_OF_GENERAL_NAME_freefunc): PSTACK_OF_STACK_OF_GENERAL_NAME;{$ifdef USE_INLINE} inline;{$endif}
+function sk_STACK_OF_GENERAL_NAME_set_cmp_func(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME; compare: sk_STACK_OF_GENERAL_NAME_compfunc): sk_STACK_OF_GENERAL_NAME_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_ACCESS_DESCRIPTION_num(const sk: PSTACK_OF_ACCESS_DESCRIPTION): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_value(const sk: PSTACK_OF_ACCESS_DESCRIPTION; index: TIdC_INT): PACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_new(compare: sk_ACCESS_DESCRIPTION_compfunc): PSTACK_OF_ACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_new_null(): PSTACK_OF_ACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_new_reserve(compare: sk_ACCESS_DESCRIPTION_compfunc; n: TIdC_INT): PSTACK_OF_ACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_reserve(sk: PSTACK_OF_ACCESS_DESCRIPTION; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ACCESS_DESCRIPTION_free(sk: PSTACK_OF_ACCESS_DESCRIPTION);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ACCESS_DESCRIPTION_zero(sk: PSTACK_OF_ACCESS_DESCRIPTION);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_delete(sk: PSTACK_OF_ACCESS_DESCRIPTION; i: TIdC_INT): PACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_delete_ptr(sk: PSTACK_OF_ACCESS_DESCRIPTION; ptr: PACCESS_DESCRIPTION): PACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_push(sk: PSTACK_OF_ACCESS_DESCRIPTION; ptr: PACCESS_DESCRIPTION): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_unshift(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_pop(sk: PSTACK_OF_ACCESS_DESCRIPTION): PACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_shift(sk: PSTACK_OF_ACCESS_DESCRIPTION): PACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ACCESS_DESCRIPTION_pop_free(sk: PSTACK_OF_ACCESS_DESCRIPTION; freeFunc: sk_ACCESS_DESCRIPTION_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_insert(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_set(sk: PSTACK_OF_ACCESS_DESCRIPTION; idx: TIdC_INT; const ptr: PACCESS_DESCRIPTION): PACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_find(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_find_ex(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ACCESS_DESCRIPTION_sort(sk: PSTACK_OF_ACCESS_DESCRIPTION);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_is_sorted(sk: PSTACK_OF_ACCESS_DESCRIPTION): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_dup(const sk: PSTACK_OF_ACCESS_DESCRIPTION): PSTACK_OF_ACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_deep_copy(const sk: PSTACK_OF_ACCESS_DESCRIPTION; copyfunc: sk_ACCESS_DESCRIPTION_copyfunc; freefunc:sk_ACCESS_DESCRIPTION_freefunc): PSTACK_OF_ACCESS_DESCRIPTION;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ACCESS_DESCRIPTION_set_cmp_func(const sk: PSTACK_OF_ACCESS_DESCRIPTION; compare: sk_ACCESS_DESCRIPTION_compfunc): sk_ACCESS_DESCRIPTION_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_DIST_POINT_num(const sk: PSTACK_OF_DIST_POINT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_value(const sk: PSTACK_OF_DIST_POINT; index: TIdC_INT): PDIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_new(compare: sk_DIST_POINT_compfunc): PSTACK_OF_DIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_new_null(): PSTACK_OF_DIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_new_reserve(compare: sk_DIST_POINT_compfunc; n: TIdC_INT): PSTACK_OF_DIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_reserve(sk: PSTACK_OF_DIST_POINT; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_DIST_POINT_free(sk: PSTACK_OF_DIST_POINT);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_DIST_POINT_zero(sk: PSTACK_OF_DIST_POINT);{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_delete(sk: PSTACK_OF_DIST_POINT; i: TIdC_INT): PDIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_delete_ptr(sk: PSTACK_OF_DIST_POINT; ptr: PDIST_POINT): PDIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_push(sk: PSTACK_OF_DIST_POINT; ptr: PDIST_POINT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_unshift(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_pop(sk: PSTACK_OF_DIST_POINT): PDIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_shift(sk: PSTACK_OF_DIST_POINT): PDIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_DIST_POINT_pop_free(sk: PSTACK_OF_DIST_POINT; freeFunc: sk_DIST_POINT_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_insert(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_set(sk: PSTACK_OF_DIST_POINT; idx: TIdC_INT; const ptr: PDIST_POINT): PDIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_find(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_find_ex(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_DIST_POINT_sort(sk: PSTACK_OF_DIST_POINT);{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_is_sorted(sk: PSTACK_OF_DIST_POINT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_dup(const sk: PSTACK_OF_DIST_POINT): PSTACK_OF_DIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_deep_copy(const sk: PSTACK_OF_DIST_POINT; copyfunc: sk_DIST_POINT_copyfunc; freefunc:sk_DIST_POINT_freefunc): PSTACK_OF_DIST_POINT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_DIST_POINT_set_cmp_func(const sk: PSTACK_OF_DIST_POINT; compare: sk_DIST_POINT_compfunc): sk_DIST_POINT_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_SXNETID_num(const sk: PSTACK_OF_SXNETID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_value(const sk: PSTACK_OF_SXNETID; index: TIdC_INT): PSXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_new(compare: sk_SXNETID_compfunc): PSTACK_OF_SXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_new_null(): PSTACK_OF_SXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_new_reserve(compare: sk_SXNETID_compfunc; n: TIdC_INT): PSTACK_OF_SXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_reserve(sk: PSTACK_OF_SXNETID; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_SXNETID_free(sk: PSTACK_OF_SXNETID);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_SXNETID_zero(sk: PSTACK_OF_SXNETID);{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_delete(sk: PSTACK_OF_SXNETID; i: TIdC_INT): PSXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_delete_ptr(sk: PSTACK_OF_SXNETID; ptr: PSXNETID): PSXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_push(sk: PSTACK_OF_SXNETID; ptr: PSXNETID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_unshift(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_pop(sk: PSTACK_OF_SXNETID): PSXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_shift(sk: PSTACK_OF_SXNETID): PSXNETID;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_SXNETID_pop_free(sk: PSTACK_OF_SXNETID; freeFunc: sk_SXNETID_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_insert(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_set(sk: PSTACK_OF_SXNETID; idx: TIdC_INT; const ptr: PSXNETID): PSXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_find(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_find_ex(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_SXNETID_sort(sk: PSTACK_OF_SXNETID);{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_is_sorted(sk: PSTACK_OF_SXNETID): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_dup(const sk: PSTACK_OF_SXNETID): PSTACK_OF_SXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_deep_copy(const sk: PSTACK_OF_SXNETID; copyfunc: sk_SXNETID_copyfunc; freefunc:sk_SXNETID_freefunc): PSTACK_OF_SXNETID;{$ifdef USE_INLINE} inline;{$endif}
+function sk_SXNETID_set_cmp_func(const sk: PSTACK_OF_SXNETID; compare: sk_SXNETID_compfunc): sk_SXNETID_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_POLICY_MAPPING_num(const sk: PSTACK_OF_POLICY_MAPPING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_value(const sk: PSTACK_OF_POLICY_MAPPING; index: TIdC_INT): PPOLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_new(compare: sk_POLICY_MAPPING_compfunc): PSTACK_OF_POLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_new_null(): PSTACK_OF_POLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_new_reserve(compare: sk_POLICY_MAPPING_compfunc; n: TIdC_INT): PSTACK_OF_POLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_reserve(sk: PSTACK_OF_POLICY_MAPPING; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_POLICY_MAPPING_free(sk: PSTACK_OF_POLICY_MAPPING);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_POLICY_MAPPING_zero(sk: PSTACK_OF_POLICY_MAPPING);{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_delete(sk: PSTACK_OF_POLICY_MAPPING; i: TIdC_INT): PPOLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_delete_ptr(sk: PSTACK_OF_POLICY_MAPPING; ptr: PPOLICY_MAPPING): PPOLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_push(sk: PSTACK_OF_POLICY_MAPPING; ptr: PPOLICY_MAPPING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_unshift(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_pop(sk: PSTACK_OF_POLICY_MAPPING): PPOLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_shift(sk: PSTACK_OF_POLICY_MAPPING): PPOLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_POLICY_MAPPING_pop_free(sk: PSTACK_OF_POLICY_MAPPING; freeFunc: sk_POLICY_MAPPING_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_insert(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_set(sk: PSTACK_OF_POLICY_MAPPING; idx: TIdC_INT; const ptr: PPOLICY_MAPPING): PPOLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_find(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_find_ex(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_POLICY_MAPPING_sort(sk: PSTACK_OF_POLICY_MAPPING);{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_is_sorted(sk: PSTACK_OF_POLICY_MAPPING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_dup(const sk: PSTACK_OF_POLICY_MAPPING): PSTACK_OF_POLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_deep_copy(const sk: PSTACK_OF_POLICY_MAPPING; copyfunc: sk_POLICY_MAPPING_copyfunc; freefunc:sk_POLICY_MAPPING_freefunc): PSTACK_OF_POLICY_MAPPING;{$ifdef USE_INLINE} inline;{$endif}
+function sk_POLICY_MAPPING_set_cmp_func(const sk: PSTACK_OF_POLICY_MAPPING; compare: sk_POLICY_MAPPING_compfunc): sk_POLICY_MAPPING_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_GENERAL_SUBTREE_num(const sk: PSTACK_OF_GENERAL_SUBTREE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_value(const sk: PSTACK_OF_GENERAL_SUBTREE; index: TIdC_INT): PGENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_new(compare: sk_GENERAL_SUBTREE_compfunc): PSTACK_OF_GENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_new_null(): PSTACK_OF_GENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_new_reserve(compare: sk_GENERAL_SUBTREE_compfunc; n: TIdC_INT): PSTACK_OF_GENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_reserve(sk: PSTACK_OF_GENERAL_SUBTREE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_SUBTREE_free(sk: PSTACK_OF_GENERAL_SUBTREE);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_SUBTREE_zero(sk: PSTACK_OF_GENERAL_SUBTREE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_delete(sk: PSTACK_OF_GENERAL_SUBTREE; i: TIdC_INT): PGENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_delete_ptr(sk: PSTACK_OF_GENERAL_SUBTREE; ptr: PGENERAL_SUBTREE): PGENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_push(sk: PSTACK_OF_GENERAL_SUBTREE; ptr: PGENERAL_SUBTREE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_unshift(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_pop(sk: PSTACK_OF_GENERAL_SUBTREE): PGENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_shift(sk: PSTACK_OF_GENERAL_SUBTREE): PGENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_SUBTREE_pop_free(sk: PSTACK_OF_GENERAL_SUBTREE; freeFunc: sk_GENERAL_SUBTREE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_insert(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_set(sk: PSTACK_OF_GENERAL_SUBTREE; idx: TIdC_INT; const ptr: PGENERAL_SUBTREE): PGENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_find(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_find_ex(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_GENERAL_SUBTREE_sort(sk: PSTACK_OF_GENERAL_SUBTREE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_is_sorted(sk: PSTACK_OF_GENERAL_SUBTREE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_dup(const sk: PSTACK_OF_GENERAL_SUBTREE): PSTACK_OF_GENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_deep_copy(const sk: PSTACK_OF_GENERAL_SUBTREE; copyfunc: sk_GENERAL_SUBTREE_copyfunc; freefunc:sk_GENERAL_SUBTREE_freefunc): PSTACK_OF_GENERAL_SUBTREE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_GENERAL_SUBTREE_set_cmp_func(const sk: PSTACK_OF_GENERAL_SUBTREE; compare: sk_GENERAL_SUBTREE_compfunc): sk_GENERAL_SUBTREE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_X509_PURPOSE_num(const sk: PSTACK_OF_X509_PURPOSE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_value(const sk: PSTACK_OF_X509_PURPOSE; index: TIdC_INT): PX509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_new(compare: sk_X509_PURPOSE_compfunc): PSTACK_OF_X509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_new_null(): PSTACK_OF_X509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_new_reserve(compare: sk_X509_PURPOSE_compfunc; n: TIdC_INT): PSTACK_OF_X509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_reserve(sk: PSTACK_OF_X509_PURPOSE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_PURPOSE_free(sk: PSTACK_OF_X509_PURPOSE);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_PURPOSE_zero(sk: PSTACK_OF_X509_PURPOSE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_delete(sk: PSTACK_OF_X509_PURPOSE; i: TIdC_INT): PX509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_delete_ptr(sk: PSTACK_OF_X509_PURPOSE; ptr: PX509_PURPOSE): PX509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_push(sk: PSTACK_OF_X509_PURPOSE; ptr: PX509_PURPOSE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_unshift(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_pop(sk: PSTACK_OF_X509_PURPOSE): PX509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_shift(sk: PSTACK_OF_X509_PURPOSE): PX509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_PURPOSE_pop_free(sk: PSTACK_OF_X509_PURPOSE; freeFunc: sk_X509_PURPOSE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_insert(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_set(sk: PSTACK_OF_X509_PURPOSE; idx: TIdC_INT; const ptr: PX509_PURPOSE): PX509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_find(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_find_ex(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_X509_PURPOSE_sort(sk: PSTACK_OF_X509_PURPOSE);{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_is_sorted(sk: PSTACK_OF_X509_PURPOSE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_dup(const sk: PSTACK_OF_X509_PURPOSE): PSTACK_OF_X509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_deep_copy(const sk: PSTACK_OF_X509_PURPOSE; copyfunc: sk_X509_PURPOSE_copyfunc; freefunc:sk_X509_PURPOSE_freefunc): PSTACK_OF_X509_PURPOSE;{$ifdef USE_INLINE} inline;{$endif}
+function sk_X509_PURPOSE_set_cmp_func(const sk: PSTACK_OF_X509_PURPOSE; compare: sk_X509_PURPOSE_compfunc): sk_X509_PURPOSE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_ASIdOrRange_num(const sk: PSTACK_OF_ASIdOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_value(const sk: PSTACK_OF_ASIdOrRange; index: TIdC_INT): PASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_new(compare: sk_ASIdOrRange_compfunc): PSTACK_OF_ASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_new_null(): PSTACK_OF_ASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_new_reserve(compare: sk_ASIdOrRange_compfunc; n: TIdC_INT): PSTACK_OF_ASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_reserve(sk: PSTACK_OF_ASIdOrRange; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASIdOrRange_free(sk: PSTACK_OF_ASIdOrRange);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASIdOrRange_zero(sk: PSTACK_OF_ASIdOrRange);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_delete(sk: PSTACK_OF_ASIdOrRange; i: TIdC_INT): PASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_delete_ptr(sk: PSTACK_OF_ASIdOrRange; ptr: PASIdOrRange): PASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_push(sk: PSTACK_OF_ASIdOrRange; ptr: PASIdOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_unshift(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_pop(sk: PSTACK_OF_ASIdOrRange): PASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_shift(sk: PSTACK_OF_ASIdOrRange): PASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASIdOrRange_pop_free(sk: PSTACK_OF_ASIdOrRange; freeFunc: sk_ASIdOrRange_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_insert(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_set(sk: PSTACK_OF_ASIdOrRange; idx: TIdC_INT; const ptr: PASIdOrRange): PASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_find(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_find_ex(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ASIdOrRange_sort(sk: PSTACK_OF_ASIdOrRange);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_is_sorted(sk: PSTACK_OF_ASIdOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_dup(const sk: PSTACK_OF_ASIdOrRange): PSTACK_OF_ASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_deep_copy(const sk: PSTACK_OF_ASIdOrRange; copyfunc: sk_ASIdOrRange_copyfunc; freefunc:sk_ASIdOrRange_freefunc): PSTACK_OF_ASIdOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ASIdOrRange_set_cmp_func(const sk: PSTACK_OF_ASIdOrRange; compare: sk_ASIdOrRange_compfunc): sk_ASIdOrRange_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_IPAddressOrRange_num(const sk: PSTACK_OF_IPAddressOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_value(const sk: PSTACK_OF_IPAddressOrRange; index: TIdC_INT): PIPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_new(compare: sk_IPAddressOrRange_compfunc): PSTACK_OF_IPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_new_null(): PSTACK_OF_IPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_new_reserve(compare: sk_IPAddressOrRange_compfunc; n: TIdC_INT): PSTACK_OF_IPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_reserve(sk: PSTACK_OF_IPAddressOrRange; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_IPAddressOrRange_free(sk: PSTACK_OF_IPAddressOrRange);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_IPAddressOrRange_zero(sk: PSTACK_OF_IPAddressOrRange);{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_delete(sk: PSTACK_OF_IPAddressOrRange; i: TIdC_INT): PIPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_delete_ptr(sk: PSTACK_OF_IPAddressOrRange; ptr: PIPAddressOrRange): PIPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_push(sk: PSTACK_OF_IPAddressOrRange; ptr: PIPAddressOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_unshift(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_pop(sk: PSTACK_OF_IPAddressOrRange): PIPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_shift(sk: PSTACK_OF_IPAddressOrRange): PIPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_IPAddressOrRange_pop_free(sk: PSTACK_OF_IPAddressOrRange; freeFunc: sk_IPAddressOrRange_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_insert(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_set(sk: PSTACK_OF_IPAddressOrRange; idx: TIdC_INT; const ptr: PIPAddressOrRange): PIPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_find(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_find_ex(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_IPAddressOrRange_sort(sk: PSTACK_OF_IPAddressOrRange);{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_is_sorted(sk: PSTACK_OF_IPAddressOrRange): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_dup(const sk: PSTACK_OF_IPAddressOrRange): PSTACK_OF_IPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_deep_copy(const sk: PSTACK_OF_IPAddressOrRange; copyfunc: sk_IPAddressOrRange_copyfunc; freefunc:sk_IPAddressOrRange_freefunc): PSTACK_OF_IPAddressOrRange;{$ifdef USE_INLINE} inline;{$endif}
+function sk_IPAddressOrRange_set_cmp_func(const sk: PSTACK_OF_IPAddressOrRange; compare: sk_IPAddressOrRange_compfunc): sk_IPAddressOrRange_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_ADMISSIONS_num(const sk: PSTACK_OF_ADMISSIONS): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_value(const sk: PSTACK_OF_ADMISSIONS; index: TIdC_INT): PADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_new(compare: sk_ADMISSIONS_compfunc): PSTACK_OF_ADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_new_null(): PSTACK_OF_ADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_new_reserve(compare: sk_ADMISSIONS_compfunc; n: TIdC_INT): PSTACK_OF_ADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_reserve(sk: PSTACK_OF_ADMISSIONS; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ADMISSIONS_free(sk: PSTACK_OF_ADMISSIONS);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ADMISSIONS_zero(sk: PSTACK_OF_ADMISSIONS);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_delete(sk: PSTACK_OF_ADMISSIONS; i: TIdC_INT): PADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_delete_ptr(sk: PSTACK_OF_ADMISSIONS; ptr: PADMISSIONS): PADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_push(sk: PSTACK_OF_ADMISSIONS; ptr: PADMISSIONS): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_unshift(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_pop(sk: PSTACK_OF_ADMISSIONS): PADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_shift(sk: PSTACK_OF_ADMISSIONS): PADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ADMISSIONS_pop_free(sk: PSTACK_OF_ADMISSIONS; freeFunc: sk_ADMISSIONS_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_insert(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_set(sk: PSTACK_OF_ADMISSIONS; idx: TIdC_INT; const ptr: PADMISSIONS): PADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_find(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_find_ex(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_ADMISSIONS_sort(sk: PSTACK_OF_ADMISSIONS);{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_is_sorted(sk: PSTACK_OF_ADMISSIONS): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_dup(const sk: PSTACK_OF_ADMISSIONS): PSTACK_OF_ADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_deep_copy(const sk: PSTACK_OF_ADMISSIONS; copyfunc: sk_ADMISSIONS_copyfunc; freefunc:sk_ADMISSIONS_freefunc): PSTACK_OF_ADMISSIONS;{$ifdef USE_INLINE} inline;{$endif}
+function sk_ADMISSIONS_set_cmp_func(const sk: PSTACK_OF_ADMISSIONS; compare: sk_ADMISSIONS_compfunc): sk_ADMISSIONS_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_PROFESSION_INFO_num(const sk: PSTACK_OF_PROFESSION_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_value(const sk: PSTACK_OF_PROFESSION_INFO; index: TIdC_INT): PPROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_new(compare: sk_PROFESSION_INFO_compfunc): PSTACK_OF_PROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_new_null(): PSTACK_OF_PROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_new_reserve(compare: sk_PROFESSION_INFO_compfunc; n: TIdC_INT): PSTACK_OF_PROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_reserve(sk: PSTACK_OF_PROFESSION_INFO; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PROFESSION_INFO_free(sk: PSTACK_OF_PROFESSION_INFO);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PROFESSION_INFO_zero(sk: PSTACK_OF_PROFESSION_INFO);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_delete(sk: PSTACK_OF_PROFESSION_INFO; i: TIdC_INT): PPROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_delete_ptr(sk: PSTACK_OF_PROFESSION_INFO; ptr: PPROFESSION_INFO): PPROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_push(sk: PSTACK_OF_PROFESSION_INFO; ptr: PPROFESSION_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_unshift(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_pop(sk: PSTACK_OF_PROFESSION_INFO): PPROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_shift(sk: PSTACK_OF_PROFESSION_INFO): PPROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PROFESSION_INFO_pop_free(sk: PSTACK_OF_PROFESSION_INFO; freeFunc: sk_PROFESSION_INFO_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_insert(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_set(sk: PSTACK_OF_PROFESSION_INFO; idx: TIdC_INT; const ptr: PPROFESSION_INFO): PPROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_find(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_find_ex(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PROFESSION_INFO_sort(sk: PSTACK_OF_PROFESSION_INFO);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_is_sorted(sk: PSTACK_OF_PROFESSION_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_dup(const sk: PSTACK_OF_PROFESSION_INFO): PSTACK_OF_PROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_deep_copy(const sk: PSTACK_OF_PROFESSION_INFO; copyfunc: sk_PROFESSION_INFO_copyfunc; freefunc:sk_PROFESSION_INFO_freefunc): PSTACK_OF_PROFESSION_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PROFESSION_INFO_set_cmp_func(const sk: PSTACK_OF_PROFESSION_INFO; compare: sk_PROFESSION_INFO_compfunc): sk_PROFESSION_INFO_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(GENERAL_NAME) Methoden }
+
+function sk_GENERAL_NAME_num(const sk: PSTACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_NAME_value(const sk: PSTACK_OF_GENERAL_NAME; index: TIdC_INT): PGENERAL_NAME;
+begin
+  result := PGENERAL_NAME(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_GENERAL_NAME_new(compare: sk_GENERAL_NAME_compfunc): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_GENERAL_NAME_new_null(): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_new_null());
+end;
+function sk_GENERAL_NAME_new_reserve(compare: sk_GENERAL_NAME_compfunc; n: TIdC_INT): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_GENERAL_NAME_reserve(sk: PSTACK_OF_GENERAL_NAME; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_GENERAL_NAME_free(sk: PSTACK_OF_GENERAL_NAME);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_GENERAL_NAME_zero(sk: PSTACK_OF_GENERAL_NAME);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_NAME_delete(sk: PSTACK_OF_GENERAL_NAME; i: TIdC_INT): PGENERAL_NAME;
+begin
+  result := PGENERAL_NAME(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_GENERAL_NAME_delete_ptr(sk: PSTACK_OF_GENERAL_NAME; ptr: PGENERAL_NAME): PGENERAL_NAME;
+begin
+  result := PGENERAL_NAME(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_GENERAL_NAME_push(sk: PSTACK_OF_GENERAL_NAME; ptr: PGENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_GENERAL_NAME_unshift(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_GENERAL_NAME_pop(sk: PSTACK_OF_GENERAL_NAME): PGENERAL_NAME;
+begin
+  result := PGENERAL_NAME(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_GENERAL_NAME_shift(sk: PSTACK_OF_GENERAL_NAME): PGENERAL_NAME;
+begin
+  result := PGENERAL_NAME(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_GENERAL_NAME_pop_free(sk: PSTACK_OF_GENERAL_NAME; freeFunc: sk_GENERAL_NAME_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_GENERAL_NAME_insert(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_GENERAL_NAME_set(sk: PSTACK_OF_GENERAL_NAME; idx: TIdC_INT; const ptr: PGENERAL_NAME): PGENERAL_NAME;
+begin
+  result := PGENERAL_NAME(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_GENERAL_NAME_find(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_GENERAL_NAME_find_ex(sk: PSTACK_OF_GENERAL_NAME; const ptr: PGENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_GENERAL_NAME_sort(sk: PSTACK_OF_GENERAL_NAME);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_NAME_is_sorted(sk: PSTACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_NAME_dup(const sk: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;
+begin
+  result:=PSTACK_OF_GENERAL_NAME(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_GENERAL_NAME_deep_copy(const sk: PSTACK_OF_GENERAL_NAME; copyfunc: sk_GENERAL_NAME_copyfunc; freefunc:sk_GENERAL_NAME_freefunc): PSTACK_OF_GENERAL_NAME;
+begin
+  result:=PSTACK_OF_GENERAL_NAME(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_GENERAL_NAME_set_cmp_func(const sk: PSTACK_OF_GENERAL_NAME; compare: sk_GENERAL_NAME_compfunc): sk_GENERAL_NAME_compfunc;
+begin
+  result:=sk_GENERAL_NAME_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(STACK_OF_GENERAL_NAME) Methoden }
+
+function sk_STACK_OF_GENERAL_NAME_num(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_STACK_OF_GENERAL_NAME_value(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME; index: TIdC_INT): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_STACK_OF_GENERAL_NAME_new(compare: sk_STACK_OF_GENERAL_NAME_compfunc): PSTACK_OF_STACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_STACK_OF_GENERAL_NAME(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_STACK_OF_GENERAL_NAME_new_null(): PSTACK_OF_STACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_STACK_OF_GENERAL_NAME(OPENSSL_sk_new_null());
+end;
+function sk_STACK_OF_GENERAL_NAME_new_reserve(compare: sk_STACK_OF_GENERAL_NAME_compfunc; n: TIdC_INT): PSTACK_OF_STACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_STACK_OF_GENERAL_NAME(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_STACK_OF_GENERAL_NAME_reserve(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_STACK_OF_GENERAL_NAME_free(sk: PSTACK_OF_STACK_OF_GENERAL_NAME);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_STACK_OF_GENERAL_NAME_zero(sk: PSTACK_OF_STACK_OF_GENERAL_NAME);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_STACK_OF_GENERAL_NAME_delete(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; i: TIdC_INT): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_STACK_OF_GENERAL_NAME_delete_ptr(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; ptr: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_STACK_OF_GENERAL_NAME_push(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_STACK_OF_GENERAL_NAME_unshift(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_STACK_OF_GENERAL_NAME_pop(sk: PSTACK_OF_STACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_STACK_OF_GENERAL_NAME_shift(sk: PSTACK_OF_STACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_STACK_OF_GENERAL_NAME_pop_free(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; freeFunc: sk_STACK_OF_GENERAL_NAME_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_STACK_OF_GENERAL_NAME_insert(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_STACK_OF_GENERAL_NAME_set(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; idx: TIdC_INT; const ptr: PSTACK_OF_GENERAL_NAME): PSTACK_OF_GENERAL_NAME;
+begin
+  result := PSTACK_OF_GENERAL_NAME(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_STACK_OF_GENERAL_NAME_find(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_STACK_OF_GENERAL_NAME_find_ex(sk: PSTACK_OF_STACK_OF_GENERAL_NAME; const ptr: PSTACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_STACK_OF_GENERAL_NAME_sort(sk: PSTACK_OF_STACK_OF_GENERAL_NAME);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_STACK_OF_GENERAL_NAME_is_sorted(sk: PSTACK_OF_STACK_OF_GENERAL_NAME): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_STACK_OF_GENERAL_NAME_dup(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME): PSTACK_OF_STACK_OF_GENERAL_NAME;
+begin
+  result:=PSTACK_OF_STACK_OF_GENERAL_NAME(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_STACK_OF_GENERAL_NAME_deep_copy(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME; copyfunc: sk_STACK_OF_GENERAL_NAME_copyfunc; freefunc:sk_STACK_OF_GENERAL_NAME_freefunc): PSTACK_OF_STACK_OF_GENERAL_NAME;
+begin
+  result:=PSTACK_OF_STACK_OF_GENERAL_NAME(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_STACK_OF_GENERAL_NAME_set_cmp_func(const sk: PSTACK_OF_STACK_OF_GENERAL_NAME; compare: sk_STACK_OF_GENERAL_NAME_compfunc): sk_STACK_OF_GENERAL_NAME_compfunc;
+begin
+  result:=sk_STACK_OF_GENERAL_NAME_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(ACCESS_DESCRIPTION) Methoden }
+
+function sk_ACCESS_DESCRIPTION_num(const sk: PSTACK_OF_ACCESS_DESCRIPTION): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_ACCESS_DESCRIPTION_value(const sk: PSTACK_OF_ACCESS_DESCRIPTION; index: TIdC_INT): PACCESS_DESCRIPTION;
+begin
+  result := PACCESS_DESCRIPTION(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_ACCESS_DESCRIPTION_new(compare: sk_ACCESS_DESCRIPTION_compfunc): PSTACK_OF_ACCESS_DESCRIPTION;
+begin
+  result := PSTACK_OF_ACCESS_DESCRIPTION(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_ACCESS_DESCRIPTION_new_null(): PSTACK_OF_ACCESS_DESCRIPTION;
+begin
+  result := PSTACK_OF_ACCESS_DESCRIPTION(OPENSSL_sk_new_null());
+end;
+function sk_ACCESS_DESCRIPTION_new_reserve(compare: sk_ACCESS_DESCRIPTION_compfunc; n: TIdC_INT): PSTACK_OF_ACCESS_DESCRIPTION;
+begin
+  result := PSTACK_OF_ACCESS_DESCRIPTION(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_ACCESS_DESCRIPTION_reserve(sk: PSTACK_OF_ACCESS_DESCRIPTION; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_ACCESS_DESCRIPTION_free(sk: PSTACK_OF_ACCESS_DESCRIPTION);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_ACCESS_DESCRIPTION_zero(sk: PSTACK_OF_ACCESS_DESCRIPTION);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_ACCESS_DESCRIPTION_delete(sk: PSTACK_OF_ACCESS_DESCRIPTION; i: TIdC_INT): PACCESS_DESCRIPTION;
+begin
+  result := PACCESS_DESCRIPTION(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_ACCESS_DESCRIPTION_delete_ptr(sk: PSTACK_OF_ACCESS_DESCRIPTION; ptr: PACCESS_DESCRIPTION): PACCESS_DESCRIPTION;
+begin
+  result := PACCESS_DESCRIPTION(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_ACCESS_DESCRIPTION_push(sk: PSTACK_OF_ACCESS_DESCRIPTION; ptr: PACCESS_DESCRIPTION): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ACCESS_DESCRIPTION_unshift(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ACCESS_DESCRIPTION_pop(sk: PSTACK_OF_ACCESS_DESCRIPTION): PACCESS_DESCRIPTION;
+begin
+  result := PACCESS_DESCRIPTION(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_ACCESS_DESCRIPTION_shift(sk: PSTACK_OF_ACCESS_DESCRIPTION): PACCESS_DESCRIPTION;
+begin
+  result := PACCESS_DESCRIPTION(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_ACCESS_DESCRIPTION_pop_free(sk: PSTACK_OF_ACCESS_DESCRIPTION; freeFunc: sk_ACCESS_DESCRIPTION_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_ACCESS_DESCRIPTION_insert(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_ACCESS_DESCRIPTION_set(sk: PSTACK_OF_ACCESS_DESCRIPTION; idx: TIdC_INT; const ptr: PACCESS_DESCRIPTION): PACCESS_DESCRIPTION;
+begin
+  result := PACCESS_DESCRIPTION(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_ACCESS_DESCRIPTION_find(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_ACCESS_DESCRIPTION_find_ex(sk: PSTACK_OF_ACCESS_DESCRIPTION; const ptr: PACCESS_DESCRIPTION): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_ACCESS_DESCRIPTION_sort(sk: PSTACK_OF_ACCESS_DESCRIPTION);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_ACCESS_DESCRIPTION_is_sorted(sk: PSTACK_OF_ACCESS_DESCRIPTION): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_ACCESS_DESCRIPTION_dup(const sk: PSTACK_OF_ACCESS_DESCRIPTION): PSTACK_OF_ACCESS_DESCRIPTION;
+begin
+  result:=PSTACK_OF_ACCESS_DESCRIPTION(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_ACCESS_DESCRIPTION_deep_copy(const sk: PSTACK_OF_ACCESS_DESCRIPTION; copyfunc: sk_ACCESS_DESCRIPTION_copyfunc; freefunc:sk_ACCESS_DESCRIPTION_freefunc): PSTACK_OF_ACCESS_DESCRIPTION;
+begin
+  result:=PSTACK_OF_ACCESS_DESCRIPTION(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_ACCESS_DESCRIPTION_set_cmp_func(const sk: PSTACK_OF_ACCESS_DESCRIPTION; compare: sk_ACCESS_DESCRIPTION_compfunc): sk_ACCESS_DESCRIPTION_compfunc;
+begin
+  result:=sk_ACCESS_DESCRIPTION_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(DIST_POINT) Methoden }
+
+function sk_DIST_POINT_num(const sk: PSTACK_OF_DIST_POINT): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_DIST_POINT_value(const sk: PSTACK_OF_DIST_POINT; index: TIdC_INT): PDIST_POINT;
+begin
+  result := PDIST_POINT(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_DIST_POINT_new(compare: sk_DIST_POINT_compfunc): PSTACK_OF_DIST_POINT;
+begin
+  result := PSTACK_OF_DIST_POINT(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_DIST_POINT_new_null(): PSTACK_OF_DIST_POINT;
+begin
+  result := PSTACK_OF_DIST_POINT(OPENSSL_sk_new_null());
+end;
+function sk_DIST_POINT_new_reserve(compare: sk_DIST_POINT_compfunc; n: TIdC_INT): PSTACK_OF_DIST_POINT;
+begin
+  result := PSTACK_OF_DIST_POINT(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_DIST_POINT_reserve(sk: PSTACK_OF_DIST_POINT; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_DIST_POINT_free(sk: PSTACK_OF_DIST_POINT);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_DIST_POINT_zero(sk: PSTACK_OF_DIST_POINT);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_DIST_POINT_delete(sk: PSTACK_OF_DIST_POINT; i: TIdC_INT): PDIST_POINT;
+begin
+  result := PDIST_POINT(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_DIST_POINT_delete_ptr(sk: PSTACK_OF_DIST_POINT; ptr: PDIST_POINT): PDIST_POINT;
+begin
+  result := PDIST_POINT(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_DIST_POINT_push(sk: PSTACK_OF_DIST_POINT; ptr: PDIST_POINT): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_DIST_POINT_unshift(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_DIST_POINT_pop(sk: PSTACK_OF_DIST_POINT): PDIST_POINT;
+begin
+  result := PDIST_POINT(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_DIST_POINT_shift(sk: PSTACK_OF_DIST_POINT): PDIST_POINT;
+begin
+  result := PDIST_POINT(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_DIST_POINT_pop_free(sk: PSTACK_OF_DIST_POINT; freeFunc: sk_DIST_POINT_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_DIST_POINT_insert(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_DIST_POINT_set(sk: PSTACK_OF_DIST_POINT; idx: TIdC_INT; const ptr: PDIST_POINT): PDIST_POINT;
+begin
+  result := PDIST_POINT(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_DIST_POINT_find(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_DIST_POINT_find_ex(sk: PSTACK_OF_DIST_POINT; const ptr: PDIST_POINT): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_DIST_POINT_sort(sk: PSTACK_OF_DIST_POINT);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_DIST_POINT_is_sorted(sk: PSTACK_OF_DIST_POINT): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_DIST_POINT_dup(const sk: PSTACK_OF_DIST_POINT): PSTACK_OF_DIST_POINT;
+begin
+  result:=PSTACK_OF_DIST_POINT(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_DIST_POINT_deep_copy(const sk: PSTACK_OF_DIST_POINT; copyfunc: sk_DIST_POINT_copyfunc; freefunc:sk_DIST_POINT_freefunc): PSTACK_OF_DIST_POINT;
+begin
+  result:=PSTACK_OF_DIST_POINT(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_DIST_POINT_set_cmp_func(const sk: PSTACK_OF_DIST_POINT; compare: sk_DIST_POINT_compfunc): sk_DIST_POINT_compfunc;
+begin
+  result:=sk_DIST_POINT_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(SXNETID) Methoden }
+
+function sk_SXNETID_num(const sk: PSTACK_OF_SXNETID): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_SXNETID_value(const sk: PSTACK_OF_SXNETID; index: TIdC_INT): PSXNETID;
+begin
+  result := PSXNETID(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_SXNETID_new(compare: sk_SXNETID_compfunc): PSTACK_OF_SXNETID;
+begin
+  result := PSTACK_OF_SXNETID(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_SXNETID_new_null(): PSTACK_OF_SXNETID;
+begin
+  result := PSTACK_OF_SXNETID(OPENSSL_sk_new_null());
+end;
+function sk_SXNETID_new_reserve(compare: sk_SXNETID_compfunc; n: TIdC_INT): PSTACK_OF_SXNETID;
+begin
+  result := PSTACK_OF_SXNETID(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_SXNETID_reserve(sk: PSTACK_OF_SXNETID; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_SXNETID_free(sk: PSTACK_OF_SXNETID);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_SXNETID_zero(sk: PSTACK_OF_SXNETID);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_SXNETID_delete(sk: PSTACK_OF_SXNETID; i: TIdC_INT): PSXNETID;
+begin
+  result := PSXNETID(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_SXNETID_delete_ptr(sk: PSTACK_OF_SXNETID; ptr: PSXNETID): PSXNETID;
+begin
+  result := PSXNETID(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_SXNETID_push(sk: PSTACK_OF_SXNETID; ptr: PSXNETID): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_SXNETID_unshift(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_SXNETID_pop(sk: PSTACK_OF_SXNETID): PSXNETID;
+begin
+  result := PSXNETID(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_SXNETID_shift(sk: PSTACK_OF_SXNETID): PSXNETID;
+begin
+  result := PSXNETID(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_SXNETID_pop_free(sk: PSTACK_OF_SXNETID; freeFunc: sk_SXNETID_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_SXNETID_insert(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_SXNETID_set(sk: PSTACK_OF_SXNETID; idx: TIdC_INT; const ptr: PSXNETID): PSXNETID;
+begin
+  result := PSXNETID(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_SXNETID_find(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_SXNETID_find_ex(sk: PSTACK_OF_SXNETID; const ptr: PSXNETID): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_SXNETID_sort(sk: PSTACK_OF_SXNETID);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_SXNETID_is_sorted(sk: PSTACK_OF_SXNETID): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_SXNETID_dup(const sk: PSTACK_OF_SXNETID): PSTACK_OF_SXNETID;
+begin
+  result:=PSTACK_OF_SXNETID(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_SXNETID_deep_copy(const sk: PSTACK_OF_SXNETID; copyfunc: sk_SXNETID_copyfunc; freefunc:sk_SXNETID_freefunc): PSTACK_OF_SXNETID;
+begin
+  result:=PSTACK_OF_SXNETID(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_SXNETID_set_cmp_func(const sk: PSTACK_OF_SXNETID; compare: sk_SXNETID_compfunc): sk_SXNETID_compfunc;
+begin
+  result:=sk_SXNETID_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(POLICY_MAPPING) Methoden }
+
+function sk_POLICY_MAPPING_num(const sk: PSTACK_OF_POLICY_MAPPING): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_POLICY_MAPPING_value(const sk: PSTACK_OF_POLICY_MAPPING; index: TIdC_INT): PPOLICY_MAPPING;
+begin
+  result := PPOLICY_MAPPING(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_POLICY_MAPPING_new(compare: sk_POLICY_MAPPING_compfunc): PSTACK_OF_POLICY_MAPPING;
+begin
+  result := PSTACK_OF_POLICY_MAPPING(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_POLICY_MAPPING_new_null(): PSTACK_OF_POLICY_MAPPING;
+begin
+  result := PSTACK_OF_POLICY_MAPPING(OPENSSL_sk_new_null());
+end;
+function sk_POLICY_MAPPING_new_reserve(compare: sk_POLICY_MAPPING_compfunc; n: TIdC_INT): PSTACK_OF_POLICY_MAPPING;
+begin
+  result := PSTACK_OF_POLICY_MAPPING(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_POLICY_MAPPING_reserve(sk: PSTACK_OF_POLICY_MAPPING; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_POLICY_MAPPING_free(sk: PSTACK_OF_POLICY_MAPPING);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_POLICY_MAPPING_zero(sk: PSTACK_OF_POLICY_MAPPING);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_POLICY_MAPPING_delete(sk: PSTACK_OF_POLICY_MAPPING; i: TIdC_INT): PPOLICY_MAPPING;
+begin
+  result := PPOLICY_MAPPING(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_POLICY_MAPPING_delete_ptr(sk: PSTACK_OF_POLICY_MAPPING; ptr: PPOLICY_MAPPING): PPOLICY_MAPPING;
+begin
+  result := PPOLICY_MAPPING(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_POLICY_MAPPING_push(sk: PSTACK_OF_POLICY_MAPPING; ptr: PPOLICY_MAPPING): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_POLICY_MAPPING_unshift(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_POLICY_MAPPING_pop(sk: PSTACK_OF_POLICY_MAPPING): PPOLICY_MAPPING;
+begin
+  result := PPOLICY_MAPPING(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_POLICY_MAPPING_shift(sk: PSTACK_OF_POLICY_MAPPING): PPOLICY_MAPPING;
+begin
+  result := PPOLICY_MAPPING(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_POLICY_MAPPING_pop_free(sk: PSTACK_OF_POLICY_MAPPING; freeFunc: sk_POLICY_MAPPING_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_POLICY_MAPPING_insert(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_POLICY_MAPPING_set(sk: PSTACK_OF_POLICY_MAPPING; idx: TIdC_INT; const ptr: PPOLICY_MAPPING): PPOLICY_MAPPING;
+begin
+  result := PPOLICY_MAPPING(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_POLICY_MAPPING_find(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_POLICY_MAPPING_find_ex(sk: PSTACK_OF_POLICY_MAPPING; const ptr: PPOLICY_MAPPING): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_POLICY_MAPPING_sort(sk: PSTACK_OF_POLICY_MAPPING);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_POLICY_MAPPING_is_sorted(sk: PSTACK_OF_POLICY_MAPPING): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_POLICY_MAPPING_dup(const sk: PSTACK_OF_POLICY_MAPPING): PSTACK_OF_POLICY_MAPPING;
+begin
+  result:=PSTACK_OF_POLICY_MAPPING(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_POLICY_MAPPING_deep_copy(const sk: PSTACK_OF_POLICY_MAPPING; copyfunc: sk_POLICY_MAPPING_copyfunc; freefunc:sk_POLICY_MAPPING_freefunc): PSTACK_OF_POLICY_MAPPING;
+begin
+  result:=PSTACK_OF_POLICY_MAPPING(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_POLICY_MAPPING_set_cmp_func(const sk: PSTACK_OF_POLICY_MAPPING; compare: sk_POLICY_MAPPING_compfunc): sk_POLICY_MAPPING_compfunc;
+begin
+  result:=sk_POLICY_MAPPING_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(GENERAL_SUBTREE) Methoden }
+
+function sk_GENERAL_SUBTREE_num(const sk: PSTACK_OF_GENERAL_SUBTREE): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_SUBTREE_value(const sk: PSTACK_OF_GENERAL_SUBTREE; index: TIdC_INT): PGENERAL_SUBTREE;
+begin
+  result := PGENERAL_SUBTREE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_GENERAL_SUBTREE_new(compare: sk_GENERAL_SUBTREE_compfunc): PSTACK_OF_GENERAL_SUBTREE;
+begin
+  result := PSTACK_OF_GENERAL_SUBTREE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_GENERAL_SUBTREE_new_null(): PSTACK_OF_GENERAL_SUBTREE;
+begin
+  result := PSTACK_OF_GENERAL_SUBTREE(OPENSSL_sk_new_null());
+end;
+function sk_GENERAL_SUBTREE_new_reserve(compare: sk_GENERAL_SUBTREE_compfunc; n: TIdC_INT): PSTACK_OF_GENERAL_SUBTREE;
+begin
+  result := PSTACK_OF_GENERAL_SUBTREE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_GENERAL_SUBTREE_reserve(sk: PSTACK_OF_GENERAL_SUBTREE; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_GENERAL_SUBTREE_free(sk: PSTACK_OF_GENERAL_SUBTREE);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_GENERAL_SUBTREE_zero(sk: PSTACK_OF_GENERAL_SUBTREE);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_SUBTREE_delete(sk: PSTACK_OF_GENERAL_SUBTREE; i: TIdC_INT): PGENERAL_SUBTREE;
+begin
+  result := PGENERAL_SUBTREE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_GENERAL_SUBTREE_delete_ptr(sk: PSTACK_OF_GENERAL_SUBTREE; ptr: PGENERAL_SUBTREE): PGENERAL_SUBTREE;
+begin
+  result := PGENERAL_SUBTREE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_GENERAL_SUBTREE_push(sk: PSTACK_OF_GENERAL_SUBTREE; ptr: PGENERAL_SUBTREE): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_GENERAL_SUBTREE_unshift(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_GENERAL_SUBTREE_pop(sk: PSTACK_OF_GENERAL_SUBTREE): PGENERAL_SUBTREE;
+begin
+  result := PGENERAL_SUBTREE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_GENERAL_SUBTREE_shift(sk: PSTACK_OF_GENERAL_SUBTREE): PGENERAL_SUBTREE;
+begin
+  result := PGENERAL_SUBTREE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_GENERAL_SUBTREE_pop_free(sk: PSTACK_OF_GENERAL_SUBTREE; freeFunc: sk_GENERAL_SUBTREE_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_GENERAL_SUBTREE_insert(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_GENERAL_SUBTREE_set(sk: PSTACK_OF_GENERAL_SUBTREE; idx: TIdC_INT; const ptr: PGENERAL_SUBTREE): PGENERAL_SUBTREE;
+begin
+  result := PGENERAL_SUBTREE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_GENERAL_SUBTREE_find(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_GENERAL_SUBTREE_find_ex(sk: PSTACK_OF_GENERAL_SUBTREE; const ptr: PGENERAL_SUBTREE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_GENERAL_SUBTREE_sort(sk: PSTACK_OF_GENERAL_SUBTREE);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_SUBTREE_is_sorted(sk: PSTACK_OF_GENERAL_SUBTREE): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_GENERAL_SUBTREE_dup(const sk: PSTACK_OF_GENERAL_SUBTREE): PSTACK_OF_GENERAL_SUBTREE;
+begin
+  result:=PSTACK_OF_GENERAL_SUBTREE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_GENERAL_SUBTREE_deep_copy(const sk: PSTACK_OF_GENERAL_SUBTREE; copyfunc: sk_GENERAL_SUBTREE_copyfunc; freefunc:sk_GENERAL_SUBTREE_freefunc): PSTACK_OF_GENERAL_SUBTREE;
+begin
+  result:=PSTACK_OF_GENERAL_SUBTREE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_GENERAL_SUBTREE_set_cmp_func(const sk: PSTACK_OF_GENERAL_SUBTREE; compare: sk_GENERAL_SUBTREE_compfunc): sk_GENERAL_SUBTREE_compfunc;
+begin
+  result:=sk_GENERAL_SUBTREE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(X509_PURPOSE) Methoden }
+
+function sk_X509_PURPOSE_num(const sk: PSTACK_OF_X509_PURPOSE): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_X509_PURPOSE_value(const sk: PSTACK_OF_X509_PURPOSE; index: TIdC_INT): PX509_PURPOSE;
+begin
+  result := PX509_PURPOSE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_X509_PURPOSE_new(compare: sk_X509_PURPOSE_compfunc): PSTACK_OF_X509_PURPOSE;
+begin
+  result := PSTACK_OF_X509_PURPOSE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_X509_PURPOSE_new_null(): PSTACK_OF_X509_PURPOSE;
+begin
+  result := PSTACK_OF_X509_PURPOSE(OPENSSL_sk_new_null());
+end;
+function sk_X509_PURPOSE_new_reserve(compare: sk_X509_PURPOSE_compfunc; n: TIdC_INT): PSTACK_OF_X509_PURPOSE;
+begin
+  result := PSTACK_OF_X509_PURPOSE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_X509_PURPOSE_reserve(sk: PSTACK_OF_X509_PURPOSE; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_X509_PURPOSE_free(sk: PSTACK_OF_X509_PURPOSE);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_X509_PURPOSE_zero(sk: PSTACK_OF_X509_PURPOSE);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_X509_PURPOSE_delete(sk: PSTACK_OF_X509_PURPOSE; i: TIdC_INT): PX509_PURPOSE;
+begin
+  result := PX509_PURPOSE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_X509_PURPOSE_delete_ptr(sk: PSTACK_OF_X509_PURPOSE; ptr: PX509_PURPOSE): PX509_PURPOSE;
+begin
+  result := PX509_PURPOSE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_X509_PURPOSE_push(sk: PSTACK_OF_X509_PURPOSE; ptr: PX509_PURPOSE): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_X509_PURPOSE_unshift(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_X509_PURPOSE_pop(sk: PSTACK_OF_X509_PURPOSE): PX509_PURPOSE;
+begin
+  result := PX509_PURPOSE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_X509_PURPOSE_shift(sk: PSTACK_OF_X509_PURPOSE): PX509_PURPOSE;
+begin
+  result := PX509_PURPOSE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_X509_PURPOSE_pop_free(sk: PSTACK_OF_X509_PURPOSE; freeFunc: sk_X509_PURPOSE_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_X509_PURPOSE_insert(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_X509_PURPOSE_set(sk: PSTACK_OF_X509_PURPOSE; idx: TIdC_INT; const ptr: PX509_PURPOSE): PX509_PURPOSE;
+begin
+  result := PX509_PURPOSE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_X509_PURPOSE_find(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_X509_PURPOSE_find_ex(sk: PSTACK_OF_X509_PURPOSE; const ptr: PX509_PURPOSE): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_X509_PURPOSE_sort(sk: PSTACK_OF_X509_PURPOSE);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_X509_PURPOSE_is_sorted(sk: PSTACK_OF_X509_PURPOSE): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_X509_PURPOSE_dup(const sk: PSTACK_OF_X509_PURPOSE): PSTACK_OF_X509_PURPOSE;
+begin
+  result:=PSTACK_OF_X509_PURPOSE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_X509_PURPOSE_deep_copy(const sk: PSTACK_OF_X509_PURPOSE; copyfunc: sk_X509_PURPOSE_copyfunc; freefunc:sk_X509_PURPOSE_freefunc): PSTACK_OF_X509_PURPOSE;
+begin
+  result:=PSTACK_OF_X509_PURPOSE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_X509_PURPOSE_set_cmp_func(const sk: PSTACK_OF_X509_PURPOSE; compare: sk_X509_PURPOSE_compfunc): sk_X509_PURPOSE_compfunc;
+begin
+  result:=sk_X509_PURPOSE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(ASIdOrRange) Methoden }
+
+function sk_ASIdOrRange_num(const sk: PSTACK_OF_ASIdOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_ASIdOrRange_value(const sk: PSTACK_OF_ASIdOrRange; index: TIdC_INT): PASIdOrRange;
+begin
+  result := PASIdOrRange(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_ASIdOrRange_new(compare: sk_ASIdOrRange_compfunc): PSTACK_OF_ASIdOrRange;
+begin
+  result := PSTACK_OF_ASIdOrRange(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_ASIdOrRange_new_null(): PSTACK_OF_ASIdOrRange;
+begin
+  result := PSTACK_OF_ASIdOrRange(OPENSSL_sk_new_null());
+end;
+function sk_ASIdOrRange_new_reserve(compare: sk_ASIdOrRange_compfunc; n: TIdC_INT): PSTACK_OF_ASIdOrRange;
+begin
+  result := PSTACK_OF_ASIdOrRange(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_ASIdOrRange_reserve(sk: PSTACK_OF_ASIdOrRange; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_ASIdOrRange_free(sk: PSTACK_OF_ASIdOrRange);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_ASIdOrRange_zero(sk: PSTACK_OF_ASIdOrRange);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_ASIdOrRange_delete(sk: PSTACK_OF_ASIdOrRange; i: TIdC_INT): PASIdOrRange;
+begin
+  result := PASIdOrRange(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_ASIdOrRange_delete_ptr(sk: PSTACK_OF_ASIdOrRange; ptr: PASIdOrRange): PASIdOrRange;
+begin
+  result := PASIdOrRange(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_ASIdOrRange_push(sk: PSTACK_OF_ASIdOrRange; ptr: PASIdOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ASIdOrRange_unshift(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ASIdOrRange_pop(sk: PSTACK_OF_ASIdOrRange): PASIdOrRange;
+begin
+  result := PASIdOrRange(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_ASIdOrRange_shift(sk: PSTACK_OF_ASIdOrRange): PASIdOrRange;
+begin
+  result := PASIdOrRange(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_ASIdOrRange_pop_free(sk: PSTACK_OF_ASIdOrRange; freeFunc: sk_ASIdOrRange_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_ASIdOrRange_insert(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_ASIdOrRange_set(sk: PSTACK_OF_ASIdOrRange; idx: TIdC_INT; const ptr: PASIdOrRange): PASIdOrRange;
+begin
+  result := PASIdOrRange(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_ASIdOrRange_find(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_ASIdOrRange_find_ex(sk: PSTACK_OF_ASIdOrRange; const ptr: PASIdOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_ASIdOrRange_sort(sk: PSTACK_OF_ASIdOrRange);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_ASIdOrRange_is_sorted(sk: PSTACK_OF_ASIdOrRange): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_ASIdOrRange_dup(const sk: PSTACK_OF_ASIdOrRange): PSTACK_OF_ASIdOrRange;
+begin
+  result:=PSTACK_OF_ASIdOrRange(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_ASIdOrRange_deep_copy(const sk: PSTACK_OF_ASIdOrRange; copyfunc: sk_ASIdOrRange_copyfunc; freefunc:sk_ASIdOrRange_freefunc): PSTACK_OF_ASIdOrRange;
+begin
+  result:=PSTACK_OF_ASIdOrRange(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_ASIdOrRange_set_cmp_func(const sk: PSTACK_OF_ASIdOrRange; compare: sk_ASIdOrRange_compfunc): sk_ASIdOrRange_compfunc;
+begin
+  result:=sk_ASIdOrRange_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(IPAddressOrRange) Methoden }
+
+function sk_IPAddressOrRange_num(const sk: PSTACK_OF_IPAddressOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_IPAddressOrRange_value(const sk: PSTACK_OF_IPAddressOrRange; index: TIdC_INT): PIPAddressOrRange;
+begin
+  result := PIPAddressOrRange(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_IPAddressOrRange_new(compare: sk_IPAddressOrRange_compfunc): PSTACK_OF_IPAddressOrRange;
+begin
+  result := PSTACK_OF_IPAddressOrRange(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_IPAddressOrRange_new_null(): PSTACK_OF_IPAddressOrRange;
+begin
+  result := PSTACK_OF_IPAddressOrRange(OPENSSL_sk_new_null());
+end;
+function sk_IPAddressOrRange_new_reserve(compare: sk_IPAddressOrRange_compfunc; n: TIdC_INT): PSTACK_OF_IPAddressOrRange;
+begin
+  result := PSTACK_OF_IPAddressOrRange(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_IPAddressOrRange_reserve(sk: PSTACK_OF_IPAddressOrRange; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_IPAddressOrRange_free(sk: PSTACK_OF_IPAddressOrRange);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_IPAddressOrRange_zero(sk: PSTACK_OF_IPAddressOrRange);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_IPAddressOrRange_delete(sk: PSTACK_OF_IPAddressOrRange; i: TIdC_INT): PIPAddressOrRange;
+begin
+  result := PIPAddressOrRange(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_IPAddressOrRange_delete_ptr(sk: PSTACK_OF_IPAddressOrRange; ptr: PIPAddressOrRange): PIPAddressOrRange;
+begin
+  result := PIPAddressOrRange(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_IPAddressOrRange_push(sk: PSTACK_OF_IPAddressOrRange; ptr: PIPAddressOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_IPAddressOrRange_unshift(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_IPAddressOrRange_pop(sk: PSTACK_OF_IPAddressOrRange): PIPAddressOrRange;
+begin
+  result := PIPAddressOrRange(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_IPAddressOrRange_shift(sk: PSTACK_OF_IPAddressOrRange): PIPAddressOrRange;
+begin
+  result := PIPAddressOrRange(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_IPAddressOrRange_pop_free(sk: PSTACK_OF_IPAddressOrRange; freeFunc: sk_IPAddressOrRange_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_IPAddressOrRange_insert(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_IPAddressOrRange_set(sk: PSTACK_OF_IPAddressOrRange; idx: TIdC_INT; const ptr: PIPAddressOrRange): PIPAddressOrRange;
+begin
+  result := PIPAddressOrRange(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_IPAddressOrRange_find(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_IPAddressOrRange_find_ex(sk: PSTACK_OF_IPAddressOrRange; const ptr: PIPAddressOrRange): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_IPAddressOrRange_sort(sk: PSTACK_OF_IPAddressOrRange);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_IPAddressOrRange_is_sorted(sk: PSTACK_OF_IPAddressOrRange): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_IPAddressOrRange_dup(const sk: PSTACK_OF_IPAddressOrRange): PSTACK_OF_IPAddressOrRange;
+begin
+  result:=PSTACK_OF_IPAddressOrRange(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_IPAddressOrRange_deep_copy(const sk: PSTACK_OF_IPAddressOrRange; copyfunc: sk_IPAddressOrRange_copyfunc; freefunc:sk_IPAddressOrRange_freefunc): PSTACK_OF_IPAddressOrRange;
+begin
+  result:=PSTACK_OF_IPAddressOrRange(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_IPAddressOrRange_set_cmp_func(const sk: PSTACK_OF_IPAddressOrRange; compare: sk_IPAddressOrRange_compfunc): sk_IPAddressOrRange_compfunc;
+begin
+  result:=sk_IPAddressOrRange_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(ADMISSIONS) Methoden }
+
+function sk_ADMISSIONS_num(const sk: PSTACK_OF_ADMISSIONS): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_ADMISSIONS_value(const sk: PSTACK_OF_ADMISSIONS; index: TIdC_INT): PADMISSIONS;
+begin
+  result := PADMISSIONS(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_ADMISSIONS_new(compare: sk_ADMISSIONS_compfunc): PSTACK_OF_ADMISSIONS;
+begin
+  result := PSTACK_OF_ADMISSIONS(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_ADMISSIONS_new_null(): PSTACK_OF_ADMISSIONS;
+begin
+  result := PSTACK_OF_ADMISSIONS(OPENSSL_sk_new_null());
+end;
+function sk_ADMISSIONS_new_reserve(compare: sk_ADMISSIONS_compfunc; n: TIdC_INT): PSTACK_OF_ADMISSIONS;
+begin
+  result := PSTACK_OF_ADMISSIONS(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_ADMISSIONS_reserve(sk: PSTACK_OF_ADMISSIONS; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_ADMISSIONS_free(sk: PSTACK_OF_ADMISSIONS);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_ADMISSIONS_zero(sk: PSTACK_OF_ADMISSIONS);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_ADMISSIONS_delete(sk: PSTACK_OF_ADMISSIONS; i: TIdC_INT): PADMISSIONS;
+begin
+  result := PADMISSIONS(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_ADMISSIONS_delete_ptr(sk: PSTACK_OF_ADMISSIONS; ptr: PADMISSIONS): PADMISSIONS;
+begin
+  result := PADMISSIONS(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_ADMISSIONS_push(sk: PSTACK_OF_ADMISSIONS; ptr: PADMISSIONS): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ADMISSIONS_unshift(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_ADMISSIONS_pop(sk: PSTACK_OF_ADMISSIONS): PADMISSIONS;
+begin
+  result := PADMISSIONS(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_ADMISSIONS_shift(sk: PSTACK_OF_ADMISSIONS): PADMISSIONS;
+begin
+  result := PADMISSIONS(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_ADMISSIONS_pop_free(sk: PSTACK_OF_ADMISSIONS; freeFunc: sk_ADMISSIONS_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_ADMISSIONS_insert(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_ADMISSIONS_set(sk: PSTACK_OF_ADMISSIONS; idx: TIdC_INT; const ptr: PADMISSIONS): PADMISSIONS;
+begin
+  result := PADMISSIONS(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_ADMISSIONS_find(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_ADMISSIONS_find_ex(sk: PSTACK_OF_ADMISSIONS; const ptr: PADMISSIONS): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_ADMISSIONS_sort(sk: PSTACK_OF_ADMISSIONS);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_ADMISSIONS_is_sorted(sk: PSTACK_OF_ADMISSIONS): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_ADMISSIONS_dup(const sk: PSTACK_OF_ADMISSIONS): PSTACK_OF_ADMISSIONS;
+begin
+  result:=PSTACK_OF_ADMISSIONS(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_ADMISSIONS_deep_copy(const sk: PSTACK_OF_ADMISSIONS; copyfunc: sk_ADMISSIONS_copyfunc; freefunc:sk_ADMISSIONS_freefunc): PSTACK_OF_ADMISSIONS;
+begin
+  result:=PSTACK_OF_ADMISSIONS(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_ADMISSIONS_set_cmp_func(const sk: PSTACK_OF_ADMISSIONS; compare: sk_ADMISSIONS_compfunc): sk_ADMISSIONS_compfunc;
+begin
+  result:=sk_ADMISSIONS_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(PROFESSION_INFO) Methoden }
+
+function sk_PROFESSION_INFO_num(const sk: PSTACK_OF_PROFESSION_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_PROFESSION_INFO_value(const sk: PSTACK_OF_PROFESSION_INFO; index: TIdC_INT): PPROFESSION_INFO;
+begin
+  result := PPROFESSION_INFO(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_PROFESSION_INFO_new(compare: sk_PROFESSION_INFO_compfunc): PSTACK_OF_PROFESSION_INFO;
+begin
+  result := PSTACK_OF_PROFESSION_INFO(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_PROFESSION_INFO_new_null(): PSTACK_OF_PROFESSION_INFO;
+begin
+  result := PSTACK_OF_PROFESSION_INFO(OPENSSL_sk_new_null());
+end;
+function sk_PROFESSION_INFO_new_reserve(compare: sk_PROFESSION_INFO_compfunc; n: TIdC_INT): PSTACK_OF_PROFESSION_INFO;
+begin
+  result := PSTACK_OF_PROFESSION_INFO(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_PROFESSION_INFO_reserve(sk: PSTACK_OF_PROFESSION_INFO; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_PROFESSION_INFO_free(sk: PSTACK_OF_PROFESSION_INFO);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_PROFESSION_INFO_zero(sk: PSTACK_OF_PROFESSION_INFO);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_PROFESSION_INFO_delete(sk: PSTACK_OF_PROFESSION_INFO; i: TIdC_INT): PPROFESSION_INFO;
+begin
+  result := PPROFESSION_INFO(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_PROFESSION_INFO_delete_ptr(sk: PSTACK_OF_PROFESSION_INFO; ptr: PPROFESSION_INFO): PPROFESSION_INFO;
+begin
+  result := PPROFESSION_INFO(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_PROFESSION_INFO_push(sk: PSTACK_OF_PROFESSION_INFO; ptr: PPROFESSION_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_PROFESSION_INFO_unshift(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_PROFESSION_INFO_pop(sk: PSTACK_OF_PROFESSION_INFO): PPROFESSION_INFO;
+begin
+  result := PPROFESSION_INFO(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_PROFESSION_INFO_shift(sk: PSTACK_OF_PROFESSION_INFO): PPROFESSION_INFO;
+begin
+  result := PPROFESSION_INFO(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_PROFESSION_INFO_pop_free(sk: PSTACK_OF_PROFESSION_INFO; freeFunc: sk_PROFESSION_INFO_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_PROFESSION_INFO_insert(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_PROFESSION_INFO_set(sk: PSTACK_OF_PROFESSION_INFO; idx: TIdC_INT; const ptr: PPROFESSION_INFO): PPROFESSION_INFO;
+begin
+  result := PPROFESSION_INFO(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_PROFESSION_INFO_find(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_PROFESSION_INFO_find_ex(sk: PSTACK_OF_PROFESSION_INFO; const ptr: PPROFESSION_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_PROFESSION_INFO_sort(sk: PSTACK_OF_PROFESSION_INFO);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_PROFESSION_INFO_is_sorted(sk: PSTACK_OF_PROFESSION_INFO): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_PROFESSION_INFO_dup(const sk: PSTACK_OF_PROFESSION_INFO): PSTACK_OF_PROFESSION_INFO;
+begin
+  result:=PSTACK_OF_PROFESSION_INFO(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_PROFESSION_INFO_deep_copy(const sk: PSTACK_OF_PROFESSION_INFO; copyfunc: sk_PROFESSION_INFO_copyfunc; freefunc:sk_PROFESSION_INFO_freefunc): PSTACK_OF_PROFESSION_INFO;
+begin
+  result:=PSTACK_OF_PROFESSION_INFO(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_PROFESSION_INFO_set_cmp_func(const sk: PSTACK_OF_PROFESSION_INFO; compare: sk_PROFESSION_INFO_compfunc): sk_PROFESSION_INFO_compfunc;
+begin
+  result:=sk_PROFESSION_INFO_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
 
 end.

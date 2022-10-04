@@ -39,6 +39,7 @@ uses
   IdOpenSSLConsts,
   IdOpenSSLHeaders_asn1t,
   IdOpenSSLHeaders_bio,
+  IdOpenSSLHeaders_stack,
   IdOpenSSlHeaders_ossl_typ;
 
 {$MINENUMSIZE 4}
@@ -84,9 +85,12 @@ const
   SMIME_CRLFEOL = $800;
   SMIME_STREAM = $1000;
 
+//type
+// -> IdOpenSSlHeaders_ossl_typ.pas
 //    struct X509_algor_st;
-//DEFINE_STACK_OF(X509_ALGOR)
+//-DEFINE_STACK_OF(X509_ALGOR)
 
+const
   ASN1_STRING_FLAG_BITS_LEFT = $08;   (* Set if $07 has bits left value *)
   (*
    * This indicates that the ASN1_STRING is not a real value but just a place
@@ -466,6 +470,8 @@ type
 //        int i2d_##name(type *a, unsigned char **out); \
 //#  define DECLARE_ASN1_ITEM(name) \
 //        OPENSSL_EXTERN const ASN1_ITEM name##_it;
+ // moved from below to here
+  //DEFINE_STACK_OF(ASN1_OBJECT)
 
 var
 // DECLARE_ASN1_FUNCTIONS_fname(ASN1_TYPE, ASN1_ANY, ASN1_TYPE)

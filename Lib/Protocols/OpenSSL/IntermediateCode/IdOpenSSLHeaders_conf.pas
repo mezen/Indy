@@ -38,7 +38,8 @@ uses
   IdGlobal,
   IdOpenSSLConsts,
   IdOpenSSLHeaders_bio,
-  IdOpenSSLHeaders_ossl_typ;
+  IdOpenSSLHeaders_ossl_typ,
+  IdOpenSSLHeaders_stack;
 
 type
   CONF_parse_list_list_cb = function (const elem: PAnsiChar; len: TIdC_INT; usr: Pointer): TIdC_INT;

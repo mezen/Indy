@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 23.07.2021 14:40:17
+// Generation date: 07.09.2022 11:33:03
 
 unit IdOpenSSLHeaders_pkcs7;
 
@@ -44,6 +44,8 @@ uses
   IdCTypes,
   IdGlobal,
   IdOpenSSLConsts,
+  IdOpenSSLHeaders_x509,
+  IdOpenSSLHeaders_stack,
   IdOpenSSLHeaders_ossl_typ;
 
 const
@@ -107,15 +109,22 @@ type
     version: PASN1_INTEGER;
     issuer_and_serial: PPKCS7_ISSUER_AND_SERIAL;
     digest_alg: PX509_ALGOR;
-    auth_attr: Pointer; //PSTACK_OF_X509_ATTRIBUTE;
+    auth_attr: PSTACK_OF_X509_ATTRIBUTE;
     digest_enc_alg: PX509_ALGOR;
     enc_digest: PASN1_OCTET_STRING;
-    unauth_attr: Pointer; //PSTACK_OF_X509_ATTRIBUTE;
+    unauth_attr: PSTACK_OF_X509_ATTRIBUTE;
     pkey: PEVP_PKEY;
   end;
   PKCS7_SIGNER_INFO = pkcs7_issuer_and_serial_st;
   PPKCS7_SIGNER_INFO = ^PKCS7_SIGNER_INFO;
   PPPKCS7_SIGNER_INFO = ^PPKCS7_SIGNER_INFO;
+
+  // DEFINE_STACK_OF(PKCS7_SIGNER_INFO)
+  STACK_OF_PKCS7_SIGNER_INFO = type of pointer;
+  PSTACK_OF_PKCS7_SIGNER_INFO = ^STACK_OF_PKCS7_SIGNER_INFO;
+  sk_PKCS7_SIGNER_INFO_compfunc = function(const a: PPKCS7_SIGNER_INFO; const b: PPKCS7_SIGNER_INFO): TIdC_INT; cdecl;
+  sk_PKCS7_SIGNER_INFO_freefunc = procedure(a: PPKCS7_SIGNER_INFO); cdecl;
+  sk_PKCS7_SIGNER_INFO_copyfunc = function(const a: PPKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO; cdecl;
 
   pkcs7_recip_info_st = record
     version: PASN1_INTEGER;
@@ -128,12 +137,19 @@ type
   PPKCS7_RECIP_INFO = ^PKCS7_RECIP_INFO;
   PPPKCS7_RECIP_INFO = ^PPKCS7_RECIP_INFO;
 
+  // DEFINE_STACK_OF(PKCS7_RECIP_INFO)
+  STACK_OF_PKCS7_RECIP_INFO = type of pointer;
+  PSTACK_OF_PKCS7_RECIP_INFO = ^STACK_OF_PKCS7_RECIP_INFO;
+  sk_PKCS7_RECIP_INFO_compfunc = function(const a: PPKCS7_RECIP_INFO; const b: PPKCS7_RECIP_INFO): TIdC_INT; cdecl;
+  sk_PKCS7_RECIP_INFO_freefunc = procedure(a: PPKCS7_RECIP_INFO); cdecl;
+  sk_PKCS7_RECIP_INFO_copyfunc = function(const a: PPKCS7_RECIP_INFO): PPKCS7_RECIP_INFO; cdecl;
+
   pkcs7_signed_st = record
     version: PASN1_INTEGER;
-    md_algs: Pointer; //PSTACK_OF_X509_ALGOR;
-    cert: Pointer; //PSTACK_OF_X509;
-    crl: Pointer; //PSTACK_OF_X509_CRL;
-    signer_info: Pointer; //PSTACK_OF_PKCS7_SIGNER_INFO;
+    md_algs: PSTACK_OF_X509_ALGOR;
+    cert: PSTACK_OF_X509; //PSTACK_OF_X509;
+    crl: PSTACK_OF_X509_CRL;
+    signer_info: PSTACK_OF_PKCS7_SIGNER_INFO;
     contents: PPKCS7;
   end;
   PKCS7_SIGNED = pkcs7_signed_st;
@@ -152,7 +168,7 @@ type
 
   pkcs7_enveloped_st = record
     version: PASN1_INTEGER;
-    recipientinfo: Pointer; //PSTACK_OF_PKCS7_RECIP_INFO;
+    recipientinfo: PSTACK_OF_PKCS7_RECIP_INFO;
     enc_data: PPKCS7_ENC_CONTENT;
   end;
   PKCS7_ENVELOPE = pkcs7_enveloped_st;
@@ -161,12 +177,12 @@ type
 
   pkcs7_signedandenveloped_st = record
     version: PASN1_INTEGER;
-    md_algs: Pointer; //PSTACK_OF_X509_ALGOR;
-    cert: Pointer; //PSTACK_OF_X509;
-    crl: Pointer; //PSTACK_OF_X509_CRL;
-    signer_info: Pointer; //PSTACK_OF_PKCS7_SIGNER_INFO;
+    md_algs: PSTACK_OF_X509_ALGOR;
+    cert: PSTACK_OF_X509; //PSTACK_OF_X509;
+    crl: PSTACK_OF_X509_CRL;
+    signer_info: PSTACK_OF_PKCS7_SIGNER_INFO;
     enc_data: PPKCS7_ENC_CONTENT;
-    recipientinfo: Pointer; //PSTACK_OF_PKCS7_RECIP_INFO;
+    recipientinfo: PSTACK_OF_PKCS7_RECIP_INFO;
   end;
   PKCS7_SIGN_ENVELOPE = pkcs7_signedandenveloped_st;
   PPKCS7_SIGN_ENVELOPE = ^PKCS7_SIGN_ENVELOPE;
@@ -276,8 +292,8 @@ var
 //  function i2d_PKCS7_ENCRYPT(const a: PPKCS7_ENCRYPT_STRUCT; out_: PByte): TIdC_INT;
 //  function PKCS7_ENCRYPT_it: PASN1_ITEM;
 //
-//  function PKCS7_new: PPKCS7;
-//  procedure PKCS7_free(a: PPKCS7);
+  PKCS7_new: function: PPKCS7 cdecl = nil;
+  PKCS7_free: procedure(a: PPKCS7) cdecl = nil;
 //  function d2i_PKCS7(a: PPPKCS7; const in_: PByte; len: TIdC_LONG): PPKCS7;
 //  function i2d_PKCS7(const a: PPKCS7; out_: PByte): TIdC_INT;
 //  function PKCS7_it: PASN1_ITEM;
@@ -310,7 +326,7 @@ var
   PKCS7_add_signature: function(p7: PPKCS7; x509: PX509; pkey: PEVP_PKEY; const dgst: PEVP_MD): PPKCS7_SIGNER_INFO cdecl = nil;
   PKCS7_cert_from_signer_info: function(p7: PPKCS7; si: PPKCS7_SIGNER_INFO): PX509 cdecl = nil;
   PKCS7_set_digest: function(p7: PPKCS7; const md: PEVP_MD): TIdC_INT cdecl = nil;
-//  function PKCS7_get_signer_info(p7: PPKCS7): PSTACK_OF_PKCS7_SIGNER_INFO;
+  PKCS7_get_signer_info: function(p7: PPKCS7): PSTACK_OF_PKCS7_SIGNER_INFO cdecl = nil;
 
   PKCS7_add_recipient: function(p7: PPKCS7; x509: PX509): PPKCS7_RECIP_INFO cdecl = nil;
   PKCS7_SIGNER_INFO_get0_algs: procedure(si: PPKCS7_SIGNER_INFO; pk: PPEVP_PKEY; pdig: PPX509_ALGOR; psig: PPX509_ALGOR) cdecl = nil;
@@ -321,27 +337,27 @@ var
   PKCS7_stream: function(boundary: PPPByte; p7: PPKCS7): TIdC_INT cdecl = nil;
 
   PKCS7_get_issuer_and_serial: function(p7: PPKCS7; idx: TIdC_INT): PPKCS7_ISSUER_AND_SERIAL cdecl = nil;
-  //function PKCS7_digest_from_attributes(sk: Pointer{PSTACK_OF_X509_ATTRIBUTE}): PASN1_OCTET_STRING;
+  PKCS7_digest_from_attributes: function(sk: PSTACK_OF_X509_ATTRIBUTE): PASN1_OCTET_STRING cdecl = nil;
   PKCS7_add_signed_attribute: function(p7si: PPKCS7_SIGNER_INFO; nid: TIdC_INT; type_: TIdC_INT; data: Pointer): TIdC_INT cdecl = nil;
   PKCS7_add_attribute: function(p7si: PPKCS7_SIGNER_INFO; nid: TIdC_INT; atrtype: TIdC_INT; value: Pointer): TIdC_INT cdecl = nil;
   PKCS7_get_attribute: function(si: PPKCS7_SIGNER_INFO; nid: TIdC_INT): PASN1_TYPE cdecl = nil;
   PKCS7_get_signed_attribute: function(si: PPKCS7_SIGNER_INFO; nid: TIdC_INT): PASN1_TYPE cdecl = nil;
-  //function PKCS7_set_signed_attributes(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509): TIdC_INT;
-  //function PKCS7_set_attributes(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509_ATTRIBUTE): TIdC_INT;
+  PKCS7_set_signed_attributes: function(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509): TIdC_INT cdecl = nil;
+  PKCS7_set_attributes: function(p7si: PPKCS7_SIGNER_INFO; sk: PSTACK_OF_X509_ATTRIBUTE): TIdC_INT cdecl = nil;
 
-  //function PKCS7_sign(signcert: PX509; pkey: PEVP_PKEY; certs: PSTACK_OF_X509; data: PBIO; flags: TIdC_INT): PPKCS7;
+  PKCS7_sign: function(signcert: PX509; pkey: PEVP_PKEY; certs: PSTACK_OF_X509; data: PBIO; flags: TIdC_INT): PPKCS7 cdecl = nil;
 
   PKCS7_sign_add_signer: function(p7: PPKCS7; signcert: PX509; pkey: PEVP_PKEY; const md: PEVP_MD; flags: TIdC_INT): PPKCS7_SIGNER_INFO cdecl = nil;
 
   PKCS7_final: function(p7: PPKCS7; data: PBIO; flags: TIdC_INT): TIdC_INT cdecl = nil;
-  //function PKCS7_verify(p7: PPKCS7; certs: PSTACK_OF_X509; store: PX509_STORE; indata: PBIO; out_: PBIO; flags: TIdC_INT): TIdC_INT;
-  //function PKCS7_get0_signers(p7: PPKCS7; certs: PSTACK_OF_X509; flags: TIdC_INT): PSTACK_OF_X509;
-  //function PKCS7_encrypt(certs: PSTACK_OF_X509; in_: PBIO; const cipher: PEVP_CIPHER; flags: TIdC_INT): PPKCS7;
+  PKCS7_verify: function(p7: PPKCS7; certs: PSTACK_OF_X509; store: PX509_STORE; indata: PBIO; out_: PBIO; flags: TIdC_INT): TIdC_INT cdecl = nil;
+  PKCS7_get0_signers: function(p7: PPKCS7; certs: PSTACK_OF_X509; flags: TIdC_INT): PSTACK_OF_X509 cdecl = nil;
+  PKCS7_encrypt: function(certs: PSTACK_OF_X509; in_: PBIO; const cipher: PEVP_CIPHER; flags: TIdC_INT): PPKCS7 cdecl = nil;
   PKCS7_decrypt: function(p7: PPKCS7; pkey: PEVP_PKEY; cert: PX509; data: PBIO; flags: TIdC_INT): TIdC_INT cdecl = nil;
 
-  //function PKCS7_add_attrib_smimecap(si: PPKCS7_SIGNER_INFO; cap: PSTACK_OF_X509_ALGOR): TIdC_INT;
-  //function PKCS7_get_smimecap(si: PPKCS7_SIGNER_INFO): PSTACK_OF_X509_ALGOR;
-  //function PKCS7_simple_smimecap(sk: PSTACK_OF_X509_ALGOR; nid: TIdC_INT; arg: TIdC_INT): TIdC_INT;
+  PKCS7_add_attrib_smimecap: function(si: PPKCS7_SIGNER_INFO; cap: PSTACK_OF_X509_ALGOR): TIdC_INT cdecl = nil;
+  PKCS7_get_smimecap: function(si: PPKCS7_SIGNER_INFO): PSTACK_OF_X509_ALGOR cdecl = nil;
+  PKCS7_simple_smimecap: function(sk: PSTACK_OF_X509_ALGOR; nid: TIdC_INT; arg: TIdC_INT): TIdC_INT cdecl = nil;
 
   PKCS7_add_attrib_content_type: function(si: PPKCS7_SIGNER_INFO; coid: PASN1_OBJECT): TIdC_INT cdecl = nil;
   PKCS7_add0_attrib_signing_time: function(si: PPKCS7_SIGNER_INFO; t: PASN1_TIME): TIdC_INT cdecl = nil;
@@ -352,7 +368,258 @@ var
 
   BIO_new_PKCS7: function(out_: PBIO; p7: PPKCS7): PBIO cdecl = nil;
 
+function sk_PKCS7_SIGNER_INFO_num(const sk: PSTACK_OF_PKCS7_SIGNER_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_value(const sk: PSTACK_OF_PKCS7_SIGNER_INFO; index: TIdC_INT): PPKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_new(compare: sk_PKCS7_SIGNER_INFO_compfunc): PSTACK_OF_PKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_new_null(): PSTACK_OF_PKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_new_reserve(compare: sk_PKCS7_SIGNER_INFO_compfunc; n: TIdC_INT): PSTACK_OF_PKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_reserve(sk: PSTACK_OF_PKCS7_SIGNER_INFO; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_SIGNER_INFO_free(sk: PSTACK_OF_PKCS7_SIGNER_INFO);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_SIGNER_INFO_zero(sk: PSTACK_OF_PKCS7_SIGNER_INFO);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_delete(sk: PSTACK_OF_PKCS7_SIGNER_INFO; i: TIdC_INT): PPKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_delete_ptr(sk: PSTACK_OF_PKCS7_SIGNER_INFO; ptr: PPKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_push(sk: PSTACK_OF_PKCS7_SIGNER_INFO; ptr: PPKCS7_SIGNER_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_unshift(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_pop(sk: PSTACK_OF_PKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_shift(sk: PSTACK_OF_PKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_SIGNER_INFO_pop_free(sk: PSTACK_OF_PKCS7_SIGNER_INFO; freeFunc: sk_PKCS7_SIGNER_INFO_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_insert(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_set(sk: PSTACK_OF_PKCS7_SIGNER_INFO; idx: TIdC_INT; const ptr: PPKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_find(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_find_ex(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_SIGNER_INFO_sort(sk: PSTACK_OF_PKCS7_SIGNER_INFO);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_is_sorted(sk: PSTACK_OF_PKCS7_SIGNER_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_dup(const sk: PSTACK_OF_PKCS7_SIGNER_INFO): PSTACK_OF_PKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_deep_copy(const sk: PSTACK_OF_PKCS7_SIGNER_INFO; copyfunc: sk_PKCS7_SIGNER_INFO_copyfunc; freefunc:sk_PKCS7_SIGNER_INFO_freefunc): PSTACK_OF_PKCS7_SIGNER_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_SIGNER_INFO_set_cmp_func(const sk: PSTACK_OF_PKCS7_SIGNER_INFO; compare: sk_PKCS7_SIGNER_INFO_compfunc): sk_PKCS7_SIGNER_INFO_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
+function sk_PKCS7_RECIP_INFO_num(const sk: PSTACK_OF_PKCS7_RECIP_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_value(const sk: PSTACK_OF_PKCS7_RECIP_INFO; index: TIdC_INT): PPKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_new(compare: sk_PKCS7_RECIP_INFO_compfunc): PSTACK_OF_PKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_new_null(): PSTACK_OF_PKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_new_reserve(compare: sk_PKCS7_RECIP_INFO_compfunc; n: TIdC_INT): PSTACK_OF_PKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_reserve(sk: PSTACK_OF_PKCS7_RECIP_INFO; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_RECIP_INFO_free(sk: PSTACK_OF_PKCS7_RECIP_INFO);{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_RECIP_INFO_zero(sk: PSTACK_OF_PKCS7_RECIP_INFO);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_delete(sk: PSTACK_OF_PKCS7_RECIP_INFO; i: TIdC_INT): PPKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_delete_ptr(sk: PSTACK_OF_PKCS7_RECIP_INFO; ptr: PPKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_push(sk: PSTACK_OF_PKCS7_RECIP_INFO; ptr: PPKCS7_RECIP_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_unshift(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_pop(sk: PSTACK_OF_PKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_shift(sk: PSTACK_OF_PKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_RECIP_INFO_pop_free(sk: PSTACK_OF_PKCS7_RECIP_INFO; freeFunc: sk_PKCS7_RECIP_INFO_freefunc);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_insert(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_set(sk: PSTACK_OF_PKCS7_RECIP_INFO; idx: TIdC_INT; const ptr: PPKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_find(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_find_ex(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+procedure sk_PKCS7_RECIP_INFO_sort(sk: PSTACK_OF_PKCS7_RECIP_INFO);{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_is_sorted(sk: PSTACK_OF_PKCS7_RECIP_INFO): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_dup(const sk: PSTACK_OF_PKCS7_RECIP_INFO): PSTACK_OF_PKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_deep_copy(const sk: PSTACK_OF_PKCS7_RECIP_INFO; copyfunc: sk_PKCS7_RECIP_INFO_copyfunc; freefunc:sk_PKCS7_RECIP_INFO_freefunc): PSTACK_OF_PKCS7_RECIP_INFO;{$ifdef USE_INLINE} inline;{$endif}
+function sk_PKCS7_RECIP_INFO_set_cmp_func(const sk: PSTACK_OF_PKCS7_RECIP_INFO; compare: sk_PKCS7_RECIP_INFO_compfunc): sk_PKCS7_RECIP_INFO_compfunc;{$ifdef USE_INLINE} inline;{$endif}
+
 implementation
+
+{ DEFINE_STACK_OF(PKCS7_SIGNER_INFO) Methoden }
+
+function sk_PKCS7_SIGNER_INFO_num(const sk: PSTACK_OF_PKCS7_SIGNER_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_SIGNER_INFO_value(const sk: PSTACK_OF_PKCS7_SIGNER_INFO; index: TIdC_INT): PPKCS7_SIGNER_INFO;
+begin
+  result := PPKCS7_SIGNER_INFO(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_PKCS7_SIGNER_INFO_new(compare: sk_PKCS7_SIGNER_INFO_compfunc): PSTACK_OF_PKCS7_SIGNER_INFO;
+begin
+  result := PSTACK_OF_PKCS7_SIGNER_INFO(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_PKCS7_SIGNER_INFO_new_null(): PSTACK_OF_PKCS7_SIGNER_INFO;
+begin
+  result := PSTACK_OF_PKCS7_SIGNER_INFO(OPENSSL_sk_new_null());
+end;
+function sk_PKCS7_SIGNER_INFO_new_reserve(compare: sk_PKCS7_SIGNER_INFO_compfunc; n: TIdC_INT): PSTACK_OF_PKCS7_SIGNER_INFO;
+begin
+  result := PSTACK_OF_PKCS7_SIGNER_INFO(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_PKCS7_SIGNER_INFO_reserve(sk: PSTACK_OF_PKCS7_SIGNER_INFO; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_PKCS7_SIGNER_INFO_free(sk: PSTACK_OF_PKCS7_SIGNER_INFO);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_PKCS7_SIGNER_INFO_zero(sk: PSTACK_OF_PKCS7_SIGNER_INFO);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_SIGNER_INFO_delete(sk: PSTACK_OF_PKCS7_SIGNER_INFO; i: TIdC_INT): PPKCS7_SIGNER_INFO;
+begin
+  result := PPKCS7_SIGNER_INFO(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_PKCS7_SIGNER_INFO_delete_ptr(sk: PSTACK_OF_PKCS7_SIGNER_INFO; ptr: PPKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;
+begin
+  result := PPKCS7_SIGNER_INFO(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_PKCS7_SIGNER_INFO_push(sk: PSTACK_OF_PKCS7_SIGNER_INFO; ptr: PPKCS7_SIGNER_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_PKCS7_SIGNER_INFO_unshift(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_PKCS7_SIGNER_INFO_pop(sk: PSTACK_OF_PKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;
+begin
+  result := PPKCS7_SIGNER_INFO(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_PKCS7_SIGNER_INFO_shift(sk: PSTACK_OF_PKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;
+begin
+  result := PPKCS7_SIGNER_INFO(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_PKCS7_SIGNER_INFO_pop_free(sk: PSTACK_OF_PKCS7_SIGNER_INFO; freeFunc: sk_PKCS7_SIGNER_INFO_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_PKCS7_SIGNER_INFO_insert(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_PKCS7_SIGNER_INFO_set(sk: PSTACK_OF_PKCS7_SIGNER_INFO; idx: TIdC_INT; const ptr: PPKCS7_SIGNER_INFO): PPKCS7_SIGNER_INFO;
+begin
+  result := PPKCS7_SIGNER_INFO(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_PKCS7_SIGNER_INFO_find(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_PKCS7_SIGNER_INFO_find_ex(sk: PSTACK_OF_PKCS7_SIGNER_INFO; const ptr: PPKCS7_SIGNER_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_PKCS7_SIGNER_INFO_sort(sk: PSTACK_OF_PKCS7_SIGNER_INFO);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_SIGNER_INFO_is_sorted(sk: PSTACK_OF_PKCS7_SIGNER_INFO): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_SIGNER_INFO_dup(const sk: PSTACK_OF_PKCS7_SIGNER_INFO): PSTACK_OF_PKCS7_SIGNER_INFO;
+begin
+  result:=PSTACK_OF_PKCS7_SIGNER_INFO(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_PKCS7_SIGNER_INFO_deep_copy(const sk: PSTACK_OF_PKCS7_SIGNER_INFO; copyfunc: sk_PKCS7_SIGNER_INFO_copyfunc; freefunc:sk_PKCS7_SIGNER_INFO_freefunc): PSTACK_OF_PKCS7_SIGNER_INFO;
+begin
+  result:=PSTACK_OF_PKCS7_SIGNER_INFO(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_PKCS7_SIGNER_INFO_set_cmp_func(const sk: PSTACK_OF_PKCS7_SIGNER_INFO; compare: sk_PKCS7_SIGNER_INFO_compfunc): sk_PKCS7_SIGNER_INFO_compfunc;
+begin
+  result:=sk_PKCS7_SIGNER_INFO_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+{ DEFINE_STACK_OF(PKCS7_RECIP_INFO) Methoden }
+
+function sk_PKCS7_RECIP_INFO_num(const sk: PSTACK_OF_PKCS7_RECIP_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_RECIP_INFO_value(const sk: PSTACK_OF_PKCS7_RECIP_INFO; index: TIdC_INT): PPKCS7_RECIP_INFO;
+begin
+  result := PPKCS7_RECIP_INFO(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
+end;
+function sk_PKCS7_RECIP_INFO_new(compare: sk_PKCS7_RECIP_INFO_compfunc): PSTACK_OF_PKCS7_RECIP_INFO;
+begin
+  result := PSTACK_OF_PKCS7_RECIP_INFO(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
+end;
+function sk_PKCS7_RECIP_INFO_new_null(): PSTACK_OF_PKCS7_RECIP_INFO;
+begin
+  result := PSTACK_OF_PKCS7_RECIP_INFO(OPENSSL_sk_new_null());
+end;
+function sk_PKCS7_RECIP_INFO_new_reserve(compare: sk_PKCS7_RECIP_INFO_compfunc; n: TIdC_INT): PSTACK_OF_PKCS7_RECIP_INFO;
+begin
+  result := PSTACK_OF_PKCS7_RECIP_INFO(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
+end;
+function sk_PKCS7_RECIP_INFO_reserve(sk: PSTACK_OF_PKCS7_RECIP_INFO; n: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
+end;
+procedure sk_PKCS7_RECIP_INFO_free(sk: PSTACK_OF_PKCS7_RECIP_INFO);
+begin
+  OPENSSL_sk_free(POPENSSL_STACK(sk));
+end;
+procedure sk_PKCS7_RECIP_INFO_zero(sk: PSTACK_OF_PKCS7_RECIP_INFO);
+begin
+  OPENSSL_sk_zero(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_RECIP_INFO_delete(sk: PSTACK_OF_PKCS7_RECIP_INFO; i: TIdC_INT): PPKCS7_RECIP_INFO;
+begin
+  result := PPKCS7_RECIP_INFO(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
+end;
+function sk_PKCS7_RECIP_INFO_delete_ptr(sk: PSTACK_OF_PKCS7_RECIP_INFO; ptr: PPKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;
+begin
+  result := PPKCS7_RECIP_INFO(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
+end;
+function sk_PKCS7_RECIP_INFO_push(sk: PSTACK_OF_PKCS7_RECIP_INFO; ptr: PPKCS7_RECIP_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_PKCS7_RECIP_INFO_unshift(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
+end;
+function sk_PKCS7_RECIP_INFO_pop(sk: PSTACK_OF_PKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;
+begin
+  result := PPKCS7_RECIP_INFO(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
+end;
+function sk_PKCS7_RECIP_INFO_shift(sk: PSTACK_OF_PKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;
+begin
+  result := PPKCS7_RECIP_INFO(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
+end;
+procedure sk_PKCS7_RECIP_INFO_pop_free(sk: PSTACK_OF_PKCS7_RECIP_INFO; freeFunc: sk_PKCS7_RECIP_INFO_freefunc);
+begin
+  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
+end;
+function sk_PKCS7_RECIP_INFO_insert(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO; idx: TIdC_INT): TIdC_INT;
+begin
+  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
+end;
+function sk_PKCS7_RECIP_INFO_set(sk: PSTACK_OF_PKCS7_RECIP_INFO; idx: TIdC_INT; const ptr: PPKCS7_RECIP_INFO): PPKCS7_RECIP_INFO;
+begin
+  result := PPKCS7_RECIP_INFO(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
+end;
+function sk_PKCS7_RECIP_INFO_find(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
+end;
+function sk_PKCS7_RECIP_INFO_find_ex(sk: PSTACK_OF_PKCS7_RECIP_INFO; const ptr: PPKCS7_RECIP_INFO): TIdC_INT;
+begin
+  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
+end;
+procedure sk_PKCS7_RECIP_INFO_sort(sk: PSTACK_OF_PKCS7_RECIP_INFO);
+begin
+  OPENSSL_sk_sort(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_RECIP_INFO_is_sorted(sk: PSTACK_OF_PKCS7_RECIP_INFO): TIdC_INT;
+begin
+  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
+end;
+function sk_PKCS7_RECIP_INFO_dup(const sk: PSTACK_OF_PKCS7_RECIP_INFO): PSTACK_OF_PKCS7_RECIP_INFO;
+begin
+  result:=PSTACK_OF_PKCS7_RECIP_INFO(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
+end;
+function sk_PKCS7_RECIP_INFO_deep_copy(const sk: PSTACK_OF_PKCS7_RECIP_INFO; copyfunc: sk_PKCS7_RECIP_INFO_copyfunc; freefunc:sk_PKCS7_RECIP_INFO_freefunc): PSTACK_OF_PKCS7_RECIP_INFO;
+begin
+  result:=PSTACK_OF_PKCS7_RECIP_INFO(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
+end;
+function sk_PKCS7_RECIP_INFO_set_cmp_func(const sk: PSTACK_OF_PKCS7_RECIP_INFO; compare: sk_PKCS7_RECIP_INFO_compfunc): sk_PKCS7_RECIP_INFO_compfunc;
+begin
+  result:=sk_PKCS7_RECIP_INFO_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
+end;
+
+
+
 
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 
@@ -370,6 +637,8 @@ begin
   i2d_PKCS7_bio := LoadFunction('i2d_PKCS7_bio', AFailed);
   i2d_PKCS7_bio_stream := LoadFunction('i2d_PKCS7_bio_stream', AFailed);
   PEM_write_bio_PKCS7_stream := LoadFunction('PEM_write_bio_PKCS7_stream', AFailed);
+  PKCS7_new := LoadFunction('PKCS7_new', AFailed);
+  PKCS7_free := LoadFunction('PKCS7_free', AFailed);
   PKCS7_ctrl := LoadFunction('PKCS7_ctrl', AFailed);
   PKCS7_set_type := LoadFunction('PKCS7_set_type', AFailed);
   PKCS7_set0_type_other := LoadFunction('PKCS7_set0_type_other', AFailed);
@@ -388,6 +657,7 @@ begin
   PKCS7_add_signature := LoadFunction('PKCS7_add_signature', AFailed);
   PKCS7_cert_from_signer_info := LoadFunction('PKCS7_cert_from_signer_info', AFailed);
   PKCS7_set_digest := LoadFunction('PKCS7_set_digest', AFailed);
+  PKCS7_get_signer_info := LoadFunction('PKCS7_get_signer_info', AFailed);
   PKCS7_add_recipient := LoadFunction('PKCS7_add_recipient', AFailed);
   PKCS7_SIGNER_INFO_get0_algs := LoadFunction('PKCS7_SIGNER_INFO_get0_algs', AFailed);
   PKCS7_RECIP_INFO_get0_alg := LoadFunction('PKCS7_RECIP_INFO_get0_alg', AFailed);
@@ -396,13 +666,23 @@ begin
   PKCS7_set_cipher := LoadFunction('PKCS7_set_cipher', AFailed);
   PKCS7_stream := LoadFunction('PKCS7_stream', AFailed);
   PKCS7_get_issuer_and_serial := LoadFunction('PKCS7_get_issuer_and_serial', AFailed);
+  PKCS7_digest_from_attributes := LoadFunction('PKCS7_digest_from_attributes', AFailed);
   PKCS7_add_signed_attribute := LoadFunction('PKCS7_add_signed_attribute', AFailed);
   PKCS7_add_attribute := LoadFunction('PKCS7_add_attribute', AFailed);
   PKCS7_get_attribute := LoadFunction('PKCS7_get_attribute', AFailed);
   PKCS7_get_signed_attribute := LoadFunction('PKCS7_get_signed_attribute', AFailed);
+  PKCS7_set_signed_attributes := LoadFunction('PKCS7_set_signed_attributes', AFailed);
+  PKCS7_set_attributes := LoadFunction('PKCS7_set_attributes', AFailed);
+  PKCS7_sign := LoadFunction('PKCS7_sign', AFailed);
   PKCS7_sign_add_signer := LoadFunction('PKCS7_sign_add_signer', AFailed);
   PKCS7_final := LoadFunction('PKCS7_final', AFailed);
+  PKCS7_verify := LoadFunction('PKCS7_verify', AFailed);
+  PKCS7_get0_signers := LoadFunction('PKCS7_get0_signers', AFailed);
+  PKCS7_encrypt := LoadFunction('PKCS7_encrypt', AFailed);
   PKCS7_decrypt := LoadFunction('PKCS7_decrypt', AFailed);
+  PKCS7_add_attrib_smimecap := LoadFunction('PKCS7_add_attrib_smimecap', AFailed);
+  PKCS7_get_smimecap := LoadFunction('PKCS7_get_smimecap', AFailed);
+  PKCS7_simple_smimecap := LoadFunction('PKCS7_simple_smimecap', AFailed);
   PKCS7_add_attrib_content_type := LoadFunction('PKCS7_add_attrib_content_type', AFailed);
   PKCS7_add0_attrib_signing_time := LoadFunction('PKCS7_add0_attrib_signing_time', AFailed);
   PKCS7_add1_attrib_digest := LoadFunction('PKCS7_add1_attrib_digest', AFailed);
@@ -419,6 +699,8 @@ begin
   i2d_PKCS7_bio := nil;
   i2d_PKCS7_bio_stream := nil;
   PEM_write_bio_PKCS7_stream := nil;
+  PKCS7_new := nil;
+  PKCS7_free := nil;
   PKCS7_ctrl := nil;
   PKCS7_set_type := nil;
   PKCS7_set0_type_other := nil;
@@ -437,6 +719,7 @@ begin
   PKCS7_add_signature := nil;
   PKCS7_cert_from_signer_info := nil;
   PKCS7_set_digest := nil;
+  PKCS7_get_signer_info := nil;
   PKCS7_add_recipient := nil;
   PKCS7_SIGNER_INFO_get0_algs := nil;
   PKCS7_RECIP_INFO_get0_alg := nil;
@@ -445,13 +728,23 @@ begin
   PKCS7_set_cipher := nil;
   PKCS7_stream := nil;
   PKCS7_get_issuer_and_serial := nil;
+  PKCS7_digest_from_attributes := nil;
   PKCS7_add_signed_attribute := nil;
   PKCS7_add_attribute := nil;
   PKCS7_get_attribute := nil;
   PKCS7_get_signed_attribute := nil;
+  PKCS7_set_signed_attributes := nil;
+  PKCS7_set_attributes := nil;
+  PKCS7_sign := nil;
   PKCS7_sign_add_signer := nil;
   PKCS7_final := nil;
+  PKCS7_verify := nil;
+  PKCS7_get0_signers := nil;
+  PKCS7_encrypt := nil;
   PKCS7_decrypt := nil;
+  PKCS7_add_attrib_smimecap := nil;
+  PKCS7_get_smimecap := nil;
+  PKCS7_simple_smimecap := nil;
   PKCS7_add_attrib_content_type := nil;
   PKCS7_add0_attrib_signing_time := nil;
   PKCS7_add1_attrib_digest := nil;
@@ -459,5 +752,4 @@ begin
   SMIME_read_PKCS7 := nil;
   BIO_new_PKCS7 := nil;
 end;
-
 end.
