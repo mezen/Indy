@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 07.09.2022 11:33:03
+// Generation date: 10.10.2022 11:49:31
 
 unit IdOpenSSLHeaders_ossl_typ;
 
@@ -44,6 +44,7 @@ uses
   IdGlobal,
   IdOpenSSLConsts,
   IdOpenSSLHeaders_stack;
+  IdOpenSSLConsts;
 
 type
 // moved from unit "asn1" to prevent circular references
@@ -263,6 +264,11 @@ type
   X509 = x509_st;
   PX509 = ^X509;
   PPX509 = ^PX509;
+
+  Stack_Of_X509 = type Pointer;
+  PStack_Of_X509 = ^Stack_Of_X509;
+  PPStack_Of_X509 = ^PStack_Of_X509;
+
   X509_crl_st = type Pointer;
   X509_CRL = X509_crl_st;
   PX509_CRL = ^X509_CRL;
@@ -666,6 +672,6 @@ begin
   result:=sk_X509_ALGOR_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
 end;
 
-
+implementation
 
 end.

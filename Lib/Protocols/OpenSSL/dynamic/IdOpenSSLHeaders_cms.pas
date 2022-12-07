@@ -113,6 +113,7 @@ type
   sk_CMS_RevocationInfoChoice_compfunc = function(const a: PCMS_RevocationInfoChoice; const b: PCMS_RevocationInfoChoice): TIdC_INT; cdecl;
   sk_CMS_RevocationInfoChoice_freefunc = procedure(a: PCMS_RevocationInfoChoice); cdecl;
   sk_CMS_RevocationInfoChoice_copyfunc = function(const a: PCMS_RevocationInfoChoice): PCMS_RevocationInfoChoice; cdecl;
+
 //DECLARE_ASN1_FUNCTIONS(CMS_ContentInfo)
 //DECLARE_ASN1_FUNCTIONS(CMS_ReceiptRequest)
 //DECLARE_ASN1_PRINT_FUNCTION(CMS_ContentInfo)
@@ -816,8 +817,7 @@ begin
   result:=sk_CMS_RevocationInfoChoice_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
 end;
 
-
-
+implementation
 
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 

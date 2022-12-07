@@ -1797,6 +1797,7 @@ begin
 
           DoOnDataChannelCreate;
 
+          // TODO: if Connect() fails and PassiveUseControlHost is false, try connecting to the command host...
           LPasvCl.Connect;
         end;
         try
@@ -2035,6 +2036,7 @@ begin
 
         DoOnDataChannelCreate;
 
+        // TODO: if Connect() fails and PassiveUseControlHost is false, try connecting to the command host...
         LPasvCl.Connect;
       end;
       try
@@ -2121,7 +2123,7 @@ begin
           LSocketList.Add(Socket.Binding.Handle);
           LSocketList.Add(LDataSocket);
 
-          IOHandler.Write(ACommand);
+          IOHandler.WriteLn(ACommand);
 
           LReadList := nil;
           if not LSocketList.SelectReadList(LReadList, ListenTimeout) then begin
@@ -3300,7 +3302,6 @@ begin
     InternalGet(TrimRight('MLSD ' + ADirectory), LDest);  {do not localize}
     FreeAndNil(FDirectoryListing);
     FDirFormat := '';
-    DoOnRetrievedDir;
     LDest.Position := 0;
     // RLebeau: using IndyTextEncoding_8Bit here.  TIdFTPListParseBase will
     // decode UTF-8 sequences later on...
@@ -3316,6 +3317,7 @@ begin
   if Assigned(ADest) then begin //APR: User can use ListResult and DirectoryListing
     ADest.Assign(FListResult);
   end;
+  DoOnRetrievedDir;
 end;
 
 procedure TIdFTP.ExtListItem(ADest: TStrings; AFList : TIdFTPListItems; const AItem: string);
@@ -4024,7 +4026,7 @@ begin
   //syntax 3 - MDTM [local timestamp] Filename
   else if FTZInfo.FGMTOffsetAvailable then begin
     //send it relative to the server's time-zone
-    LCmd := 'MDTM '+ FTPDateTimeToMDTMD(ALocalTime - OffSetFromUTC + FTZInfo.FGMTOffset, False, False) + ' ' + AFileName; {do not localize}
+    LCmd := 'MDTM '+ FTPDateTimeToMDTMD(LocalTimeToUTCTime(ALocalTime) + FTZInfo.FGMTOffset, False, False) + ' ' + AFileName; {do not localize}
   end
   
   else begin
@@ -4067,7 +4069,7 @@ begin
   //Syntax 2 -  MDTM yyyymmddhhmmss[+-minutes from Universal Time] Filename
   //use old method for old versions of Serv-U and BPFTP Server
   else if (IndexOfFeatLine('MDTM YYYYMMDDHHMMSS[+-TZ] filename') > 0) or IsOldServU or IsBPFTP then begin {do not localize}
-    LCmd := 'MDTM '+ FTPDateTimeToMDTMD(AGMTTime + OffSetFromUTC, False, True) + ' ' + AFileName; {do not localize}
+    LCmd := 'MDTM '+ FTPDateTimeToMDTMD(UTCTimeToLocalTime(AGMTTime), False, True) + ' ' + AFileName; {do not localize}
   end
   
   //syntax 3 - MDTM [local timestamp] Filename
@@ -4077,7 +4079,7 @@ begin
   end
 
   else begin
-    LCmd := 'MDTM '+ FTPDateTimeToMDTMD(AGMTTime + OffSetFromUTC, False, False) + ' ' + AFileName; {do not localize}
+    LCmd := 'MDTM '+ FTPDateTimeToMDTMD(UTCTimeToLocalTime(AGMTTime), False, False) + ' ' + AFileName; {do not localize}
   end;
 
   // When using MDTM, Titan FTP 5 returns 200 and vsFTPd returns 213

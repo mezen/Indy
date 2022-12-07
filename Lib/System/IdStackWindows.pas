@@ -313,13 +313,14 @@ type
 
 var
 //This is for the Win32-only package (SuperCore)
-  GWindowsStack : TIdStackWindows = nil;
+  GWindowsStack : TIdStackWindows = nil{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use GStack or GBSDStack instead'{$ENDIF}{$ENDIF};
 
 implementation
 
 {$DEFINE USE_IPHLPAPI}
 
 {$IFDEF USE_IPHLPAPI}
+  // TODO: Move this to IdCompilerDefines.inc
   {$IFDEF VCL_XE2_OR_ABOVE}
     {$DEFINE HAS_UNIT_IpTypes}
     {$DEFINE HAS_UNIT_IpHlpApi}
@@ -330,10 +331,10 @@ uses
   IdIDN, IdResourceStrings, IdWship6
   {$IFDEF USE_IPHLPAPI}
     {$IFDEF HAS_UNIT_IpTypes}
-  , IpTypes
+  , Winapi.IpTypes
     {$ENDIF}
     {$IFDEF HAS_UNIT_IpHlpApi}
-  , IpHlpApi
+  , Winapi.IpHlpApi
     {$ENDIF}
   {$ENDIF}
   ;
@@ -845,7 +846,9 @@ begin
     end;
     GStarted := True;
   end;
+  {$I IdSymbolDeprecatedOff.inc}
   GWindowsStack := Self;
+  {$I IdSymbolDeprecatedOn.inc}
 end;
 
 destructor TIdStackWindows.Destroy;
@@ -1382,7 +1385,7 @@ procedure TIdStackWindows.GetLocalAddressList(AAddresses: TIdStackLocalAddressLi
       repeat
         // TODO: include GAA_FLAG_INCLUDE_PREFIX on XPSP1+?
         // TODO: include GAA_FLAG_INCLUDE_ALL_INTERFACES on Vista+?
-        Ret := GetAdaptersAddresses(PF_UNSPEC, GAA_FLAG_SKIP_ANYCAST or GAA_FLAG_SKIP_MULTICAST or GAA_FLAG_SKIP_DNS_SERVER or GAA_FLAG_SKIP_FRIENDLY_NAME, nil, Adapters, BufLen);
+        Ret := GetAdaptersAddresses(PF_UNSPEC, GAA_FLAG_SKIP_ANYCAST or GAA_FLAG_SKIP_MULTICAST or GAA_FLAG_SKIP_DNS_SERVER, nil, Adapters, BufLen);
         case Ret of
           ERROR_SUCCESS:
           begin
@@ -1449,18 +1452,21 @@ procedure TIdStackWindows.GetLocalAddressList(AAddresses: TIdStackLocalAddressLi
                           SubNetStr := SubNetMasks.Values[IPAddr];
                         end;
                         LAddress := TIdStackLocalAddressIPv4.Create(AAddresses, IPAddr, SubNetStr);
-                        TIdStackLocalAddressAccess(LAddress).FInterfaceName := String(Adapter^.AdapterName);
                         TIdStackLocalAddressAccess(LAddress).FInterfaceIndex := Adapter^.Union.IfIndex;
                       end;
                       AF_INET6: begin
                         LAddress := TIdStackLocalAddressIPv6.Create(AAddresses,
                           TranslateTInAddrToString(PSockAddrIn6(UnicastAddr^.Address.lpSockaddr)^.sin6_addr, Id_IPv6));
-                        TIdStackLocalAddressAccess(LAddress).FInterfaceName := String(Adapter^.AdapterName);
                         // The Ipv6IfIndex member is only available on Windows XP SP1 and later
                         if IndyCheckWindowsVersion(5, 2) or (IndyCheckWindowsVersion(5, 1) {TODO: and SP1+}) then begin
                           TIdStackLocalAddressAccess(LAddress).FInterfaceIndex := Adapter^.Ipv6IfIndex;
                         end;
                       end;
+                    end;
+                    if LAddress <> nil then begin
+                      TIdStackLocalAddressAccess(LAddress).FDescription := String(Adapter^.Description);
+                      TIdStackLocalAddressAccess(LAddress).FFriendlyName := String(Adapter^.FriendlyName);
+                      TIdStackLocalAddressAccess(LAddress).FInterfaceName := String(Adapter^.AdapterName);
                     end;
                   end;
                   UnicastAddr := UnicastAddr^.Next;
@@ -1605,6 +1611,8 @@ procedure TIdStackWindows.GetLocalAddressList(AAddresses: TIdStackLocalAddressLi
                   MaskStr := String(IPAddr^.IpMask.S);
                   {$ENDIF}
                   LAddress := TIdStackLocalAddressIPv4.Create(AAddresses, IPStr, MaskStr);
+                  TIdStackLocalAddressAccess(LAddress).FDescription := String(Adapter^.Description);
+                  TIdStackLocalAddressAccess(LAddress).FFriendlyName := String(Adapter^.AdapterName);
                   TIdStackLocalAddressAccess(LAddress).FInterfaceName := String(Adapter^.AdapterName);
                   TIdStackLocalAddressAccess(LAddress).FInterfaceIndex := Adapter^.Index;
                 end;
@@ -1679,6 +1687,8 @@ procedure TIdStackWindows.GetLocalAddressList(AAddresses: TIdStackLocalAddressLi
           // TODO: implement this...
           {
           if LAddress <> nil then begin
+            TIdStackLocalAddressAccess(LAddress).FDescription := ?;
+            TIdStackLocalAddressAccess(LAddress).FFriendlyName := ?;
             TIdStackLocalAddressAccess(LAddress).FInterfaceName := ?;
             TIdStackLocalAddressAccess(LAddress).FInterfaceIndex := ?;
           end;
@@ -1795,7 +1805,6 @@ end;
 
 function TIdSocketListWindows.GetItem(AIndex: Integer): TIdStackSocketHandle;
 begin
-  Result := 0;
   Lock;
   try
     //We can't redefine AIndex to be a UInt32 because the libc Interface
@@ -1803,6 +1812,7 @@ begin
     if (AIndex >= 0) and (u_int(AIndex) < FFDSet.fd_count) then begin
       Result := FFDSet.fd_array[AIndex];
     end else begin
+      // TODO: just return 0/invalid, like most of the other Stack classes do?
       raise EIdStackSetSizeExceeded.Create(RSSetSizeExceeded);
     end;
   finally
@@ -2358,7 +2368,7 @@ begin
   begin
     //we call the macro twice because we specified two possible structures.
     //Id_IPV6_HOPLIMIT and Id_IPV6_PKTINFO
-    LSize := WSA_CMSG_LEN(WSA_CMSG_LEN(Length(VBuffer)));
+    LSize := WSA_CMSG_SPACE(SizeOf(Byte)) + WSA_CMSG_SPACE(SizeOf(IN6_PKTINFO));
     SetLength(LControl, LSize);
 
     LMsgBuf.len := Length(VBuffer); // Length(VMsgData);

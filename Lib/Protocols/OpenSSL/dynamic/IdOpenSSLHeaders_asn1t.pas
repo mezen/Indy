@@ -1132,6 +1132,8 @@ end;
 
 
 
+implementation
+
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 
   function LoadFunction(const AMethodName: string; const AFailed: TStringList): Pointer;

@@ -302,6 +302,8 @@ begin
     if SupportsTLS then begin
       if SendCmd('STLS','') = ST_OK then begin {Do not translate}
         TLSHandshake;
+        //obtain capabilities again - RFC2595
+        CAPA;
       end else begin
         ProcessTLSNegCmdFailed;
       end;
@@ -340,7 +342,7 @@ begin
         // (which was formalized in RFC 5034). So, until we can handle that
         // descrepency better, we will simply disable Initial-Response for now.
 
-        FSASLMechanisms.LoginSASL('AUTH', FHost, IdGSKSSN_pop, [ST_OK], [ST_SASLCONTINUE], Self, Capabilities, 'SASL', False); {do not localize}
+        FSASLMechanisms.LoginSASL('AUTH', FHost, IdGSKSSN_pop, [ST_OK], [ST_SASLCONTINUE], Self, Capabilities, 'SASL'); {do not localize}
       end;
   end;
 end;

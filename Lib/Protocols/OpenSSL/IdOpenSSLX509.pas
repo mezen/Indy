@@ -35,7 +35,8 @@ uses
   IdOpenSSLHeaders_ossl_typ,
   IdCTypes,
   IdGlobal,
-  Classes;
+  Classes,
+  SysUtils;
 
 type
   /// <summary>
@@ -124,6 +125,7 @@ type
   public
     constructor Create(const AX509: PX509); reintroduce; overload;
     constructor Create(const AFile: string); reintroduce; overload;
+    constructor Create(const ACert: TBytes); reintroduce; overload;
     destructor Destroy; override;
     procedure AssignTo(Dest: TPersistent); override;
 
@@ -190,6 +192,16 @@ uses
   IdOpenSSLHeaders_x509,
   IdOpenSSLUtils;
 
+function LoadFromBio(const ABIO: PBIO): PX509;
+begin
+  Result := PEM_read_bio_X509(ABio, nil, nil, nil);
+  if not Assigned(Result) then
+  begin
+    BIO_ctrl(ABio, BIO_CTRL_RESET, 0, nil); // long version for makro BIO_reset
+    Result := PEM_read_bio_X509_AUX(ABio, nil, nil, nil); // Retry for -----BEGIN TRUSTED CERTIFICATE-----
+  end;
+end;
+
 function LoadCertificate(const AFile: string): PX509;
 var
   LBio: PBIO;
@@ -199,7 +211,7 @@ begin
   if not Assigned(LBio) then
     Exit;
   try
-    Result := PEM_read_bio_X509(LBio, nil, nil, nil);
+    Result := LoadFromBio(LBIO);
   finally
     BIO_free(LBio);
   end;
@@ -237,6 +249,21 @@ begin
   FX509 := AX509;
 end;
 
+constructor TIdOpenSSLX509.Create(const ACert: TBytes);
+var
+  LBIO: PBIO;
+begin
+  inherited Create();
+  LBIO := BIO_new_mem_buf(@ACert[0], Length(ACert));
+  if not Assigned(LBio) then
+    Exit;
+  try
+    FX509 := LoadFromBio(LBIO);
+  finally
+    BIO_free(LBIO);
+  end;
+end;
+
 destructor TIdOpenSSLX509.Destroy;
 begin
   FSubject.Free();
@@ -264,7 +291,7 @@ var
   LAsAsn1Int: PASN1_INTEGER;
   LAsBN: PBIGNUM;
 begin
-  LAsAsn1Int := X509_get_serialNumber(FX509);
+  LAsAsn1Int := X509_get0_serialNumber(FX509);
   LAsBN := ASN1_INTEGER_to_BN(LAsAsn1Int, nil);
   Result := GetString(BN_bn2hex(LAsBN));
 end;

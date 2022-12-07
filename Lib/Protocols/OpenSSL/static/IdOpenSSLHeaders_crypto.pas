@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 07.09.2022 11:33:03
+// Generation date: 23.07.2021 14:35:33
 
 unit IdOpenSSLHeaders_crypto;
 
@@ -45,7 +45,6 @@ uses
   IdOpenSSLConsts,
   IdOpenSSLHeaders_bio,
   IdOpenSSLHeaders_ossl_typ,
-  IdOpenSSLHeaders_stack,
   {$IFDEF VCL_XE3_OR_ABOVE}System.Types{$ELSE}Types{$ENDIF};
 
 {$MINENUMSIZE 4}
@@ -126,19 +125,10 @@ const
 type
   CRYPTO_RWLOCK = type Pointer;
   PCRYPTO_RWLOCK = ^CRYPTO_RWLOCK;
-
-  Void = type Pointer;
-  PVoid = ^Void;
-
   //crypto_ex_data_st = record
   //  sk: PStackOfVoid;
   //end;
   //DEFINE_STACK_OF(void)
-  STACK_OF_void = type of pointer;
-  PSTACK_OF_void = ^STACK_OF_void;
-  sk_void_compfunc = function(const a: Pvoid; const b: Pvoid): TIdC_INT; cdecl;
-  sk_void_freefunc = procedure(a: Pvoid); cdecl;
-  sk_void_copyfunc = function(const a: Pvoid): Pvoid; cdecl;
 
   // CRYPTO_EX_new = procedure(parent: Pointer; ptr: Pointer; CRYPTO_EX_DATA *ad; idx: TIdC_INT; argl: TIdC_LONG; argp: Pointer);
   //  CRYPTO_EX_free = procedure(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
@@ -359,133 +349,7 @@ function OPENSSL_secure_actual_size(ptr: Pointer): TIdC_SIZET;
   function CRYPTO_THREAD_get_current_id: CRYPTO_THREAD_ID cdecl; external CLibCrypto;
   function CRYPTO_THREAD_compare_id(a: CRYPTO_THREAD_ID; b: CRYPTO_THREAD_ID): TIdC_INT cdecl; external CLibCrypto;
 
-function sk_void_num(const sk: PSTACK_OF_void): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_value(const sk: PSTACK_OF_void; index: TIdC_INT): Pvoid;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_new(compare: sk_void_compfunc): PSTACK_OF_void;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_new_null(): PSTACK_OF_void;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_new_reserve(compare: sk_void_compfunc; n: TIdC_INT): PSTACK_OF_void;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_reserve(sk: PSTACK_OF_void; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_void_free(sk: PSTACK_OF_void);{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_void_zero(sk: PSTACK_OF_void);{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_delete(sk: PSTACK_OF_void; i: TIdC_INT): Pvoid;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_delete_ptr(sk: PSTACK_OF_void; ptr: Pvoid): Pvoid;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_push(sk: PSTACK_OF_void; ptr: Pvoid): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_unshift(sk: PSTACK_OF_void; const ptr: Pvoid): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_pop(sk: PSTACK_OF_void): Pvoid;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_shift(sk: PSTACK_OF_void): Pvoid;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_void_pop_free(sk: PSTACK_OF_void; freeFunc: sk_void_freefunc);{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_insert(sk: PSTACK_OF_void; const ptr: Pvoid; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_set(sk: PSTACK_OF_void; idx: TIdC_INT; const ptr: Pvoid): Pvoid;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_find(sk: PSTACK_OF_void; const ptr: Pvoid): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_find_ex(sk: PSTACK_OF_void; const ptr: Pvoid): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_void_sort(sk: PSTACK_OF_void);{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_is_sorted(sk: PSTACK_OF_void): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_dup(const sk: PSTACK_OF_void): PSTACK_OF_void;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_deep_copy(const sk: PSTACK_OF_void; copyfunc: sk_void_copyfunc; freefunc:sk_void_freefunc): PSTACK_OF_void;{$ifdef USE_INLINE} inline;{$endif}
-function sk_void_set_cmp_func(const sk: PSTACK_OF_void; compare: sk_void_compfunc): sk_void_compfunc;{$ifdef USE_INLINE} inline;{$endif}
-
 implementation
-
-{ DEFINE_STACK_OF(void) Methoden }
-
-function sk_void_num(const sk: PSTACK_OF_void): TIdC_INT;
-begin
-  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
-end;
-function sk_void_value(const sk: PSTACK_OF_void; index: TIdC_INT): Pvoid;
-begin
-  result := Pvoid(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
-end;
-function sk_void_new(compare: sk_void_compfunc): PSTACK_OF_void;
-begin
-  result := PSTACK_OF_void(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
-end;
-function sk_void_new_null(): PSTACK_OF_void;
-begin
-  result := PSTACK_OF_void(OPENSSL_sk_new_null());
-end;
-function sk_void_new_reserve(compare: sk_void_compfunc; n: TIdC_INT): PSTACK_OF_void;
-begin
-  result := PSTACK_OF_void(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
-end;
-function sk_void_reserve(sk: PSTACK_OF_void; n: TIdC_INT): TIdC_INT;
-begin
-  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
-end;
-procedure sk_void_free(sk: PSTACK_OF_void);
-begin
-  OPENSSL_sk_free(POPENSSL_STACK(sk));
-end;
-procedure sk_void_zero(sk: PSTACK_OF_void);
-begin
-  OPENSSL_sk_zero(POPENSSL_STACK(sk));
-end;
-function sk_void_delete(sk: PSTACK_OF_void; i: TIdC_INT): Pvoid;
-begin
-  result := Pvoid(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
-end;
-function sk_void_delete_ptr(sk: PSTACK_OF_void; ptr: Pvoid): Pvoid;
-begin
-  result := Pvoid(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
-end;
-function sk_void_push(sk: PSTACK_OF_void; ptr: Pvoid): TIdC_INT;
-begin
-  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
-end;
-function sk_void_unshift(sk: PSTACK_OF_void; const ptr: Pvoid): TIdC_INT;
-begin
-  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
-end;
-function sk_void_pop(sk: PSTACK_OF_void): Pvoid;
-begin
-  result := Pvoid(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
-end;
-function sk_void_shift(sk: PSTACK_OF_void): Pvoid;
-begin
-  result := Pvoid(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
-end;
-procedure sk_void_pop_free(sk: PSTACK_OF_void; freeFunc: sk_void_freefunc);
-begin
-  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
-end;
-function sk_void_insert(sk: PSTACK_OF_void; const ptr: Pvoid; idx: TIdC_INT): TIdC_INT;
-begin
-  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
-end;
-function sk_void_set(sk: PSTACK_OF_void; idx: TIdC_INT; const ptr: Pvoid): Pvoid;
-begin
-  result := Pvoid(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
-end;
-function sk_void_find(sk: PSTACK_OF_void; const ptr: Pvoid): TIdC_INT;
-begin
-  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
-end;
-function sk_void_find_ex(sk: PSTACK_OF_void; const ptr: Pvoid): TIdC_INT;
-begin
-  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
-end;
-procedure sk_void_sort(sk: PSTACK_OF_void);
-begin
-  OPENSSL_sk_sort(POPENSSL_STACK(sk));
-end;
-function sk_void_is_sorted(sk: PSTACK_OF_void): TIdC_INT;
-begin
-  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
-end;
-function sk_void_dup(const sk: PSTACK_OF_void): PSTACK_OF_void;
-begin
-  result:=PSTACK_OF_void(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
-end;
-function sk_void_deep_copy(const sk: PSTACK_OF_void; copyfunc: sk_void_copyfunc; freefunc:sk_void_freefunc): PSTACK_OF_void;
-begin
-  result:=PSTACK_OF_void(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
-end;
-function sk_void_set_cmp_func(const sk: PSTACK_OF_void; compare: sk_void_compfunc): sk_void_compfunc;
-begin
-  result:=sk_void_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
-end;
-
-
 
 // OPENSSL_FILE = __FILE__ = C preprocessor macro
 // OPENSSL_LINE = __LINE__ = C preprocessor macro

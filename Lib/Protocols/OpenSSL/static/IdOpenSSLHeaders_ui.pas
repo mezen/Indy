@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 07.09.2022 11:33:03
+// Generation date: 28.10.2020 15:24:33
 
 unit IdOpenSSLHeaders_ui;
 
@@ -46,8 +46,7 @@ uses
   IdOpenSSLHeaders_ossl_typ,
   IdOpenSSLHeaders_crypto,
   IdOpenSSLHeaders_pem,
-  IdOpenSSLHeaders_uierr,
-  IdOpenSSLHeaders_stack;
+  IdOpenSSLHeaders_uierr;
 
 {$MINENUMSIZE 4}
 
@@ -107,11 +106,6 @@ type
   UI_STRING = ui_string_st;
   PUI_STRING = ^UI_STRING;
 // DEFINE_STACK_OF(UI_STRING)
-  STACK_OF_UI_STRING = type of pointer;
-  PSTACK_OF_UI_STRING = ^STACK_OF_UI_STRING;
-  sk_UI_STRING_compfunc = function(const a: PUI_STRING; const b: PUI_STRING): TIdC_INT; cdecl;
-  sk_UI_STRING_freefunc = procedure(a: PUI_STRING); cdecl;
-  sk_UI_STRING_copyfunc = function(const a: PUI_STRING): PUI_STRING; cdecl;
 
   (*
    * The different types of strings that are currently supported. This is only
@@ -384,132 +378,6 @@ type
   function UI_UTIL_read_pw(buf: PIdAnsiChar; buff: PIdAnsiChar; size: TIdC_INT; const prompt: PIdAnsiChar; verify: TIdC_INT): TIdC_INT cdecl; external CLibCrypto;
   function UI_UTIL_wrap_read_pem_callback(cb: pem_password_cb; rwflag: TIdC_INT): PUI_Method cdecl; external CLibCrypto;
 
-function sk_UI_STRING_num(const sk: PSTACK_OF_UI_STRING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_value(const sk: PSTACK_OF_UI_STRING; index: TIdC_INT): PUI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_new(compare: sk_UI_STRING_compfunc): PSTACK_OF_UI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_new_null(): PSTACK_OF_UI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_new_reserve(compare: sk_UI_STRING_compfunc; n: TIdC_INT): PSTACK_OF_UI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_reserve(sk: PSTACK_OF_UI_STRING; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_UI_STRING_free(sk: PSTACK_OF_UI_STRING);{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_UI_STRING_zero(sk: PSTACK_OF_UI_STRING);{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_delete(sk: PSTACK_OF_UI_STRING; i: TIdC_INT): PUI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_delete_ptr(sk: PSTACK_OF_UI_STRING; ptr: PUI_STRING): PUI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_push(sk: PSTACK_OF_UI_STRING; ptr: PUI_STRING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_unshift(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_pop(sk: PSTACK_OF_UI_STRING): PUI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_shift(sk: PSTACK_OF_UI_STRING): PUI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_UI_STRING_pop_free(sk: PSTACK_OF_UI_STRING; freeFunc: sk_UI_STRING_freefunc);{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_insert(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_set(sk: PSTACK_OF_UI_STRING; idx: TIdC_INT; const ptr: PUI_STRING): PUI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_find(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_find_ex(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_UI_STRING_sort(sk: PSTACK_OF_UI_STRING);{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_is_sorted(sk: PSTACK_OF_UI_STRING): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_dup(const sk: PSTACK_OF_UI_STRING): PSTACK_OF_UI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_deep_copy(const sk: PSTACK_OF_UI_STRING; copyfunc: sk_UI_STRING_copyfunc; freefunc:sk_UI_STRING_freefunc): PSTACK_OF_UI_STRING;{$ifdef USE_INLINE} inline;{$endif}
-function sk_UI_STRING_set_cmp_func(const sk: PSTACK_OF_UI_STRING; compare: sk_UI_STRING_compfunc): sk_UI_STRING_compfunc;{$ifdef USE_INLINE} inline;{$endif}
-
 implementation
-
-{ DEFINE_STACK_OF(UI_STRING) Methoden }
-
-function sk_UI_STRING_num(const sk: PSTACK_OF_UI_STRING): TIdC_INT;
-begin
-  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
-end;
-function sk_UI_STRING_value(const sk: PSTACK_OF_UI_STRING; index: TIdC_INT): PUI_STRING;
-begin
-  result := PUI_STRING(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
-end;
-function sk_UI_STRING_new(compare: sk_UI_STRING_compfunc): PSTACK_OF_UI_STRING;
-begin
-  result := PSTACK_OF_UI_STRING(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
-end;
-function sk_UI_STRING_new_null(): PSTACK_OF_UI_STRING;
-begin
-  result := PSTACK_OF_UI_STRING(OPENSSL_sk_new_null());
-end;
-function sk_UI_STRING_new_reserve(compare: sk_UI_STRING_compfunc; n: TIdC_INT): PSTACK_OF_UI_STRING;
-begin
-  result := PSTACK_OF_UI_STRING(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
-end;
-function sk_UI_STRING_reserve(sk: PSTACK_OF_UI_STRING; n: TIdC_INT): TIdC_INT;
-begin
-  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
-end;
-procedure sk_UI_STRING_free(sk: PSTACK_OF_UI_STRING);
-begin
-  OPENSSL_sk_free(POPENSSL_STACK(sk));
-end;
-procedure sk_UI_STRING_zero(sk: PSTACK_OF_UI_STRING);
-begin
-  OPENSSL_sk_zero(POPENSSL_STACK(sk));
-end;
-function sk_UI_STRING_delete(sk: PSTACK_OF_UI_STRING; i: TIdC_INT): PUI_STRING;
-begin
-  result := PUI_STRING(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
-end;
-function sk_UI_STRING_delete_ptr(sk: PSTACK_OF_UI_STRING; ptr: PUI_STRING): PUI_STRING;
-begin
-  result := PUI_STRING(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
-end;
-function sk_UI_STRING_push(sk: PSTACK_OF_UI_STRING; ptr: PUI_STRING): TIdC_INT;
-begin
-  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
-end;
-function sk_UI_STRING_unshift(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING): TIdC_INT;
-begin
-  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
-end;
-function sk_UI_STRING_pop(sk: PSTACK_OF_UI_STRING): PUI_STRING;
-begin
-  result := PUI_STRING(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
-end;
-function sk_UI_STRING_shift(sk: PSTACK_OF_UI_STRING): PUI_STRING;
-begin
-  result := PUI_STRING(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
-end;
-procedure sk_UI_STRING_pop_free(sk: PSTACK_OF_UI_STRING; freeFunc: sk_UI_STRING_freefunc);
-begin
-  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
-end;
-function sk_UI_STRING_insert(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING; idx: TIdC_INT): TIdC_INT;
-begin
-  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
-end;
-function sk_UI_STRING_set(sk: PSTACK_OF_UI_STRING; idx: TIdC_INT; const ptr: PUI_STRING): PUI_STRING;
-begin
-  result := PUI_STRING(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
-end;
-function sk_UI_STRING_find(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING): TIdC_INT;
-begin
-  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
-end;
-function sk_UI_STRING_find_ex(sk: PSTACK_OF_UI_STRING; const ptr: PUI_STRING): TIdC_INT;
-begin
-  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
-end;
-procedure sk_UI_STRING_sort(sk: PSTACK_OF_UI_STRING);
-begin
-  OPENSSL_sk_sort(POPENSSL_STACK(sk));
-end;
-function sk_UI_STRING_is_sorted(sk: PSTACK_OF_UI_STRING): TIdC_INT;
-begin
-  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
-end;
-function sk_UI_STRING_dup(const sk: PSTACK_OF_UI_STRING): PSTACK_OF_UI_STRING;
-begin
-  result:=PSTACK_OF_UI_STRING(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
-end;
-function sk_UI_STRING_deep_copy(const sk: PSTACK_OF_UI_STRING; copyfunc: sk_UI_STRING_copyfunc; freefunc:sk_UI_STRING_freefunc): PSTACK_OF_UI_STRING;
-begin
-  result:=PSTACK_OF_UI_STRING(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
-end;
-function sk_UI_STRING_set_cmp_func(const sk: PSTACK_OF_UI_STRING; compare: sk_UI_STRING_compfunc): sk_UI_STRING_compfunc;
-begin
-  result:=sk_UI_STRING_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
-end;
-
-
 
 end.

@@ -493,6 +493,8 @@ end;
 
 
 
+implementation
+
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 
   function LoadFunction(const AMethodName: string; const AFailed: TStringList): Pointer;
@@ -642,6 +644,7 @@ begin
   CRYPTO_THREAD_get_current_id := nil;
   CRYPTO_THREAD_compare_id := nil;
 end;
+
 // OPENSSL_FILE = __FILE__ = C preprocessor macro
 // OPENSSL_LINE = __LINE__ = C preprocessor macro
 // FPC hase an equivalent with {$I %FILE%} and {$I %LINENUM%}, see https://www.freepascal.org/docs-html/prog/progsu41.html#x47-460001.1.41

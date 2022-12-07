@@ -484,6 +484,14 @@ type
   ASN1_SEQUENCE_ANY = STACK_OF_ASN1_TYPE;
   PASN1_SEQUENCE_ANY = PSTACK_OF_ASN1_TYPE;
 //
+//DEFINE_STACK_OF(ASN1_GENERALSTRING)
+//
+//DEFINE_STACK_OF(ASN1_UTF8STRING)
+
+//DEFINE_STACK_OF(ASN1_TYPE)
+//
+//typedef STACK_OF(ASN1_TYPE) ASN1_SEQUENCE_ANY;
+//
 //DECLARE_ASN1_ENCODE_FUNCTIONS_const(ASN1_SEQUENCE_ANY, ASN1_SEQUENCE_ANY)
 //DECLARE_ASN1_ENCODE_FUNCTIONS_const(ASN1_SEQUENCE_ANY, ASN1_SET_ANY)
 
@@ -504,6 +512,7 @@ type
 //        int i2d_##name(type *a, unsigned char **out); \
 //#  define DECLARE_ASN1_ITEM(name) \
 //        OPENSSL_EXTERN const ASN1_ITEM name##_it;
+
  // moved from below to here
   //DEFINE_STACK_OF(ASN1_OBJECT)
   STACK_OF_ASN1_OBJECT = type of pointer;
@@ -1589,8 +1598,7 @@ begin
   result:=sk_ASN1_OBJECT_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
 end;
 
-
-
+implementation
 
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 

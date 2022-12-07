@@ -175,7 +175,7 @@ uses
 
 type
   // Enums
-  THTTPCommandType = (hcUnknown, hcHEAD, hcGET, hcPOST, hcDELETE, hcPUT, hcTRACE, hcOPTION);
+  THTTPCommandType = (hcUnknown, hcHEAD, hcGET, hcPOST, hcDELETE, hcPUT, hcTRACE, hcOPTION, hcPATCH);
 
 const
   Id_TId_HTTPServer_KeepAlive = false;
@@ -191,7 +191,7 @@ const
   GServerSoftware = gsIdProductName + '/' + gsIdVersion;    {Do not Localize}
   GContentType = 'text/html';    {Do not Localize}
   GSessionIDCookie = 'IDHTTPSESSIONID';    {Do not Localize}
-  HTTPRequestStrings: array[0..Ord(High(THTTPCommandType))] of string = ('UNKNOWN', 'HEAD','GET','POST','DELETE','PUT','TRACE', 'OPTIONS'); {do not localize}
+  HTTPRequestStrings: array[0..Ord(High(THTTPCommandType))] of string = ('UNKNOWN', 'HEAD','GET','POST','DELETE','PUT','TRACE', 'OPTIONS', 'PATCH'); {do not localize}
 
 type
   // Forwards
@@ -251,6 +251,7 @@ type
     FQueryParams: string;
     FFormParams: string;
     FCommandType: THTTPCommandType;
+    FAuthType: string;
     //
     procedure DecodeAndSetParams(const AValue: String); virtual;
   public
@@ -261,6 +262,7 @@ type
     property Session: TIdHTTPSession read FSession;
     //
     property AuthExists: Boolean read FAuthExists;
+    property AuthType: string read FAuthType;
     property AuthPassword: string read FAuthPassword;
     property AuthUsername: string read FAuthUsername;
     property Command: string read FCommand;
@@ -870,7 +872,7 @@ begin
       soEnd: LOffset := (FRangeEnd+1) + AOffset;
     else
       // TODO: move this into IdResourceStringsProtocols.pas
-      raise EIdException.Create('Unknown Seek Origin'); {do not localize}
+      raise EIdException.Create('Unknown Seek Origin'); {do not localize} // TODO: add a resource string, and create a new Exception class for this
     end;
     LOffset := IndyMax(LOffset, FRangeStart);
     LOffset := IndyMin(LOffset, FRangeEnd+1);
@@ -1118,6 +1120,8 @@ var
     LResponseText, LContentText, S: String;
   begin
     // let the user decide if the request headers are acceptable
+    // TODO pass the whole LRequestInfo object so the user has access
+    // to the request method, too...
     Result := DoHeadersAvailable(AContext, LRequestInfo.URI, LRequestInfo.RawHeaders);
     if not Result then begin
       DoHeadersBlocked(AContext, LRequestInfo.RawHeaders, LResponseNo, LResponseText, LContentText);
@@ -1269,15 +1273,13 @@ var
 
 var
   i: integer;
-  s, LInputLine, LRawHTTPCommand, LCmd, LContentType, LAuthType: String;
+  s, LInputLine, LRawHTTPCommand, LCmd, LContentType: String;
   LURI: TIdURI;
   LContinueProcessing, LCloseConnection: Boolean;
   LConn: TIdTCPConnection;
   LEncoding: IIdTextEncoding;
 begin
-  LContinueProcessing := True;
   Result := False;
-  LCloseConnection := not KeepAlive;
   try
     try
       LConn := AContext.Connection;
@@ -1287,6 +1289,7 @@ begin
         if i = 0 then begin
           raise EIdHTTPErrorParsingCommand.Create(RSHTTPErrorParsingCommand);
         end;
+        LCloseConnection := not KeepAlive;
         // TODO: don't recreate the Request and Response objects on each loop
         // iteration. Just create them once before entering the loop, and then
         // reset them as needed on each iteration...
@@ -1448,8 +1451,8 @@ begin
                 // Authentication
                 s := LRequestInfo.RawHeaders.Values['Authorization'];    {Do not Localize}
                 if Length(s) > 0 then begin
-                  LAuthType := Fetch(s, ' ');
-                  LRequestInfo.FAuthExists := DoParseAuthentication(AContext, LAuthType, s, LRequestInfo.FAuthUsername, LRequestInfo.FAuthPassword);
+                  LRequestInfo.FAuthType := Fetch(s, ' ');
+                  LRequestInfo.FAuthExists := DoParseAuthentication(AContext, LRequestInfo.FAuthType, s, LRequestInfo.FAuthUsername, LRequestInfo.FAuthPassword);
                   if not LRequestInfo.FAuthExists then begin
                     raise EIdHTTPUnsupportedAuthorisationScheme.Create(
                       RSHTTPUnsupportedAuthorisationScheme);
@@ -1457,6 +1460,7 @@ begin
                 end;
 
                 // Session management
+                LContinueProcessing := True;
                 GetSessionFromCookie(AContext, LRequestInfo, LResponseInfo, LContinueProcessing);
                 if LContinueProcessing then begin
                   // These essentially all "retrieve" so they are all "Get"s
@@ -1687,7 +1691,7 @@ begin
     // gets called by Notification() if the sessionList is freed while
     // the server is still Active?
     if Active then begin
-      raise EIdException.Create(RSHTTPCannotSwitchSessionListWhenActive);
+      raise EIdException.Create(RSHTTPCannotSwitchSessionListWhenActive); // TODO: create a new Exception class for this
     end;
 
     // under ARC, all weak references to a freed object get nil'ed automatically
@@ -1743,7 +1747,7 @@ begin
   LCookieName := Trim(AValue);
   if LCookieName = '' then begin
     // TODO: move this into IdResourceStringsProtocols.pas
-    raise EIdException.Create('Invalid cookie name'); {do not localize}
+    raise EIdException.Create('Invalid cookie name'); {do not localize} // TODO: add a resource string, and create a new Exception class for this
   end;
   FSessionIDCookieName := AValue;
 end;

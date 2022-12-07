@@ -39,7 +39,6 @@ uses
   IdOpenSSLConsts,
   IdOpenSSLHeaders_bio,
   IdOpenSSLHeaders_ossl_typ,
-  IdOpenSSLHeaders_stack,
   {$IFDEF VCL_XE3_OR_ABOVE}System.Types{$ELSE}Types{$ENDIF};
 
 {$MINENUMSIZE 4}
@@ -120,10 +119,6 @@ const
 type
   CRYPTO_RWLOCK = type Pointer;
   PCRYPTO_RWLOCK = ^CRYPTO_RWLOCK;
-
-  Void = type Pointer;
-  PVoid = ^Void;
-
   //crypto_ex_data_st = record
   //  sk: PStackOfVoid;
   //end;

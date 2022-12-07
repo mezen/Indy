@@ -865,7 +865,7 @@ var
   LChar: WideChar;
   Encoded: Boolean;
 begin
-  Result := '';    {Do not Localize}
+  Result := '';
 
   // keep the compiler happy
   Buf := nil;
@@ -896,7 +896,7 @@ begin
     // their true Unicode codepoint value, depending on the codepage used for
     // the source code. For instance, #128 may become #$20AC...
 
-    if Ord(LChar) = 32 then {do not localize}
+    if Ord(LChar) = 32 then
     begin
       Result := Result + '+'; {do not localize}
       Inc(I);
@@ -986,7 +986,7 @@ begin
           // bottleneck for code that makes a lot of calls to Pos() in a loop, so we
           // will scan through the string looking for the character without a conversion...
           //
-          // LPos := IndyPos(LTemp.NameValueSeparator, LStr); {do not localize}
+          // LPos := IndyPos(LTemp.NameValueSeparator, LStr);
           //
           LChar := LTemp.NameValueSeparator;
           LPos := 0;
@@ -1850,7 +1850,7 @@ begin
       (PosInStrArray(ARequest.MethodOverride, Requires_HTTP_1_1, False) > -1) then
     begin
       if ProtocolVersion <> pv1_1 then  begin
-        raise EIdException.Create(RSHTTPMethodRequiresVersion);
+        raise EIdException.Create(RSHTTPMethodRequiresVersion); // TODO: create a new Exception class for this
       end;
     end;
 
@@ -2114,7 +2114,7 @@ begin
               end;
             wnDontKnow:
               begin
-                raise EIdException.Create(RSHTTPNotAcceptable);
+                raise EIdException.Create(RSHTTPNotAcceptable); // TODO: create a new Exception class for this
               end;
           end;
         until False;
@@ -3217,14 +3217,17 @@ begin
           end;
         wnDontKnow:
           begin
-            raise EIdException.Create(RSHTTPNotAcceptable);
+            raise EIdException.Create(RSHTTPNotAcceptable); // TODO: create a new Exception class for this
           end;
       end;
     until False;
   finally
-    if not Response.KeepAlive then begin
-      // TODO: do not disconnect if hoNoReadMultipartMIME is in effect
-      // TODO: do not disconnect if hoNoReadChunked is in effect
+    if not (
+      Response.KeepAlive or
+      ((hoNoReadMultipartMIME in FOptions) and IsHeaderMediaType(Response.ContentType, 'multipart')) or   {do not localize}
+      ((hoNoReadChunked in FOptions) and (IndyPos('chunked', LowerCase(Response.TransferEncoding)) > 0))  {do not localize}
+    ) then
+    begin
       Disconnect;
     end;
   end;

@@ -528,8 +528,8 @@ end;
 begin
   //we call the macro twice because we specified two possible structures.
   //Id_IPV6_HOPLIMIT and Id_IPV6_PKTINFO
-  LSize := CMSG_LEN(CMSG_LEN(Length(VBuffer)));
-  SetLength( LControl,LSize);
+  LSize := CMSG_SPACE(SizeOf(Byte)) + CMSG_SPACE(SizeOf(in6_pktinfo));
+  SetLength(LControl, LSize);
 
   LMsgBuf.len := Length(VBuffer); // Length(VMsgData);
   LMsgBuf.buf := @VBuffer[0]; // @VMsgData[0];
@@ -813,6 +813,7 @@ var
   LAddrList, LAddrInfo: pifaddrs;
   LSubNetStr: String;
   LAddress: TIdStackLocalAddress;
+  LName: string;
   {$ELSE}
   LI4 : array of THostAddr;
   LI6 : array of THostAddr6;
@@ -854,7 +855,10 @@ begin
             end;
           end;
           if LAddress <> nil then begin
-            TIdStackLocalAddressAccess(LAddress).FInterfaceName := String(LAddrInfo^.ifa_name);
+            LName := String(LAddrInfo^.ifa_name);
+            TIdStackLocalAddressAccess(LAddress).FDescription := LName;
+            TIdStackLocalAddressAccess(LAddress).FFriendlyName := LName;
+            TIdStackLocalAddressAccess(LAddress).FInterfaceName := LName;
             {$IFDEF HAS_if_nametoindex}
             TIdStackLocalAddressAccess(LAddress).FInterfaceIndex := if_nametoindex(LAddrInfo^.ifa_name);
             {$ENDIF}
@@ -1228,6 +1232,7 @@ var
   LIndex, i: Integer;
 begin
   Result := 0;
+  // TODO: is this missing Lock/Unlock calls?
   LIndex := 0;
   //? use FMaxHandle div x
   for i:= 0 to __FD_SETSIZE - 1 do begin

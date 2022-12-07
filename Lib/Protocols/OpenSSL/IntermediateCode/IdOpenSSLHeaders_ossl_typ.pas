@@ -36,8 +36,7 @@ interface
 uses
   IdCTypes,
   IdGlobal,
-  IdOpenSSLConsts,
-  IdOpenSSLHeaders_stack;
+  IdOpenSSLConsts;
 
 type
 // moved from unit "asn1" to prevent circular references
@@ -257,6 +256,9 @@ type
   X509 = x509_st;
   PX509 = ^X509;
   PPX509 = ^PX509;
+  Stack_Of_X509 = type Pointer;
+  PStack_Of_X509 = ^Stack_Of_X509;
+  PPStack_Of_X509 = ^PStack_Of_X509;
   X509_crl_st = type Pointer;
   X509_CRL = X509_crl_st;
   PX509_CRL = ^X509_CRL;
@@ -520,8 +522,6 @@ type
   X509_ALGOR = X509_algor_st;
   PX509_ALGOR = ^X509_ALGOR;
   PPX509_ALGOR = ^PX509_ALGOR;
-
-  //DEFINE_STACK_OF(X509_ALGOR)
   
   i2d_of_void = type Pointer;
   Pi2d_of_void = ^i2d_of_void;

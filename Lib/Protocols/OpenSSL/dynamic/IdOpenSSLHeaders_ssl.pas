@@ -28,7 +28,7 @@
 // Any change to this file should be made in the
 // corresponding unit in the folder "intermediate"!
 
-// Generation date: 07.09.2022 11:33:03
+// Generation date: 23.07.2021 14:40:17
 
 unit IdOpenSSLHeaders_ssl;
 
@@ -51,8 +51,7 @@ uses
   IdOpenSSLHeaders_pem,
   IdOpenSSLHeaders_tls1,
   IdOpenSSLHeaders_ssl3,
-  IdOpenSSLHeaders_x509,
-  IdOpenSSLHeaders_stack;
+  IdOpenSSLHeaders_x509;
 
 {$MINENUMSIZE 4}
 
@@ -939,11 +938,6 @@ type
   PSRTP_PROTECTION_PROFILE = ^SRTP_PROTECTION_PROFILE;
 
   //DEFINE_STACK_OF(SRTP_PROTECTION_PROFILE)
-  STACK_OF_SRTP_PROTECTION_PROFILE = type of pointer;
-  PSTACK_OF_SRTP_PROTECTION_PROFILE = ^STACK_OF_SRTP_PROTECTION_PROFILE;
-  sk_SRTP_PROTECTION_PROFILE_compfunc = function(const a: PSRTP_PROTECTION_PROFILE; const b: PSRTP_PROTECTION_PROFILE): TIdC_INT; cdecl;
-  sk_SRTP_PROTECTION_PROFILE_freefunc = procedure(a: PSRTP_PROTECTION_PROFILE); cdecl;
-  sk_SRTP_PROTECTION_PROFILE_copyfunc = function(const a: PSRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE; cdecl;
 
   (* Typedefs for handling custom extensions *)
   custom_ext_add_cb = function (s: PSSL; ext_type: TIdC_UINT; const out_: PByte; outlen: PIdC_SIZET; al: PIdC_INT; add_arg: Pointer): TIdC_INT; cdecl;
@@ -2101,134 +2095,7 @@ var
   SSL_CTX_set_allow_early_data_cb: procedure(ctx: PSSL_CTX; cb: SSL_allow_early_data_cb_fN; arg: Pointer) cdecl = nil;
   SSL_set_allow_early_data_cb: procedure(s: PSSL; cb: SSL_allow_early_data_cb_fN; arg: Pointer) cdecl = nil;
 
-function sk_SRTP_PROTECTION_PROFILE_num(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_value(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; index: TIdC_INT): PSRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_new(compare: sk_SRTP_PROTECTION_PROFILE_compfunc): PSTACK_OF_SRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_new_null(): PSTACK_OF_SRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_new_reserve(compare: sk_SRTP_PROTECTION_PROFILE_compfunc; n: TIdC_INT): PSTACK_OF_SRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_reserve(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; n: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_SRTP_PROTECTION_PROFILE_free(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE);{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_SRTP_PROTECTION_PROFILE_zero(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE);{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_delete(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; i: TIdC_INT): PSRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_delete_ptr(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; ptr: PSRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_push(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_unshift(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_pop(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_shift(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_SRTP_PROTECTION_PROFILE_pop_free(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; freeFunc: sk_SRTP_PROTECTION_PROFILE_freefunc);{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_insert(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE; idx: TIdC_INT): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_set(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; idx: TIdC_INT; const ptr: PSRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_find(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_find_ex(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-procedure sk_SRTP_PROTECTION_PROFILE_sort(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE);{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_is_sorted(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): TIdC_INT;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_dup(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): PSTACK_OF_SRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_deep_copy(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; copyfunc: sk_SRTP_PROTECTION_PROFILE_copyfunc; freefunc:sk_SRTP_PROTECTION_PROFILE_freefunc): PSTACK_OF_SRTP_PROTECTION_PROFILE;{$ifdef USE_INLINE} inline;{$endif}
-function sk_SRTP_PROTECTION_PROFILE_set_cmp_func(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; compare: sk_SRTP_PROTECTION_PROFILE_compfunc): sk_SRTP_PROTECTION_PROFILE_compfunc;{$ifdef USE_INLINE} inline;{$endif}
-
 implementation
-
-{ DEFINE_STACK_OF(SRTP_PROTECTION_PROFILE) Methoden }
-
-function sk_SRTP_PROTECTION_PROFILE_num(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): TIdC_INT;
-begin
-  result := OPENSSL_sk_num(POPENSSL_STACK(sk));
-end;
-function sk_SRTP_PROTECTION_PROFILE_value(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; index: TIdC_INT): PSRTP_PROTECTION_PROFILE;
-begin
-  result := PSRTP_PROTECTION_PROFILE(OPENSSL_sk_value(POPENSSL_STACK(sk), index));
-end;
-function sk_SRTP_PROTECTION_PROFILE_new(compare: sk_SRTP_PROTECTION_PROFILE_compfunc): PSTACK_OF_SRTP_PROTECTION_PROFILE;
-begin
-  result := PSTACK_OF_SRTP_PROTECTION_PROFILE(OPENSSL_sk_new(OPENSSL_sk_compfunc(@compare)));
-end;
-function sk_SRTP_PROTECTION_PROFILE_new_null(): PSTACK_OF_SRTP_PROTECTION_PROFILE;
-begin
-  result := PSTACK_OF_SRTP_PROTECTION_PROFILE(OPENSSL_sk_new_null());
-end;
-function sk_SRTP_PROTECTION_PROFILE_new_reserve(compare: sk_SRTP_PROTECTION_PROFILE_compfunc; n: TIdC_INT): PSTACK_OF_SRTP_PROTECTION_PROFILE;
-begin
-  result := PSTACK_OF_SRTP_PROTECTION_PROFILE(OPENSSL_sk_new_reserve(OPENSSL_sk_compfunc(@compare), n));
-end;
-function sk_SRTP_PROTECTION_PROFILE_reserve(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; n: TIdC_INT): TIdC_INT;
-begin
-  result := OPENSSL_sk_reserve(POPENSSL_STACK(sk), n);
-end;
-procedure sk_SRTP_PROTECTION_PROFILE_free(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE);
-begin
-  OPENSSL_sk_free(POPENSSL_STACK(sk));
-end;
-procedure sk_SRTP_PROTECTION_PROFILE_zero(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE);
-begin
-  OPENSSL_sk_zero(POPENSSL_STACK(sk));
-end;
-function sk_SRTP_PROTECTION_PROFILE_delete(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; i: TIdC_INT): PSRTP_PROTECTION_PROFILE;
-begin
-  result := PSRTP_PROTECTION_PROFILE(OPENSSL_sk_delete(POPENSSL_STACK(sk),i));
-end;
-function sk_SRTP_PROTECTION_PROFILE_delete_ptr(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; ptr: PSRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;
-begin
-  result := PSRTP_PROTECTION_PROFILE(OPENSSL_sk_delete_ptr(POPENSSL_STACK(sk),pointer(ptr)));
-end;
-function sk_SRTP_PROTECTION_PROFILE_push(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;
-begin
-  result := OPENSSL_sk_push(POPENSSL_STACK(sk),pointer(ptr));
-end;
-function sk_SRTP_PROTECTION_PROFILE_unshift(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;
-begin
-  result := OPENSSL_sk_unshift(POPENSSL_STACK(sk),pointer(ptr));
-end;
-function sk_SRTP_PROTECTION_PROFILE_pop(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;
-begin
-  result := PSRTP_PROTECTION_PROFILE(OPENSSL_sk_pop(POPENSSL_STACK(sk)));
-end;
-function sk_SRTP_PROTECTION_PROFILE_shift(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;
-begin
-  result := PSRTP_PROTECTION_PROFILE(OPENSSL_sk_shift(POPENSSL_STACK(sk)));
-end;
-procedure sk_SRTP_PROTECTION_PROFILE_pop_free(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; freeFunc: sk_SRTP_PROTECTION_PROFILE_freefunc);
-begin
-  OPENSSL_sk_pop_free(POPENSSL_STACK(sk), OPENSSL_sk_freefunc(@freeFunc) );
-end;
-function sk_SRTP_PROTECTION_PROFILE_insert(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE; idx: TIdC_INT): TIdC_INT;
-begin
-  result := OPENSSL_sk_insert(POPENSSL_STACK(sk), pointer(ptr), idx);
-end;
-function sk_SRTP_PROTECTION_PROFILE_set(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; idx: TIdC_INT; const ptr: PSRTP_PROTECTION_PROFILE): PSRTP_PROTECTION_PROFILE;
-begin
-  result := PSRTP_PROTECTION_PROFILE(OPENSSL_sk_set(POPENSSL_STACK(sk), idx, pointer(ptr)));
-end;
-function sk_SRTP_PROTECTION_PROFILE_find(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;
-begin
-  result := OPENSSL_sk_find(POPENSSL_STACK(sk), pointer(ptr));
-end;
-function sk_SRTP_PROTECTION_PROFILE_find_ex(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; const ptr: PSRTP_PROTECTION_PROFILE): TIdC_INT;
-begin
-  result := OPENSSL_sk_find_ex(POPENSSL_STACK(sk), pointer(ptr));
-end;
-procedure sk_SRTP_PROTECTION_PROFILE_sort(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE);
-begin
-  OPENSSL_sk_sort(POPENSSL_STACK(sk));
-end;
-function sk_SRTP_PROTECTION_PROFILE_is_sorted(sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): TIdC_INT;
-begin
-  result:=OPENSSL_sk_is_sorted(POPENSSL_STACK(sk));
-end;
-function sk_SRTP_PROTECTION_PROFILE_dup(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE): PSTACK_OF_SRTP_PROTECTION_PROFILE;
-begin
-  result:=PSTACK_OF_SRTP_PROTECTION_PROFILE(OPENSSL_sk_dup(POPENSSL_STACK(sk)));
-end;
-function sk_SRTP_PROTECTION_PROFILE_deep_copy(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; copyfunc: sk_SRTP_PROTECTION_PROFILE_copyfunc; freefunc:sk_SRTP_PROTECTION_PROFILE_freefunc): PSTACK_OF_SRTP_PROTECTION_PROFILE;
-begin
-  result:=PSTACK_OF_SRTP_PROTECTION_PROFILE(OPENSSL_sk_deep_copy(POPENSSL_STACK(sk),OPENSSL_sk_copyfunc(@copyfunc),OPENSSL_sk_freefunc(@freefunc)));
-end;
-function sk_SRTP_PROTECTION_PROFILE_set_cmp_func(const sk: PSTACK_OF_SRTP_PROTECTION_PROFILE; compare: sk_SRTP_PROTECTION_PROFILE_compfunc): sk_SRTP_PROTECTION_PROFILE_compfunc;
-begin
-  result:=sk_SRTP_PROTECTION_PROFILE_compfunc(OPENSSL_sk_set_cmp_func(POPENSSL_STACK(sk), OPENSSL_sk_compfunc(@compare)));
-end;
-
-
-
 
 procedure Load(const ADllHandle: TIdLibHandle; const AFailed: TStringList);
 
@@ -3005,6 +2872,7 @@ begin
   SSL_CTX_set_allow_early_data_cb := nil;
   SSL_set_allow_early_data_cb := nil;
 end;
+
 //# define SSL_CTX_set_mode(ctx,op)      SSL_CTX_ctrl((ctx),SSL_CTRL_MODE,(op),NULL)
 function SSL_CTX_set_mode(ctx: PSSL_CTX; op: TIdC_LONG): TIdC_LONG;
 begin

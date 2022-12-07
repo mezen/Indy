@@ -193,8 +193,7 @@ const
   X509_V_FLAG_POLICY_MASK = X509_V_FLAG_POLICY_CHECK or X509_V_FLAG_EXPLICIT_POLICY
     or X509_V_FLAG_INHIBIT_ANY or X509_V_FLAG_INHIBIT_MAP;
 
-
-  DANE_FLAG_NO_DANE_EE_NAMECHECKS = TIdC_Long(1) shl 0;
+  DANE_FLAG_NO_DANE_EE_NAMECHECKS = TIdC_Long(1) shl 0;
 
   (* Non positive return values are errors *)
   X509_PCY_TREE_FAILURE  = -2; (* Failure to satisfy explicit policy *)
