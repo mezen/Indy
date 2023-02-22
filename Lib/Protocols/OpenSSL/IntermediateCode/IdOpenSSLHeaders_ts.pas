@@ -44,7 +44,8 @@ uses
   IdOpenSSLHeaders_rsa,
   IdOpenSSLHeaders_tserr,
   IdOpenSSLHeaders_x509,
-  IdOpenSSLHeaders_x509v3;
+  IdOpenSSLHeaders_x509v3,
+  IdOpenSSLHeaders_stack;
 
 const
   (* Possible values for status. *)

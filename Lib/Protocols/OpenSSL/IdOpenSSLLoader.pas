@@ -83,6 +83,7 @@ uses
   IdOpenSSLHeaders_rsaerr,
   IdOpenSSLHeaders_sha,
   IdOpenSSLHeaders_srtp,
+  IdOpenSSLHeaders_stack,
   IdOpenSSLHeaders_storeerr,
   IdOpenSSLHeaders_ts,
   IdOpenSSLHeaders_tserr,
@@ -233,6 +234,7 @@ begin                                  //FI:C101
       IdOpenSSLHeaders_rsa.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_rsaerr.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_sha.Load(FLibCrypto, FFailed);
+      IdOpenSSLHeaders_stack.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_srtp.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_storeerr.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_ts.Load(FLibCrypto, FFailed);

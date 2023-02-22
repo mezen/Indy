@@ -38,7 +38,8 @@ uses
   IdGlobal,
   IdOpenSSLConsts,
   IdOpenSSLHeaders_ossl_typ,
-  IdOpenSSLHeaders_x509;
+  IdOpenSSLHeaders_x509,
+  IdOpenSSLHeaders_stack;
 
 type
   CMS_ContentInfo_st = type Pointer;

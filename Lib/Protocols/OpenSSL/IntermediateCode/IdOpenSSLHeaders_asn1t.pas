@@ -37,7 +37,8 @@ uses
   IdCTypes,
   IdGlobal,
   IdOpenSSLConsts,
-  IdOpenSSLHeaders_ossl_typ;
+  IdOpenSSLHeaders_ossl_typ,
+  IdOpenSSLHeaders_stack;
   
 type
   // moved from asn1
@@ -974,6 +975,7 @@ const
 //DECLARE_ASN1_ITEM(ZLONG)
 //# endif
 
+type
 //DEFINE_STACK_OF(ASN1_VALUE)
 
 //* Functions used internally by the ASN1 code */
