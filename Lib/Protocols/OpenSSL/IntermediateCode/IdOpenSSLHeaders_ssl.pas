@@ -1608,6 +1608,8 @@ var
   function d2i_SSL_SESSION(a: PPSSL_SESSION; const pp: PPByte; length: TIdC_LONG): PSSL_SESSION;
 
   function SSL_get_peer_certificate(const s: PSSL): PX509;
+  function SSL_get0_peer_certificate(const s: PSSL): PX509;
+  function SSL_get1_peer_certificate(const s: PSSL): PX509;
 
   //__owur STACK_OF(X509) *SSL_get_peer_cert_chain(const s: PSSL);
   //

@@ -43,7 +43,7 @@ type
   private
     FOpenSSLLoaded: Boolean;
     function GetTargetHost: string;
-    function GetClientSocket: TIdOpenSSLSocketClient; {$IFDEF USE_INLINE}inline;{$ENDIF}
+    function GetClientSocket: TIdOpenSSLSocketClient; // {$IFDEF USE_INLINE}inline;{$ENDIF} signature change between debug and release packages can cause F2051
     procedure EnsureOpenSSLLoaded;
   protected
     FOptions: TIdOpenSSLOptionsClient;

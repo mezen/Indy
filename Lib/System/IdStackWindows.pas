@@ -1774,7 +1774,7 @@ begin
     // this more dynamic/configurable. For instance, by having this class hold a dynamic
     // byte array that is casted to PFDSet when needed...
     if not fd_isset(AHandle, FFDSet) then begin
-      if FFDSet.fd_count >= Length(FFDSet.fd_array){FD_SETSIZE} then begin
+      if Integer(FFDSet.fd_count) >= Integer(Length(FFDSet.fd_array)){FD_SETSIZE} then begin
         raise EIdStackSetSizeExceeded.Create(RSSetSizeExceeded);
       end;
       FFDSet.fd_array[FFDSet.fd_count] := AHandle;

@@ -62,6 +62,9 @@ type
     function Readable(AMSec: Integer = IdTimeoutDefault): Boolean; override;
 
     function Clone: TIdSSLIOHandlerSocketBase; override;
+  public
+    property SSLSocked: TIdOpenSSLSocket read FTLSSocket;
+    property Context: TIdOpenSSLContext read FContext;
   end;
 
 implementation

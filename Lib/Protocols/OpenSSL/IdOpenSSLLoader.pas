@@ -77,6 +77,7 @@ uses
   IdOpenSSLHeaders_pemerr,
   IdOpenSSLHeaders_pkcs7,
   IdOpenSSLHeaders_pkcs7err,
+  IdOpenSSLHeaders_pkcs12,
   IdOpenSSLHeaders_rand,
   IdOpenSSLHeaders_randerr,
   IdOpenSSLHeaders_rsa,
@@ -228,6 +229,7 @@ begin                                  //FI:C101
       IdOpenSSLHeaders_pemerr.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_pkcs7.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_pkcs7err.Load(FLibCrypto, FFailed);
+      IdOpenSSLHeaders_pkcs12.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_rand.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_randerr.Load(FLibCrypto, FFailed);
       IdOpenSSLHeaders_rsa.Load(FLibCrypto, FFailed);

@@ -67,6 +67,8 @@ type
     function HasReadableData: Boolean;
 
     function GetErrorCode(const AReturnCode: Integer): Integer; overload;
+  public
+    property SSL: PSSL read FSSL;
   end;
 
 implementation
