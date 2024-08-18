@@ -156,7 +156,7 @@ const
   //                                        const char *section);
   function NCONF_get_string(const conf: PCONF; const group: PAnsiChar; const name: PAnsiChar): PAnsiChar cdecl; external CLibCrypto;
   function NCONF_get_number_e(const conf: PCONF; const group: PAnsiChar; const name: PAnsiChar; result: PIdC_LONG): TIdC_INT cdecl; external CLibCrypto;
-  function NCONF_dump_bio(const conf: PCONf; out: PBIO): TIdC_INT cdecl; external CLibCrypto;
+  function NCONF_dump_bio(const conf: PCONf; out_: PBIO): TIdC_INT cdecl; external CLibCrypto;
 
   //#define NCONF_get_number(c,g,n,r) NCONF_get_number_e(c,g,n,r)
 

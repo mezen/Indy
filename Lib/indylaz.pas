@@ -8,8 +8,8 @@ interface
 
 uses
   IdAboutVCL, IdAntiFreeze, IdCoreDsnRegister, IdDsnCoreResourceStrings, IdDsnPropEdBindingVCL, 
-  IdDsnRegister, IdDsnResourceStrings, IdDsnSASLListEditorFormVCL, IdRegister, IdRegisterCore, IdStreamVCL, 
-  IdStream, LazarusPackageIntf;
+  IdDsnRegister, IdDsnResourceStrings, IdDsnSASLListEditorFormVCL, IdRegister, IdRegisterCore,
+  IdRegisterOpenSSL, IdStreamVCL, IdStream, LazarusPackageIntf;
 
 implementation
 
@@ -19,6 +19,7 @@ begin
   RegisterUnit('IdDsnRegister', @IdDsnRegister.Register);
   RegisterUnit('IdRegister', @IdRegister.Register);
   RegisterUnit('IdRegisterCore', @IdRegisterCore.Register);
+  RegisterUnit('IdRegisterOpenSSL', @IdRegisterOpenSSL.Register);
 end;
 
 initialization

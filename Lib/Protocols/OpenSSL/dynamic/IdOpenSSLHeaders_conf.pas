@@ -161,7 +161,7 @@ var
   //                                        const char *section);
   NCONF_get_string: function(const conf: PCONF; const group: PAnsiChar; const name: PAnsiChar): PAnsiChar cdecl = nil;
   NCONF_get_number_e: function(const conf: PCONF; const group: PAnsiChar; const name: PAnsiChar; result: PIdC_LONG): TIdC_INT cdecl = nil;
-  NCONF_dump_bio: function(const conf: PCONf; out: PBIO): TIdC_INT cdecl = nil;
+  NCONF_dump_bio: function(const conf: PCONf; out_: PBIO): TIdC_INT cdecl = nil;
 
   //#define NCONF_get_number(c,g,n,r) NCONF_get_number_e(c,g,n,r)
 
